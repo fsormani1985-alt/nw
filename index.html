@@ -14,8 +14,10 @@
 
 .nav-badge{display:inline-flex;min-width:19px;height:19px;align-items:center;justify-content:center;margin-left:5px;padding:0 6px;border-radius:12px;background:#a83b45;color:#fff;font-size:10px;font-weight:800}.nav-button.active .nav-badge{background:#fff;color:#8b2832}.live-auto-line{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:10px;padding:9px 11px;border:1px solid #29415f;border-radius:8px;color:var(--muted);font-size:11px}.live-auto-line span:first-child{color:#cfe5ff;font-weight:700}@media(max-width:720px){.live-auto-line{flex-direction:column}}
 .dot.stale{background:var(--yellow)}
+.dot.inactive{background:var(--yellow)}
 .dot.link{background:var(--blue)}
 .live-source-card .dot.stale{box-shadow:0 0 0 3px rgba(245,201,93,.10)}
+.live-source-card .dot.inactive{box-shadow:0 0 0 3px rgba(245,201,93,.10)}
 .live-source-card .dot.link{box-shadow:0 0 0 3px rgba(78,161,255,.10)}
 
 .dot.cooldown{background:var(--yellow)}
@@ -112,7 +114,7 @@
   <header class="app-header">
     <div>
       <div class="eyebrow">OSINT NEWS MONITOR</div>
-      <h1>News Watch <span class="version">3.3</span></h1>
+      <h1>News Watch <span class="version">3.4</span></h1>
       <p>Aggregatore operativo Middle East e fonti ufficiali.</p>
     </div>
     <nav class="main-nav" aria-label="Sezioni">
@@ -1144,6 +1146,15 @@ window.NWLiveResolver = (() => {
     return parts?.stamp || 0;
   }
 
+  function isRecentUrl(value, days = 2, now = new Date()) {
+    const parts = datePartsFromUrl(value);
+    if (!parts) return false;
+    const candidate = Date.UTC(parts.year, parts.month - 1, parts.day);
+    const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+    const ageDays = Math.floor((today - candidate) / 86400000);
+    return ageDays >= 0 && ageDays < Math.max(1, Number(days) || 1);
+  }
+
   function isoDay(date) {
     return {
       year: date.getUTCFullYear(),
@@ -1191,6 +1202,31 @@ window.NWLiveResolver = (() => {
     const best = candidates[0];
     if (!best) return '';
     return pageClosed || best.stamp > currentStamp ? best.url : '';
+  }
+
+  function alJazeeraSitemapCandidates(xml, limit = 6) {
+    const entries = [];
+    const regex = /<url\b[^>]*>([\s\S]*?)<\/url>/gi;
+    let match;
+    while ((match = regex.exec(String(xml || '')))) {
+      const body = match[1];
+      const location = clean((body.match(/<loc>([\s\S]*?)<\/loc>/i) || [])[1] || '');
+      const title = clean((body.match(/<(?:news:)?title>([\s\S]*?)<\/(?:news:)?title>/i) || [])[1] || '');
+      const modified = clean((body.match(/<lastmod>([\s\S]*?)<\/lastmod>/i) || [])[1] || '');
+      if (!location || !/\/news\/liveblog\//i.test(location)) continue;
+      const haystack = `${location} ${title}`.toLowerCase();
+      if (!/(iran|tehran|hormuz|israel|gaza|lebanon|houthi|middle-east|middle east|red-sea|red sea)/i.test(haystack)) continue;
+      entries.push({
+        url: norm(location),
+        title,
+        timestamp: Date.parse(modified) || 0,
+        stamp: dateStamp(location)
+      });
+    }
+    return entries
+      .sort((a, b) => b.stamp - a.stamp || b.timestamp - a.timestamp)
+      .filter((entry, index, list) => list.findIndex(other => other.url === entry.url) === index)
+      .slice(0, limit);
   }
 
   function cnnDateCandidates(currentUrl, now = new Date(), days = 4) {
@@ -1272,7 +1308,10 @@ window.NWLiveResolver = (() => {
         (body.match(/<lastmod>([\s\S]*?)<\/lastmod>/i) || [])[1] || ''
       );
       if (!location) continue;
-      if (!/iran-war-live-/i.test(location) && !/iran war live/i.test(title)) continue;
+      const haystack = `${location} ${title}`.toLowerCase();
+      const liveSignal = /(?:^|[-/])live(?:[-/]|$)|\bas it happened\b|\blive updates?\b|\blatest updates?\b/i.test(haystack);
+      const relevant = /(iran|iranian|tehran|hormuz|israel|gaza|lebanon|houthi|middle-east|middle east|red-sea|red sea)/i.test(haystack);
+      if (!liveSignal || !relevant) continue;
       entries.push({
         url: norm(location),
         title: title || 'Reuters – Iran War Live',
@@ -1331,7 +1370,9 @@ window.NWLiveResolver = (() => {
     provider,
     datePartsFromUrl,
     dateStamp,
+    isRecentUrl,
     alJazeeraContinuation,
+    alJazeeraSitemapCandidates,
     cnnDateCandidates,
     cnnSitemapCandidates,
     timesOfIsraelDateCandidates,
@@ -2216,6 +2257,40 @@ window.NWLiveResolver = (() => {
     }
   }
 
+  function alJazeeraDailySitemapUrl(date) {
+    const year = date.getUTCFullYear();
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    return `https://www.aljazeera.com/sitemap.xml?yyyy=${year}&mm=${month}&dd=${day}`;
+  }
+
+  function inactiveLiveResult(message, publicUrl = '') {
+    return {
+      items: [],
+      route: 'ricerca automatica completata',
+      duration: 0,
+      usedUrl: publicUrl,
+      latest: 0,
+      status: 'inactive',
+      info: message || 'Nessun live attivo in questo momento.',
+      publicUrl
+    };
+  }
+
+  function linkOnlyLiveResult(message, item) {
+    return {
+      items: [],
+      route: 'live individuato; aggiornamenti interni non estraibili',
+      duration: 0,
+      usedUrl: item?.url || '',
+      latest: item?.timestamp || 0,
+      status: 'link',
+      linkOnly: true,
+      info: message || item?.title || 'Live disponibile soltanto come collegamento',
+      publicUrl: item?.url || ''
+    };
+  }
+
   function liveItems() {
     return state.articles.filter(article => article.isLiveBlog);
   }
@@ -2297,75 +2372,140 @@ window.NWLiveResolver = (() => {
   }
 
   async function fetchAlJazeeraLive(source) {
+    const discovered = [];
+    const discoveryErrors = [];
+    let discoveryCompleted = false;
+    for (let offset = 0; offset >= -1; offset -= 1) {
+      const date = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate() + offset));
+      try {
+        const sitemap = await fetchRaw(alJazeeraDailySitemapUrl(date), true);
+        discoveryCompleted = true;
+        Resolver.alJazeeraSitemapCandidates(sitemap.text, 6).forEach(item => discovered.push(item));
+      } catch (error) {
+        discoveryErrors.push(error.message);
+      }
+    }
+
     let continuation = '';
     try {
       const current = await fetchRaw(source.url, true);
       continuation = Resolver.alJazeeraContinuation(current.text, source.url);
-    } catch {}
-    const urls = [continuation, source.url].filter(Boolean);
+    } catch (error) {
+      discoveryErrors.push(error.message);
+    }
+
+    const recent = discovered
+      .filter(item => Resolver.isRecentUrl(item.url, 2))
+      .sort((a, b) => b.stamp - a.stamp || b.timestamp - a.timestamp);
+    const urls = [...new Set([...recent.map(item => item.url), continuation].filter(Boolean))];
+    if (!urls.length && discoveryCompleted) {
+      return inactiveLiveResult('NESSUN LIVE ATTIVO: Al Jazeera non pubblica oggi un live pertinente.');
+    }
+    if (!urls.length) {
+      throw new Error(discoveryErrors.join(' · ') || 'Ricerca del live Al Jazeera non riuscita');
+    }
+
     const candidates = [];
     urls.forEach(url => {
       const amp = alJazeeraAmpUrl(url);
-      if (amp) candidates.push({ url: amp, pageUrl: url, strategy: 'liveblog', label: continuation && url === continuation ? 'nuovo live Al Jazeera · versione AMP' : 'versione AMP Al Jazeera' });
+      if (amp) candidates.push({ url: amp, pageUrl: url, strategy: 'liveblog', label: 'live Al Jazeera corrente · versione AMP' });
       candidates.push({ url, pageUrl: url, strategy: 'liveblog', label: 'pagina standard Al Jazeera' });
     });
     const fetched = await firstWorkingLiveCandidate(source, candidates);
-    if (continuation && U.normUrl(fetched.usedUrl) === U.normUrl(continuation)) updateFollowedUrl(source, continuation, 'seguito automaticamente dal live precedente');
+    if (fetched.usedUrl) updateFollowedUrl(source, fetched.usedUrl, 'live Al Jazeera corrente individuato dalla sitemap giornaliera');
     return fetched;
   }
 
   async function fetchTimesOfIsraelLive(source) {
     const permanentUrl = 'https://www.timesofisrael.com/live/';
-    const fetched = await firstWorkingLiveCandidate(source, [{
-      url: permanentUrl,
-      pageUrl: permanentUrl,
-      strategy: 'liveblog',
-      liveProvider: 'timesofisrael',
-      label: 'pagina permanente Live Updates',
-      fresh: false
-    }]);
-    if (U.normUrl(source.url) !== U.normUrl(permanentUrl)) {
-      source.url = permanentUrl;
-      source.pageUrl = permanentUrl;
-      source.autoFollow = false;
-      saveSources();
+    let indexHtml = '';
+    let indexError = null;
+    try {
+      const index = await fetchRaw(permanentUrl, false);
+      indexHtml = index.text;
+      const indexedDailyUrl = Resolver.timesOfIsraelLatestFromIndex(index.text, source.url)
+        || Resolver.timesOfIsraelDateCandidates(new Date(), 1)[0];
+      const effective = { ...source, url: permanentUrl, pageUrl: indexedDailyUrl, liveProvider: 'timesofisrael' };
+      const items = P.parse(index.text, effective);
+      if (items.length) {
+        if (U.normUrl(source.url) !== U.normUrl(permanentUrl)) {
+          source.url = permanentUrl;
+          source.pageUrl = permanentUrl;
+          source.autoFollow = false;
+          saveSources();
+        }
+        return {
+          items,
+          route: 'pagina permanente Live Updates',
+          duration: index.duration,
+          usedUrl: indexedDailyUrl || permanentUrl,
+          latest: Resolver.latestItemTime(items)
+        };
+      }
+    } catch (error) {
+      if (error.status === 429) throw error;
+      indexError = error;
     }
-    return fetched;
+
+    const dailyUrl = Resolver.timesOfIsraelLatestFromIndex(indexHtml, source.url)
+      || Resolver.timesOfIsraelDateCandidates(new Date(), 1)[0];
+    const candidates = [];
+    const amp = timesOfIsraelAmpUrl(dailyUrl);
+    if (amp) candidates.push({ url: amp, pageUrl: dailyUrl, strategy: 'liveblog', liveProvider: 'timesofisrael', label: 'live giornaliero Times of Israel · versione AMP' });
+    candidates.push({ url: dailyUrl, pageUrl: dailyUrl, strategy: 'liveblog', liveProvider: 'timesofisrael', label: 'live giornaliero Times of Israel' });
+    try {
+      return await firstWorkingLiveCandidate(source, candidates);
+    } catch (error) {
+      if (indexHtml) return inactiveLiveResult('NESSUN LIVE ATTIVO: Times of Israel non espone aggiornamenti live oggi.', permanentUrl);
+      throw indexError || error;
+    }
   }
 
   async function fetchCnnLive(source) {
-    const urls = [];
+    let entries = [];
+    let sitemapError = null;
     try {
       const sitemap = await fetchRaw(source.sitemapUrl || 'https://www.cnn.com/sitemap/live-story.xml', true);
-      Resolver.cnnSitemapCandidates(sitemap.text, source.url, 6).forEach(item => urls.push(item.url));
-    } catch {}
-    urls.push(...Resolver.cnnDateCandidates(source.url, new Date(), 4));
-    urls.push(source.url);
+      entries = Resolver.cnnSitemapCandidates(sitemap.text, source.url, 12)
+        .filter(item => Resolver.isRecentUrl(item.url, 2));
+    } catch (error) {
+      sitemapError = error;
+    }
+    if (sitemapError) throw new Error(`Ricerca del live CNN non riuscita: ${sitemapError.message}`);
+    if (!entries.length) return inactiveLiveResult('NESSUN LIVE ATTIVO: CNN non pubblica oggi un live pertinente.');
 
     const candidates = [];
-    [...new Set(urls)].sort((a, b) => Resolver.dateStamp(b) - Resolver.dateStamp(a)).slice(0, 6).forEach(url => {
+    entries.slice(0, 6).forEach(entry => {
+      const url = entry.url;
       const mirror = cnnMirrorUrl(url);
       if (mirror) candidates.push({ url: mirror, pageUrl: url, strategy: 'liveblog', liveProvider: 'cnn', label: 'pagina CNN server-side' });
       candidates.push({ url, pageUrl: url, strategy: 'liveblog', liveProvider: 'cnn', label: 'pagina CNN' });
     });
-    const fetched = await firstWorkingLiveCandidate(source, candidates);
-    if (fetched.usedUrl) updateFollowedUrl(source, fetched.usedUrl, 'live CNN più recente individuato automaticamente');
-    return fetched;
+    try {
+      const fetched = await firstWorkingLiveCandidate(source, candidates);
+      if (fetched.usedUrl) updateFollowedUrl(source, fetched.usedUrl, 'live CNN corrente individuato dalla sitemap');
+      return fetched;
+    } catch {
+      return linkOnlyLiveResult(entries[0].title || 'Live CNN disponibile soltanto come collegamento', entries[0]);
+    }
   }
 
   async function fetchReutersLive(source) {
     let latest = null;
     const errors = [];
+    let discoveryCompleted = false;
     for (const sitemapUrl of (source.sitemapUrls || ['https://www.reuters.com/arc/outboundfeeds/news-sitemap/?outputType=xml'])) {
       try {
         const sitemap = await fetchRaw(sitemapUrl, true);
-        const candidate = Resolver.reutersSitemapLatest(sitemap.text);
+        discoveryCompleted = true;
+        const candidate = Resolver.reutersSitemapEntries(sitemap.text).find(item => Resolver.isRecentUrl(item.url, 2));
         if (candidate && (!latest || candidate.stamp > latest.stamp || candidate.timestamp > latest.timestamp)) latest = candidate;
       } catch (error) {
         errors.push(error.message);
       }
     }
-    if (!latest) throw new Error(errors.join(' · ') || 'Nessun live Reuters individuato nella sitemap');
+    if (!latest && discoveryCompleted) return inactiveLiveResult('NESSUN LIVE ATTIVO: Reuters non pubblica oggi un live pertinente.');
+    if (!latest) throw new Error(errors.join(' · ') || 'Ricerca del live Reuters non riuscita');
     updateFollowedUrl(source, latest.url, 'live Reuters più recente individuato dalla sitemap');
 
     try {
@@ -2375,17 +2515,7 @@ window.NWLiveResolver = (() => {
       if (fetched.items.length >= 2) return fetched;
     } catch {}
 
-    return {
-      items: [],
-      route: 'Live Reuters individuato; Reuters blocca gli aggiornamenti interni',
-      duration: 0,
-      usedUrl: latest.url,
-      latest: latest.timestamp,
-      status: 'link',
-      linkOnly: true,
-      info: latest.title,
-      publicUrl: latest.url
-    };
+    return linkOnlyLiveResult(latest.title, latest);
   }
 
   async function fetchRegularSource(source,options={}) {
@@ -2797,6 +2927,7 @@ window.NWLiveResolver = (() => {
     if (result.status === 'recovery') return `${result.items.length} ${unit} · RECUPERO ALTERNATIVO${route}${info}`;
     if (result.status === 'degraded') return `${result.items.length} ${unit} conservati · AGGIORNAMENTO NON RIUSCITO${info}`;
     if (result.status === 'stale') return `${result.items.length} ${unit} · FERMO${route}${info}`;
+    if (result.status === 'inactive') return `NESSUN LIVE ATTIVO${route}${info}`;
     if (result.status === 'link') return `SOLO COLLEGAMENTO${route}${info}`;
     if (result.status === 'cooldown') return `PAUSA AUTOMATICA${route}${info}`;
     if (result.status === 'error') return `ERRORE · ${result.error || 'controllo fallito'}${info}`;
