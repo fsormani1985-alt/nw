@@ -114,7 +114,7 @@
   <header class="app-header">
     <div>
       <div class="eyebrow">OSINT NEWS MONITOR</div>
-      <h1>News Watch <span class="version">3.4</span></h1>
+      <h1>News Watch <span class="version">3.5</span></h1>
       <p>Aggregatore operativo Middle East e fonti ufficiali.</p>
     </div>
     <nav class="main-nav" aria-label="Sezioni">
@@ -327,6 +327,8 @@
                     <option value="rss">RSS / Atom</option>
                     <option value="html">Pagina HTML</option>
                     <option value="sitemap">Sitemap XML</option>
+                    <option value="nna-api">API NNA English</option>
+                    <option value="lorient-api">API L’Orient Today</option>
                   </select>
                 </label>
                 <label>Tipo
@@ -606,6 +608,47 @@ window.NWParsers = (() => {
       if (allowed(url, title, source)) output.push(make(source, title, url, date, ''));
     });
     return uniq(output, source.maxItems || 50);
+  }
+
+  function lorientApi(text, source) {
+    let payload;
+    try{payload=JSON.parse(text)}catch{throw new Error('Risposta API L’Orient Today non valida')}
+    if(payload?.error||!Array.isArray(payload?.data))throw new Error(payload?.message||'API L’Orient Today non disponibile');
+    const output=[];
+    payload.data.forEach(record=>{
+      const title=U.clean(record?.title||'');
+      const link=record?.url||record?.link||'';
+      if(!link||!validTitle(title))return;
+      const url=new URL(link,source.pageUrl||'https://today.lorientlejour.com/');
+      if(!allowed(url,title,source))return;
+      const rawDate=String(record?.firstPublished||record?.lastUpdate||'').trim();
+      const date=rawDate&&!/(?:Z|[+-]\d{2}:?\d{2})$/i.test(rawDate)
+        ? rawDate.replace(' ','T')+'+03:00'
+        : rawDate;
+      output.push(make(source,title,url,date,record?.summary||record?.subtitle||''));
+    });
+    return uniq(output,source.maxItems||50);
+  }
+
+  function nnaApi(text, source) {
+    let payload;
+    try{payload=JSON.parse(text)}catch{throw new Error('Risposta API NNA non valida')}
+    const records=payload?.data?.news;
+    if(!Array.isArray(records))throw new Error(payload?.message||'API NNA non disponibile');
+    const output=[];
+    records.forEach(record=>{
+      const title=U.clean(record?.title||record?.short_title||'');
+      const link=record?.url||record?.link||'';
+      if(!link||!validTitle(title))return;
+      const url=new URL(link,source.pageUrl||'https://nna-leb.gov.lb/en/latest-news');
+      if(!allowed(url,title,source))return;
+      const rawDate=record?.publish_date;
+      const date=Number.isFinite(Number(rawDate))
+        ? new Date(Number(rawDate)*1000).toISOString()
+        : (record?.published_at||record?.created_at||'');
+      output.push(make(source,title,url,date,record?.summary||record?.description||''));
+    });
+    return uniq(output,source.maxItems||50);
   }
 
 
@@ -1016,6 +1059,8 @@ window.NWParsers = (() => {
     const trimmed = text.trim();
     if (source.strategy === 'rss') return rss(trimmed, source);
     if (source.strategy === 'sitemap') return sitemap(trimmed, source);
+    if (source.strategy === 'nna-api') return nnaApi(trimmed, source);
+    if (source.strategy === 'lorient-api') return lorientApi(trimmed, source);
     if (source.strategy === 'fars-social') return farsSocial(trimmed, source);
     if (source.strategy === 'liveblog') return liveblog(trimmed, source);
     return html(trimmed, source);
@@ -1146,11 +1191,25 @@ window.NWLiveResolver = (() => {
     return parts?.stamp || 0;
   }
 
+  function calendarDate(value = new Date(), timeZone = 'Europe/Rome') {
+    const date = value instanceof Date ? value : new Date(value);
+    const parts = Object.fromEntries(
+      new Intl.DateTimeFormat('en-CA', {
+        timeZone,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }).formatToParts(date).map(part => [part.type, part.value])
+    );
+    return new Date(Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day)));
+  }
+
   function isRecentUrl(value, days = 2, now = new Date()) {
     const parts = datePartsFromUrl(value);
     if (!parts) return false;
     const candidate = Date.UTC(parts.year, parts.month - 1, parts.day);
-    const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+    const localDay = calendarDate(now);
+    const today = Date.UTC(localDay.getUTCFullYear(), localDay.getUTCMonth(), localDay.getUTCDate());
     const ageDays = Math.floor((today - candidate) / 86400000);
     return ageDays >= 0 && ageDays < Math.max(1, Number(days) || 1);
   }
@@ -1231,8 +1290,9 @@ window.NWLiveResolver = (() => {
 
   function cnnDateCandidates(currentUrl, now = new Date(), days = 4) {
     const output = [];
+    const localDay = calendarDate(now);
     for (let offset = 0; offset > -days; offset -= 1) {
-      const date = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + offset));
+      const date = new Date(Date.UTC(localDay.getUTCFullYear(), localDay.getUTCMonth(), localDay.getUTCDate() + offset));
       const candidate = replacePathDate(currentUrl, date);
       if (candidate && !output.includes(candidate)) output.push(candidate);
     }
@@ -1270,8 +1330,9 @@ window.NWLiveResolver = (() => {
 
   function timesOfIsraelDateCandidates(now = new Date(), days = 4) {
     const output = [];
+    const localDay = calendarDate(now);
     for (let offset = 0; offset > -days; offset -= 1) {
-      const date = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + offset));
+      const date = new Date(Date.UTC(localDay.getUTCFullYear(), localDay.getUTCMonth(), localDay.getUTCDate() + offset));
       const month = MONTHS[date.getUTCMonth()];
       output.push(`https://www.timesofisrael.com/liveblog-${month}-${date.getUTCDate()}-${date.getUTCFullYear()}/`);
     }
@@ -1370,6 +1431,7 @@ window.NWLiveResolver = (() => {
     provider,
     datePartsFromUrl,
     dateStamp,
+    calendarDate,
     isRecentUrl,
     alJazeeraContinuation,
     alJazeeraSitemapCandidates,
@@ -1390,6 +1452,7 @@ window.NWLiveResolver = (() => {
 (()=>{
   'use strict';
   const U=NWUtils,S=NWStore,P=NWParsers,Q=NWQuery,Stories=NWStories,LiveAlert=NWLiveAlert,Resolver=NWLiveResolver;
+  const APP_VERSION='3.5';
   const $=id=>document.getElementById(id);
   const ALLOWED=['aljazeera.com','haaretz.com','theiranproject.com','middleeasteye.net','presstv.ir','sky.com','jpost.com','timesofisrael.com','cnn.com','bbc.com','reuters.com','nytimes.com','wsj.com','feeds.content.dowjones.io','centcom.mil','dvidshub.net','news.google.com','edition-prod-cf.sitemirror.cnn.com','mehrnews.com','irna.ir'];
 
@@ -1802,44 +1865,7 @@ window.NWLiveResolver = (() => {
   }
 
   async function indexedConfiguration(base,reason=''){
-    const feedUrl=indexedFeedUrl(base.pageUrl||base.url,base.name);
-    const directConfig=base.directConfig||{
-      url:base.pageUrl||base.url,
-      pageUrl:base.pageUrl||base.url,
-      strategy:base.strategy||'html',
-      selectors:[...(base.selectors||AUTO_HTML_SELECTORS)],
-      includeAny:[...(base.includeAny||[])],
-      excludeAny:[...(base.excludeAny||AUTO_EXCLUDES)],
-      includeKeywordsAny:[...(base.includeKeywordsAny||[])],
-      filterMode:base.filterMode||'none'
-    };
-    const indexed={
-      ...base,
-      url:feedUrl,
-      strategy:'rss',
-      selectors:[],
-      includeAny:[],
-      excludeAny:[],
-      includeKeywordsAny:[],
-      filterMode:'none',
-      directConfig,
-      directUrl:directConfig.url,
-      directStrategy:directConfig.strategy,
-      recoveryUrl:feedUrl,
-      note:mergeAutoNote(base.note,`${reason?reason+' ':''}Usa un feed RSS indicizzato del dominio.`),
-      recoveryMode:'indexed'
-    };
-    try{
-      const tested=await parseWorkingCandidate(indexed,indexed,true);
-      return{
-        source:indexed,
-        items:tested.items,
-        route:'feed RSS indicizzato',
-        message:`${reason?reason+' ':''}Configurato automaticamente tramite feed RSS indicizzato (${tested.items.length} articoli).`
-      };
-    }catch(error){
-      throw new Error(`${reason?reason+' ':''}Non è stato trovato un metodo automatico funzionante. ${error.message}`);
-    }
+    throw new Error(`${reason?reason+' ':''}Non è stato trovato un feed RSS, una sitemap o una pagina diretta funzionante. Il recupero Google non viene usato perché il Worker lo riceve con HTTP 503.`);
   }
 
   async function autoConfigureRegularSource(input){
@@ -1947,24 +1973,9 @@ window.NWLiveResolver = (() => {
   }
 
   function automaticRecoveryCandidate(source){
-    const pageUrl=source.pageUrl||source.directUrl||source.url;
-    if(!pageUrl)return null;
-    const existing=source.recoveryUrl||((host(source.url)==='news.google.com')?source.url:'');
-    const url=existing||indexedFeedUrl(pageUrl,source.name);
-    return{
-      url,
-      pageUrl,
-      strategy:'rss',
-      filterMode:'none',
-      includeAny:[],
-      excludeAny:[],
-      includeKeywordsAny:[],
-      selectors:[],
-      maxItems:source.maxItems||40,
-      label:'recupero alternativo RSS indicizzato',
-      autoRecovery:true,
-      recovery:true
-    };
+    // Google News rifiuta in modo intermittente le richieste provenienti dal
+    // Worker. Non viene più creato come fallback generico automatico.
+    return null;
   }
 
   function backoffMinutes(table,count){
@@ -2120,20 +2131,97 @@ window.NWLiveResolver = (() => {
     return'idle';
   }
 
+  const SOURCE_RUNTIME_KEYS=new Set([
+    'directFailureCount','directRetryAt','lastDirectAttemptAt','lastDirectError','lastDirectSuccessAt',
+    'recoveryFailureCount','recoveryRetryAt','lastRecoveryError','lastRecoverySuccessAt','rateLimitedUntil'
+  ]);
+
   function cloneSources(value){return JSON.parse(JSON.stringify(Array.isArray(value)?value:[]))}
+
+  function hasAutomaticIndexedRecovery(source){
+    return host(source?.url)==='news.google.com'
+      || host(source?.recoveryUrl)==='news.google.com'
+      || (source?.fallbacks||[]).some(item=>host(item?.url)==='news.google.com'&&(item.autoRecovery||item.recovery));
+  }
+
+  function knownDirectReplacement(source){
+    if(!hasAutomaticIndexedRecovery(source))return null;
+    const identity=`${source?.name||''} ${source?.pageUrl||''} ${source?.directUrl||''} ${source?.directConfig?.url||''}`.toLowerCase();
+    if(/fox\s*news|foxnews\.com/.test(identity))return{
+      url:'https://moxie.foxnews.com/google-publisher/world.xml',
+      pageUrl:'https://www.foxnews.com/world',strategy:'rss',selectors:[],includeAny:[],excludeAny:[],includeKeywordsAny:[],filterMode:'none',
+      note:mergeAutoNote(source.note,'Feed RSS World ufficiale FOX News.')
+    };
+    if(/\bagi\b|agi\.it/.test(identity))return{
+      url:'https://www.agi.it/estero/rss',pageUrl:'https://www.agi.it/estero/',strategy:'rss',selectors:[],includeAny:[],excludeAny:[],includeKeywordsAny:[],filterMode:'none',
+      note:mergeAutoNote(source.note,'Feed RSS Estero ufficiale AGI.')
+    };
+    if(/\bnna(?:-eng)?\b|nna-leb\.gov\.lb/.test(identity))return{
+      url:'https://nna-leb.gov.lb/api/proxy/v2/en/news/latest?page=1&_rv=0',pageUrl:'https://nna-leb.gov.lb/en/latest-news',strategy:'nna-api',selectors:[],includeAny:['/en/news/'],excludeAny:[],includeKeywordsAny:[],filterMode:'path',
+      note:mergeAutoNote(source.note,'Canale dati ufficiale NNA in inglese, senza feed Google.')
+    };
+    if(/l['’]?orient|lorienttoday\.com|today\.lorientlejour\.com/.test(identity))return{
+      url:'https://www.lorientlejour.com/cmsapi/content.php?text=false&key=3d5_f6A%28S%24G_FD%3D2S%28Dr6%7BW_h37%40rE&action=search&category=%5B977%2C752%2C753%2C986%2C754%5D&limit=50&page=1',
+      pageUrl:'https://today.lorientlejour.com/live-news',strategy:'lorient-api',selectors:[],includeAny:[],excludeAny:[],includeKeywordsAny:[],filterMode:'none',
+      note:mergeAutoNote(source.note,'API editoriale ufficiale L’Orient Today, senza feed Google.')
+    };
+    return null;
+  }
+
+  function portableSource(value,{migrate=true}={}){
+    let source=JSON.parse(JSON.stringify(value||{}));
+    if(migrate&&host(source.url)==='news.google.com'&&source.directConfig?.url){
+      source={...source,...source.directConfig,pageUrl:source.directConfig.pageUrl||source.pageUrl||source.directConfig.url};
+    }
+    const replacement=migrate?knownDirectReplacement(source):null;
+    if(replacement)source={...source,...replacement};
+    SOURCE_RUNTIME_KEYS.forEach(key=>delete source[key]);
+    if(host(source.recoveryUrl)==='news.google.com')delete source.recoveryUrl;
+    if(source.recoveryMode==='indexed')delete source.recoveryMode;
+    source.fallbacks=(source.fallbacks||[]).filter(item=>!(host(item?.url)==='news.google.com'&&(item.autoRecovery||item.recovery)));
+    if(!source.fallbacks.length)delete source.fallbacks;
+    if(replacement||host(source.url)!=='news.google.com'){
+      delete source.directConfig;
+      delete source.directUrl;
+      delete source.directStrategy;
+      delete source.directSelectors;
+      delete source.directIncludeAny;
+      delete source.directExcludeAny;
+      delete source.directKeywords;
+      delete source.directFilterMode;
+    }
+    return source;
+  }
+
+  function portableSources(value,options={}){return cloneSources(value).map(source=>portableSource(source,options))}
+
+  function clearSourceRuntime(source){
+    SOURCE_RUNTIME_KEYS.forEach(key=>delete source[key]);
+  }
+
   function initialSources(){return Resolver.dedupeByUrl(cloneSources(state.defaults))}
   function loadSavedSources(){
     const saved=S.sources();
-    if(Array.isArray(saved))return Resolver.dedupeByUrl(cloneSources(saved));
+    if(Array.isArray(saved)){
+      const migrated=Resolver.dedupeByUrl(portableSources(saved));
+      S.saveSources(portableSources(migrated,{migrate:false}));
+      return migrated;
+    }
     const seeded=initialSources();
     S.saveSources(seeded);
     return seeded;
   }
-  function saveSources(){S.saveSources(cloneSources(state.sources))}
+  function saveSources(){S.saveSources(portableSources(state.sources,{migrate:false}))}
   function initSources(){
     // Regola 3.2: dopo il primo avvio lo storage dell'utente è autorevole.
     // Nessuna fonte predefinita assente viene reinserita durante F5/riapertura.
     state.sources=loadSavedSources();
+    const settings=S.settings();
+    if(settings.appVersion!==APP_VERSION){
+      state.health={};
+      S.saveHealth(state.health);
+      S.saveSettings({...settings,appVersion:APP_VERSION});
+    }
     saveFolderCatalog();
   }
 
@@ -2375,8 +2463,9 @@ window.NWLiveResolver = (() => {
     const discovered = [];
     const discoveryErrors = [];
     let discoveryCompleted = false;
+    const localDay = Resolver.calendarDate(new Date());
     for (let offset = 0; offset >= -1; offset -= 1) {
-      const date = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate() + offset));
+      const date = new Date(Date.UTC(localDay.getUTCFullYear(), localDay.getUTCMonth(), localDay.getUTCDate() + offset));
       try {
         const sitemap = await fetchRaw(alJazeeraDailySitemapUrl(date), true);
         discoveryCompleted = true;
@@ -2610,8 +2699,8 @@ window.NWLiveResolver = (() => {
     throw error;
   }
 
-  async function fetchSource(source) {
-    if (!isLiveSource(source)) return fetchRegularSource(source);
+  async function fetchSource(source,options={}) {
+    if (!isLiveSource(source)) return fetchRegularSource(source,options);
     const currentProvider = Resolver.provider(source);
     let fetched;
     if (currentProvider === 'aljazeera') fetched = await fetchAlJazeeraLive(source);
@@ -2648,9 +2737,9 @@ window.NWLiveResolver = (() => {
     return $('healthRefresh');
   }
 
-  async function refreshScope(scope = 'news') {
+  async function refreshScope(scope = 'news', options = {}) {
     if (scope === 'all') {
-      await Promise.all([refreshScope('news'), refreshScope('live')]);
+      await Promise.all([refreshScope('news',options), refreshScope('live',options)]);
       return;
     }
     if (state.refreshing[scope]) return state.refreshing[scope];
@@ -2672,6 +2761,11 @@ window.NWLiveResolver = (() => {
         button.textContent = 'Controllo…';
       }
       status(scope === 'live' ? 'Controllo dei live blog in corso…' : 'Controllo delle fonti in corso…');
+
+      if(options.force){
+        active.forEach(clearSourceRuntime);
+        saveSources();
+      }
 
       active.forEach(source => {
         const previous = state.results.get(source.id) || { items: [], newCount: 0 };
@@ -2705,7 +2799,7 @@ window.NWLiveResolver = (() => {
         }
 
         try {
-          const fetched = await fetchSource(source);
+          const fetched = await fetchSource(source,options.force?{forceDirect:true}:{});
           const first = !S.isInitialized(source.id);
           if (first && S.settings().baselineFirstRun && fetched.items.length) S.markSeen(source.id, fetched.items.map(item => item.id));
           S.setInitialized(source.id);
@@ -3044,7 +3138,9 @@ window.NWLiveResolver = (() => {
       resultElement.className = 'live-test-result';
     }
     try {
-      const fetched = await fetchSource(source);
+      clearSourceRuntime(source);
+      saveSources();
+      const fetched = await fetchSource(source,{forceDirect:true});
       if (resultElement) {
         resultElement.textContent = fetched.status === 'link'
           ? `Collegamento individuato, ma gli aggiornamenti interni non sono accessibili. ${fetched.route || ''}`
@@ -3141,6 +3237,8 @@ window.NWLiveResolver = (() => {
         card.querySelector('[data-action="retry-direct"]')?.addEventListener('click',async event=>{
           event.target.disabled=true;event.target.textContent='Tentativo…';
           try{
+            clearSourceRuntime(source);
+            saveSources();
             const fetched=await fetchRegularSource(source,{forceDirect:true,directOnly:true});
             fetched.items.forEach(item=>{item.isRead=S.isSeen(source.id,item.id)});
             const result={status:'ok',items:fetched.items,newCount:fetched.items.filter(item=>!item.isRead).length,route:fetched.route,duration:fetched.duration,info:'Collegamento diretto ripristinato.',error:''};
@@ -3484,7 +3582,7 @@ window.NWLiveResolver = (() => {
 
   function bind(){
     document.querySelectorAll('.nav-button').forEach(button=>button.addEventListener('click',()=>showView(button.dataset.view)));
-    $('refreshButton').addEventListener('click',()=>refreshScope('news'));$('liveRefreshButton').addEventListener('click',()=>refreshScope('live'));$('healthRefresh').addEventListener('click',()=>refreshScope('all'));
+    $('refreshButton').addEventListener('click',()=>refreshScope('news'));$('liveRefreshButton').addEventListener('click',()=>refreshScope('live'));$('healthRefresh').addEventListener('click',()=>refreshScope('all',{force:true}));
     $('queryInput').addEventListener('input',renderFeed);$('liveQueryInput').addEventListener('input',renderLiveFeed);
     $('folderFilter').addEventListener('change',()=>{renderSourceOptions();renderFeed()});['timeFilter','sourceFilter','readFilter','kindFilter','viewMode'].forEach(id=>$(id).addEventListener('change',renderFeed));['liveSourceFilter','liveReadFilter','liveSortOrder'].forEach(id=>$(id).addEventListener('change',renderLiveFeed));
     $('liveAutoRefresh').addEventListener('change',()=>{S.saveSettings({...S.settings(),liveAutoRefreshMinutes:Number($('liveAutoRefresh').value)||0});liveAutoRefresh();status($('liveAutoRefresh').value==='0'?'Aggiornamento automatico live disattivato.':`Aggiornamento automatico live impostato ogni ${$('liveAutoRefresh').value} minuti.`,'success')});
@@ -3563,8 +3661,8 @@ window.NWLiveResolver = (() => {
       }
     });
     $('liveAddButton').addEventListener('click',()=>openLiveEditor(''));$('liveCloseEditor').addEventListener('click',()=>$('liveEditorPanel').classList.add('hidden'));$('liveEditUrl').addEventListener('input',liveEditorDomain);$('liveSaveButton').addEventListener('click',saveLiveEditor);$('liveTestButton').addEventListener('click',async()=>{const element=$('liveEditorTestResult');try{const source=liveEditorData(),index=$('liveEditIndex').value===''?-1:Number($('liveEditIndex').value);validateSource(source,index);element.textContent='Test in corso…';element.classList.remove('hidden');const fetched=await fetchSource(source);element.textContent=`${fetched.items.length} aggiornamenti riconosciuti.`}catch(error){element.textContent='Test fallito: '+error.message;element.classList.remove('hidden')}});
-    $('importSources').addEventListener('click',()=>$('importFile').click());$('importFile').addEventListener('change',async()=>{try{const data=JSON.parse(await $('importFile').files[0].text());if(!Array.isArray(data))throw new Error('JSON non valido');const ids=new Set();data.forEach(source=>{if(!source.name||!source.id||!source.url)throw new Error('Fonte incompleta');if(!/^[a-z0-9][a-z0-9-]*$/.test(source.id))throw new Error('ID non valido: '+source.id);const url=new URL(source.url);if(url.protocol!=='https:')throw new Error('URL non HTTPS: '+source.name);if(ids.has(source.id))throw new Error('ID duplicato: '+source.id);ids.add(source.id)});state.sources=data;saveSources();saveFolderCatalog();renderAll();renderFolderManager();status('Fonti importate.','success')}catch(error){status('Importazione fallita: '+error.message,'error')}$('importFile').value=''});
-    $('exportSources').addEventListener('click',()=>U.download('news-watch-fonti.json',JSON.stringify(state.sources,null,2),'application/json'));$('exportDomains').addEventListener('click',()=>{const domains=[...new Set(state.sources.flatMap(source=>[source.url,...(source.fallbacks||[]).map(item=>item.url)]).map(host).filter(Boolean))].sort();U.download('news-watch-domini.txt',domains.join('\n'))});
+    $('importSources').addEventListener('click',()=>$('importFile').click());$('importFile').addEventListener('change',async()=>{try{const raw=JSON.parse(await $('importFile').files[0].text());if(!Array.isArray(raw))throw new Error('JSON non valido');const data=portableSources(raw);const ids=new Set();data.forEach(source=>{if(!source.name||!source.id||!source.url)throw new Error('Fonte incompleta');if(!/^[a-z0-9][a-z0-9-]*$/.test(source.id))throw new Error('ID non valido: '+source.id);const url=new URL(source.url);if(url.protocol!=='https:')throw new Error('URL non HTTPS: '+source.name);if(ids.has(source.id))throw new Error('ID duplicato: '+source.id);ids.add(source.id)});state.sources=data;saveSources();saveFolderCatalog();renderAll();renderFolderManager();status('Fonti importate senza pause o timer temporanei.','success')}catch(error){status('Importazione fallita: '+error.message,'error')}$('importFile').value=''});
+    $('exportSources').addEventListener('click',()=>U.download('news-watch-fonti.json',JSON.stringify(portableSources(state.sources),null,2),'application/json'));$('exportDomains').addEventListener('click',()=>{const domains=[...new Set(state.sources.flatMap(source=>[source.url,...(source.fallbacks||[]).map(item=>item.url)]).map(host).filter(Boolean))].sort();U.download('news-watch-domini.txt',domains.join('\n'))});
     $('restoreSources').addEventListener('click',event=>{if(state.pendingAction==='restore'){state.sources=initialSources();state.folderNames=[];state.folderCollapsed={};S.saveFolderState(state.folderCollapsed);saveSources();saveFolderCatalog();state.pendingAction=null;event.target.textContent='Ripristina iniziali';renderAll();renderFolderManager();status('Fonti e cartelle iniziali ripristinate. Questa è l’unica azione che reinserisce i predefiniti.','success')}else{state.pendingAction='restore';event.target.textContent='Conferma ripristino';status('Premi di nuovo “Conferma ripristino” entro 6 secondi.','warning');setTimeout(()=>{if(state.pendingAction==='restore'){state.pendingAction=null;event.target.textContent='Ripristina iniziali'}},6000)}});
     $('testWorker').addEventListener('click',async()=>{S.saveSettings({...S.settings(),proxyUrl:$('proxyUrl').value.trim(),adminToken:$('workerAdminToken').value.trim()});await testWorkerConnection()});
     $('settingsForm').addEventListener('submit',event=>{event.preventDefault();S.saveSettings({...S.settings(),proxyUrl:$('proxyUrl').value.trim(),adminToken:$('workerAdminToken').value.trim(),concurrency:Math.max(1,Math.min(8,Number($('concurrency').value)||4)),timeoutSeconds:Math.max(5,Math.min(60,Number($('timeout').value)||22)),autoRefreshMinutes:Number($('autoRefresh').value)||0,liveAutoRefreshMinutes:Number($('liveAutoRefresh').value)||0,baselineFirstRun:$('baseline').checked});autoRefresh();liveAutoRefresh();renderDomainsWarning();testWorkerConnection();status('Impostazioni salvate.','success')});
