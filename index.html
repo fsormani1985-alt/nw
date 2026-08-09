@@ -478,7 +478,7 @@ window.NWParsers = (() => {
     if (url) {
       try {
         const absolute = new URL(url, source.pageUrl || source.url).toString();
-        if (/\/liveblog_entry\/|[?&]update=|#(?:live-)?(?:update|post|entry)|\/live-news\//i.test(absolute)) {
+        if (/\/liveblog_entry\//i.test(absolute)) {
           return absolute;
         }
       } catch {}
@@ -1045,8 +1045,9 @@ window.NWParsers = (() => {
   function dedupeLive(items, max) {
     const grouped = new Map();
     items.forEach(item => {
-      const identityUrl = /\/liveblog_entry\/|[?&]update=|#(?:live-)?(?:update|post|entry)/i.test(item.url) ? item.url : '';
-      const key = identityUrl || `${item.title.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()}|${(item.dateISO || '').slice(0, 16)}`;
+      const identityUrl = /\/liveblog_entry\//i.test(item.url) ? item.url : '';
+      const titleKey=U.clean(item.title).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+      const key = identityUrl || `${titleKey}|${(item.dateISO || '').slice(0, 16)}`;
       if (!grouped.has(key)) grouped.set(key, item);
       else {
         const previous = grouped.get(key);
@@ -1992,17 +1993,18 @@ window.NWLiveResolver = (() => {
 
   function scheduleDirectRetry(source,error){
     const count=Math.min(20,Number(source.directFailureCount||0)+1);
-    const minutes=backoffMinutes(DIRECT_BACKOFF_MINUTES,count);
     source.directFailureCount=count;
-    source.directRetryAt=Date.now()+minutes*60000;
+    delete source.directRetryAt;
+    source.directManualOnly=true;
     source.lastDirectAttemptAt=new Date().toISOString();
     source.lastDirectError=error?.message||'Collegamento diretto non disponibile';
-    return minutes;
+    return 0;
   }
 
   function clearDirectRetry(source){
     delete source.directFailureCount;
     delete source.directRetryAt;
+    delete source.directManualOnly;
     delete source.lastDirectError;
     source.lastDirectAttemptAt=new Date().toISOString();
     source.lastDirectSuccessAt=new Date().toISOString();
@@ -2047,7 +2049,8 @@ window.NWLiveResolver = (() => {
     const auto=automaticRecoveryCandidate(source);
     if(auto)indexed.push(auto);
 
-    const directDue=forceDirect||!Number(source.directRetryAt||0)||Number(source.directRetryAt)<=now;
+    const directManualOnly=!!source.directManualOnly&&!forceDirect;
+    const directDue=!directManualOnly&&(forceDirect||!Number(source.directRetryAt||0)||Number(source.directRetryAt)<=now);
     const recoveryDue=!Number(source.recoveryRetryAt||0)||Number(source.recoveryRetryAt)<=now;
     const candidates=[];
     if(directDue&&direct?.url)candidates.push(direct);
@@ -2061,6 +2064,7 @@ window.NWLiveResolver = (() => {
         seen.add(key);return true;
       }),
       directDue,
+      directManualOnly,
       recoveryDue,
       directRetryAt:Number(source.directRetryAt||0),
       recoveryRetryAt:Number(source.recoveryRetryAt||0)
@@ -2141,7 +2145,7 @@ window.NWLiveResolver = (() => {
   }
 
   const SOURCE_RUNTIME_KEYS=new Set([
-    'directFailureCount','directRetryAt','lastDirectAttemptAt','lastDirectError','lastDirectSuccessAt',
+    'directFailureCount','directRetryAt','directManualOnly','lastDirectAttemptAt','lastDirectError','lastDirectSuccessAt',
     'recoveryFailureCount','recoveryRetryAt','lastRecoveryError','lastRecoverySuccessAt','rateLimitedUntil'
   ]);
 
@@ -2793,6 +2797,7 @@ window.NWLiveResolver = (() => {
       const parts=[];
       const directAt=retryClock(plan.directRetryAt);
       const recoveryAt=retryClock(plan.recoveryRetryAt);
+      if(plan.directManualOnly)parts.push('collegamento diretto sospeso dopo errore; usa Riprova diretto');
       if(!plan.directDue&&directAt)parts.push(`collegamento diretto in pausa fino alle ${directAt}`);
       if(!options.directOnly&&!plan.recoveryDue&&recoveryAt)parts.push(`recupero alternativo in pausa fino alle ${recoveryAt}`);
       throw new Error(`Fonte non aggiornata: ${parts.join(' e ')||'nessun tentativo disponibile'}.`);
@@ -2841,14 +2846,15 @@ window.NWLiveResolver = (() => {
           if(state.sources.includes(source))saveSources();
         }
 
-        const directAt=retryClock(source.directRetryAt);
         return{
           items,
           route:candidate.label||'recupero alternativo',
           duration:fetched.duration,
           usedUrl:effective.url,
           status:'recovery',
-          info:directAt?`Recupero alternativo attivo. Nuovo tentativo diretto alle ${directAt}.`:'Recupero alternativo attivo.'
+          info:directError
+            ? `Recupero alternativo stabile. Diretto non disponibile: ${conciseAttemptError(directError.message)}.`
+            : 'Recupero alternativo stabile.'
         };
       }catch(error){
         if(candidate.direct){
@@ -2865,6 +2871,7 @@ window.NWLiveResolver = (() => {
 
     const parts=[];
     if(directError)parts.push(`collegamento diretto non disponibile (${conciseAttemptError(directError.message)})`);
+    else if(plan.directManualOnly)parts.push('collegamento diretto sospeso dopo errore; usa Riprova diretto');
     else if(!plan.directDue&&retryClock(plan.directRetryAt))parts.push(`collegamento diretto in pausa fino alle ${retryClock(plan.directRetryAt)}`);
     if(!options.directOnly){
       if(recoveryError)parts.push(`recupero alternativo non disponibile (${conciseAttemptError(recoveryError.message)})`);
@@ -3194,8 +3201,8 @@ window.NWLiveResolver = (() => {
     const route = result.route && result.route !== 'principale' ? ` · ${result.route}` : '';
     const info = result.info ? ` · ${result.info}` : '';
     if (result.status === 'ok') return `${result.items.length} ${unit} · ${result.duration || 0} ms${route}${info}`;
-    if (result.status === 'recovery') return `${result.items.length} ${unit} · RECUPERO ALTERNATIVO${route}${info}`;
-    if (result.status === 'degraded') return `${result.items.length} ${unit} conservati · AGGIORNAMENTO NON RIUSCITO${info}`;
+    if (result.status === 'recovery') return `${result.items.length} ${unit} · OK FALLBACK${route}${info}`;
+    if (result.status === 'degraded') return `${result.items.length} ${unit} conservati · DATI CONSERVATI${info}`;
     if (result.status === 'stale') return `${result.items.length} ${unit} · FERMO${route}${info}`;
     if (result.status === 'inactive') return `NESSUN LIVE ATTIVO${route}${info}`;
     if (result.status === 'link') return `SOLO COLLEGAMENTO${route}${info}`;
@@ -3292,7 +3299,7 @@ window.NWLiveResolver = (() => {
   }
 
   function renderHealth() {
-    const names = { ok: 'OK', recovery: 'RECUPERO', degraded: 'DATI CONSERVATI', stale: 'FERMO', link: 'SOLO LINK', cooldown: 'PAUSA', error: 'ERRORE', loading: 'CONTROLLO', idle: 'MAI TESTATA' };
+    const names = { ok: 'OK DIRETTO', recovery: 'OK FALLBACK', degraded: 'DATI CONSERVATI', stale: 'FERMO', link: 'SOLO LINK', cooldown: 'PAUSA', error: 'ERRORE', loading: 'CONTROLLO', idle: 'MAI TESTATA' };
     $('healthList').innerHTML = state.sources.map(source => {
       const health = state.health[source.id] || {};
       const current = health.status || 'idle';
@@ -3401,12 +3408,11 @@ window.NWLiveResolver = (() => {
         const index=state.sources.indexOf(source),result=state.results.get(source.id)||{status:'idle'};
         const card=document.createElement('div');
         card.className='managed-card'+(source.enabled===false?' disabled':'');
-        const retryDirect=(source.directRetryAt||['recovery','degraded'].includes(result.status))?'<button data-action="retry-direct">Riprova diretto</button>':'';
+        const retryDirect=(source.directManualOnly||source.directRetryAt||['recovery','degraded'].includes(result.status))?'<button data-action="retry-direct">Riprova diretto</button>':'';
         const recoveryButton=result.status==='error'?'<button data-action="repair">Ripara automaticamente</button>':'';
-        const retryAt=retryClock(source.directRetryAt);
         const recoveryLabel=result.status==='degraded'
-          ? '<small class="recovery-note degraded-state">Ultimi articoli conservati; nuovo tentativo programmato</small>'
-          : (result.status==='recovery'?`<small class="recovery-note recovery-state">Recupero alternativo attivo${retryAt?' · diretto alle '+escape(retryAt):''}</small>`:'');
+          ? '<small class="recovery-note degraded-state">Ultimi articoli validi conservati; controlla la fonte manualmente</small>'
+          : (result.status==='recovery'?'<small class="recovery-note recovery-state">OK fallback stabile; diretto riprovabile manualmente</small>':'');
         card.innerHTML=`<span class="dot ${result.status}"></span><div><strong>${escape(source.name)}</strong><small>${escape(source.strategy.toUpperCase())} · ${escape(host(source.url))}</small>${recoveryLabel}</div><div class="managed-actions"><button data-action="toggle">${source.enabled===false?'Attiva':'Disattiva'}</button><button data-action="test">Testa</button>${retryDirect}${recoveryButton}<button data-action="edit">Modifica</button><button data-action="delete" class="danger">Elimina</button></div>`;
         card.querySelector('[data-action="toggle"]').addEventListener('click',()=>{source.enabled=source.enabled===false;saveSources();renderAll()});
         card.querySelector('[data-action="test"]').addEventListener('click',async event=>{event.target.disabled=true;try{const fetched=await testSource(source);status(`Test completato: ${source.name} · ${fetched.items.length} articoli · ${fetched.route||'principale'}`,'success')}catch(error){status(source.name+': '+error.message,'error')}finally{event.target.disabled=false}});
@@ -3555,6 +3561,27 @@ window.NWLiveResolver = (() => {
       button.disabled=false;
       button.textContent='Configura automaticamente';
     }
+  }
+
+  function prepareManualSourceDraft(error){
+    const pageUrl=$('editSimpleUrl').value.trim();
+    const fallbackName=U.clean($('editName').value)||titleCaseHost(pageUrl);
+    if(!$('editName').value.trim())$('editName').value=fallbackName;
+    if(!$('editId').value.trim())$('editId').value=U.slug(fallbackName||pageUrl);
+    if(!$('editPageUrl').value.trim())$('editPageUrl').value=pageUrl;
+    if(!$('editUrl').value.trim())$('editUrl').value=pageUrl;
+    if(!$('editStrategy').value)$('editStrategy').value='html';
+    if(!$('editSelectors').value.trim())$('editSelectors').value=AUTO_HTML_SELECTORS.join('\n');
+    if(!$('editExclude').value.trim())$('editExclude').value=AUTO_EXCLUDES.join('\n');
+    const reason=conciseAttemptError(error?.message||'configurazione automatica non riuscita');
+    const currentNote=U.clean($('editNote').value);
+    $('editNote').value=[currentNote,`Da configurare manualmente: ${reason}`].filter(Boolean).join(' | ');
+    $('sourceAdvancedPanel').classList.remove('hidden');
+    $('sourceEditor').dataset.configuredUrl=U.normUrl(pageUrl);
+    $('sourceEditor')._configuredSource=null;
+    $('autoConfigStatus').textContent=`Configurazione automatica non riuscita. Ho preparato una fonte manuale salvabile; usa Testa fonte o modifica le impostazioni avanzate. Dettaglio: ${reason}.`;
+    $('autoConfigStatus').className='inline-warning';
+    $('autoConfigStatus').classList.remove('hidden');
   }
 
   function editorData(){
@@ -3801,18 +3828,28 @@ window.NWLiveResolver = (() => {
         const publicUrl=U.normUrl($('editSimpleUrl').value.trim());
         const configuredUrl=$('sourceEditor').dataset.configuredUrl||'';
         const rawIndex=$('editIndex').value;
-        if(rawIndex===''||configuredUrl!==publicUrl)await autoConfigureEditor();
+        if(rawIndex===''||configuredUrl!==publicUrl){
+          try{await autoConfigureEditor()}
+          catch(error){prepareManualSourceDraft(error)}
+        }
         const source=editorData(),index=rawIndex===''?-1:Number(rawIndex);
         validateSource(source,index);
-        const fetched=await fetchSource(source);
+        let fetched=null,fetchError=null;
+        try{fetched=await fetchSource(source)}
+        catch(error){fetchError=error}
         if(index>=0)state.sources[index]={...state.sources[index],...source};
         else state.sources.push(source);
         registerFolder(source.folder);
         saveSources();
+        if(fetchError){
+          state.results.set(source.id,{status:'error',items:[],newCount:0,route:'Da configurare manualmente',duration:0,info:'Fonte salvata anche se il test non e riuscito.',error:fetchError.message});
+          updateHealth(source,{status:'error',lastCheck:new Date().toISOString(),route:'Da configurare manualmente',error:fetchError.message});
+        }
         $('sourceEditor').classList.add('hidden');
         renderAll();
         renderFolderManager();
-        status(`Fonte salvata e verificata: ${source.name} · ${fetched.items.length} articoli · ${fetched.route||'principale'}.`,'success');
+        if(fetchError)status(`Fonte salvata da configurare: ${source.name} · ${fetchError.message}`,'warning');
+        else status(`Fonte salvata e verificata: ${source.name} · ${fetched.items.length} articoli · ${fetched.route||'principale'}.`,'success');
       }catch(error){
         status('Fonte non salvata: '+error.message,'error');
       }finally{
@@ -3827,7 +3864,10 @@ window.NWLiveResolver = (() => {
       element.textContent='Test in corso…';
       try{
         const publicUrl=U.normUrl($('editSimpleUrl').value.trim());
-        if(($('sourceEditor').dataset.configuredUrl||'')!==publicUrl)await autoConfigureEditor();
+        if(($('sourceEditor').dataset.configuredUrl||'')!==publicUrl){
+          try{await autoConfigureEditor()}
+          catch(error){prepareManualSourceDraft(error)}
+        }
         const source=editorData();
         validateSource(source,$('editIndex').value===''?-1:Number($('editIndex').value));
         const fetched=await fetchSource(source);
@@ -3847,7 +3887,7 @@ window.NWLiveResolver = (() => {
     $('resetHistory').addEventListener('click',event=>{if(state.pendingAction==='history'){S.resetHistory();state.pendingAction=null;state.results.clear();state.articles=[];renderAll();status('Storico letture azzerato.','success')}else{state.pendingAction='history';event.target.textContent='Conferma azzeramento';status('Premi di nuovo entro 6 secondi.','warning');setTimeout(()=>{if(state.pendingAction==='history'){state.pendingAction=null;event.target.textContent='Azzera storico letture'}},6000)}});
   }
 
-  async function init(){initSources();bind();loadSettings();applyLayout();renderAll();showView('monitorView');renderLiveAlert();status('Caricamento configurazione online…');await initRemoteConfiguration();renderAll();autoRefresh();liveAutoRefresh(true);status('Pronto.','success');setTimeout(testWorkerConnection,250)}
+  async function init(){initSources();bind();loadSettings();applyLayout();renderAll();showView('monitorView');renderLiveAlert();status('Caricamento configurazione online…');await initRemoteConfiguration();renderAll();status('Avvio controllo fonti…');await refreshScope('news').catch(error=>status('Controllo iniziale non riuscito: '+error.message,'warning'));autoRefresh();liveAutoRefresh(true);setTimeout(testWorkerConnection,250)}
   init().catch(error=>status('Errore di avvio: '+error.message,'error'));
 })();
 </script>
