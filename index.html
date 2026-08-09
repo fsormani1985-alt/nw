@@ -118,7 +118,7 @@
   <header class="app-header">
     <div>
       <div class="eyebrow">OSINT NEWS MONITOR</div>
-      <h1>News Watch <span class="version">3.9</span></h1>
+      <h1>News Watch <span class="version">4.0</span></h1>
       <p>Aggregatore operativo Middle East e fonti ufficiali.</p>
     </div>
     <nav class="main-nav" aria-label="Sezioni">
@@ -288,7 +288,7 @@
             <div class="editor-heading">
               <div>
                 <h3 id="editorTitle">Aggiungi fonte</h3>
-                <div class="source-editor-help">Bastano URL, nome e cartella. Il resolver prova configurazioni note, RSS, sitemap e sitemap index, quindi HTML; il recupero indicizzato resta solo lâ€™ultima risorsa.</div>
+                <div class="source-editor-help">Bastano URL, nome e cartella. Il resolver prova configurazioni note, RSS, sitemap e sitemap index, poi HTML della fonte originale.</div>
               </div>
               <button id="closeEditor" type="button">Chiudi editor</button>
             </div>
@@ -415,7 +415,7 @@
 
 
 <script data-file="default-sources.js">
-window.NW_DEFAULT_SOURCES=[{"id":"aljazeera-middle-east","name":"Al Jazeera â€“ Middle East","kind":"media","url":"https://www.aljazeera.com/middle-east/","pageUrl":"https://www.aljazeera.com/middle-east/","strategy":"html","selectors":["article a[href]","main a[href]"],"includeAny":["/news/","/features/","/opinions/","/program/"],"excludeAny":["/tag/","/author/","/about-us/","/podcasts/"],"filterMode":"path","maxItems":35,"enabled":true,"system":true,"folder":"Internazionali"},{"id":"haaretz-middle-east","name":"Haaretz â€“ Middle East","kind":"media","url":"https://www.haaretz.com/middle-east-news","pageUrl":"https://www.haaretz.com/middle-east-news","strategy":"html","selectors":["article a[href]","main a[href]"],"includeAny":["/middle-east-news/"],"excludeAny":["/ty-article-opinion/","/ty-tag/"],"filterMode":"path","maxItems":30,"enabled":true,"system":true,"risk":"paywall/anti-bot","folder":"Israele"},{"id":"iranproject-middle-east","name":"The Iran Project â€“ Middle East","kind":"media","url":"https://www.theiranproject.com/en/International/middle-east","pageUrl":"https://www.theiranproject.com/en/International/middle-east","strategy":"html","selectors":["article a[href]","main a[href]","a[href*='/en/news/']"],"includeAny":["/en/news/","/en/International/"],"excludeAny":["/en/archive","/en/tag/"],"filterMode":"path","maxItems":35,"enabled":true,"system":true,"folder":"Iran"},{"id":"middleeasteye-war-iran","name":"Middle East Eye â€“ War on Iran","kind":"media","url":"https://www.middleeasteye.net/topics/war-on-iran","pageUrl":"https://www.middleeasteye.net/topics/war-on-iran","strategy":"html","selectors":["h2 a[href]","h3 a[href]","h4 a[href]","article a[href]","main a[href]"],"includeAny":["/news/","/live-blog/","/opinion/","/features/","/explainers/","/video/"],"excludeAny":["/topics/","/authors/","/users/"],"filterMode":"path","maxItems":40,"enabled":true,"system":true,"folder":"Internazionali"},{"id":"presstv-section-101","name":"PressTV â€“ Iran","kind":"state-media","url":"https://www.presstv.ir/Section/101","pageUrl":"https://www.presstv.ir/Section/101","strategy":"html","selectors":["article a[href]","main a[href]","a[href*='/Detail/']"],"includeAny":["/Detail/"],"excludeAny":["/Section/","/Video/"],"filterMode":"path","maxItems":40,"enabled":true,"system":true,"folder":"Iran"},{"id":"skynews-middle-east","name":"Sky News â€“ Middle East","kind":"media","url":"https://news.sky.com/topic/middle-east-6190","pageUrl":"https://news.sky.com/topic/middle-east-6190","strategy":"html","selectors":["article a[href]","main a[href]","a[href*='/story/']"],"includeAny":["/story/"],"excludeAny":["/topic/","/watch-live"],"filterMode":"path","maxItems":35,"enabled":true,"system":true,"folder":"Internazionali"},{"id":"jpost-middle-east","name":"Jerusalem Post â€“ Middle East","kind":"media","url":"https://www.jpost.com/middle-east","pageUrl":"https://www.jpost.com/middle-east","strategy":"html","selectors":["article a[href]","main a[href]"],"includeAny":["/middle-east/"],"excludeAny":["/tags/","/author/"],"filterMode":"path","maxItems":40,"enabled":true,"system":true,"folder":"Israele"},{"id":"jpost-israel-news","name":"Jerusalem Post â€“ Israel News","kind":"media","url":"https://www.jpost.com/israel-news","pageUrl":"https://www.jpost.com/israel-news","strategy":"html","selectors":["article a[href]","main a[href]"],"includeAny":["/israel-news/"],"excludeAny":["/tags/","/author/"],"filterMode":"path","maxItems":40,"enabled":true,"system":true,"folder":"Israele"},{"id":"timesofisrael-region","name":"Times of Israel â€“ Israel and the Region","kind":"media","url":"https://www.timesofisrael.com/israel-and-the-region/","pageUrl":"https://www.timesofisrael.com/israel-and-the-region/","strategy":"html","selectors":["article a[href]","main a[href]",".item a[href]"],"includeAny":["timesofisrael.com/"],"excludeAny":["/writers/","/topic/","/podcasts/","/about/"],"filterMode":"path","maxItems":40,"enabled":true,"system":true,"folder":"Israele"},{"id":"cnn-middle-east","name":"CNN â€“ Middle East","kind":"media","url":"https://edition.cnn.com/world/middle-east","pageUrl":"https://edition.cnn.com/world/middle-east","strategy":"html","selectors":["article a[href]","main a[href]","h2 a[href]","h3 a[href]","a[data-link-type='article'][href]","a[href*='/middleeast/']"],"excludeAny":["/videos/","/profiles/","/audio/","/weather/","/style/","/travel/"],"filterMode":"none","maxItems":35,"enabled":true,"system":true,"fallbacks":[{"url":"https://news.google.com/rss/search?q=site%3Acnn.com+%28%22Middle+East%22+OR+Iran+OR+Israel+OR+Gaza+OR+Lebanon+OR+Syria+OR+Iraq+OR+Yemen+OR+Hormuz+OR+%22Red+Sea%22%29&hl=en-US&gl=US&ceid=US%3Aen","pageUrl":"https://edition.cnn.com/world/middle-east","strategy":"rss","filterMode":"none","includeAny":[],"excludeAny":[],"maxItems":35,"label":"feed indicizzato CNN"}],"note":"La pagina CNN puÃ² essere caricata dinamicamente senza articoli nel codice HTML. In quel caso News Watch usa automaticamente un feed indicizzato limitato a CNN.","folder":"Internazionali"},{"id":"bbc-middle-east","name":"BBC â€“ Middle East","kind":"media","url":"https://www.bbc.com/news/world/middle_east","pageUrl":"https://www.bbc.com/news/world/middle_east","strategy":"html","selectors":["article a[href]","main a[href]","a[href*='/news/articles/']"],"includeAny":["/news/articles/","/news/world-middle-east-"],"excludeAny":["/news/topics/","/news/av/"],"filterMode":"path","maxItems":40,"enabled":true,"system":true,"folder":"Internazionali"},{"id":"reuters-iran","name":"Reuters â€“ Iran","kind":"agency","url":"https://www.reuters.com/arc/outboundfeeds/news-sitemap/?outputType=xml","pageUrl":"https://www.reuters.com/world/iran/","strategy":"sitemap","includeAny":["/world/middle-east/"],"includeKeywordsAny":["iran","iranian","tehran","irgc","hormuz","khamenei","pezeshkian","persian gulf"],"excludeAny":["/graphics/","/pictures/","/video/"],"filterMode":"path-and-keywords","maxItems":50,"enabled":true,"system":true,"fallbacks":[{"url":"https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=100&outputType=xml","strategy":"sitemap","label":"sitemap Reuters pagina 2"},{"url":"https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=200&outputType=xml","strategy":"sitemap","label":"sitemap Reuters pagina 3"}],"folder":"Agenzie"},{"id":"reuters-middle-east","name":"Reuters â€“ Middle East","kind":"agency","url":"https://www.reuters.com/arc/outboundfeeds/news-sitemap/?outputType=xml","pageUrl":"https://www.reuters.com/world/middle-east/","strategy":"sitemap","includeAny":["/world/middle-east/"],"excludeAny":["/graphics/","/pictures/","/video/"],"filterMode":"path","maxItems":50,"enabled":true,"system":true,"fallbacks":[{"url":"https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=100&outputType=xml","strategy":"sitemap","label":"sitemap Reuters pagina 2"},{"url":"https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=200&outputType=xml","strategy":"sitemap","label":"sitemap Reuters pagina 3"},{"url":"https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=300&outputType=xml","strategy":"sitemap","label":"sitemap Reuters pagina 4"}],"folder":"Agenzie"},{"id":"nyt-middle-east","name":"New York Times â€“ Middle East","kind":"media","url":"https://www.nytimes.com/section/world/middleeast","pageUrl":"https://www.nytimes.com/section/world/middleeast","strategy":"html","selectors":["article a[href]","main a[href]","h2 a[href]","h3 a[href]"],"excludeAny":["/interactive/","/video/","/section/","/crosswords/"],"filterMode":"none","maxItems":35,"enabled":true,"system":true,"risk":"paywall/anti-bot","folder":"Internazionali"},{"id":"wsj-middle-east","name":"Wall Street Journal â€“ Middle East","kind":"media","url":"https://feeds.content.dowjones.io/public/rss/RSSWorldNews","pageUrl":"https://www.wsj.com/world/middle-east","strategy":"rss","includeAny":["/world/middle-east/"],"includeKeywordsAny":["iran","israel","gaza","lebanon","syria","iraq","saudi","yemen","middle east","hormuz","gulf"],"filterMode":"path-or-keywords","maxItems":40,"enabled":true,"system":true,"folder":"Internazionali"},{"id":"centcom-public-releases","name":"CENTCOM â€“ Public Releases","kind":"official","url":"https://www.centcom.mil/DesktopModules/ArticleCS/RSS.ashx?ContentType=1&Site=808&max=50","pageUrl":"https://www.centcom.mil/MEDIA/PUBLIC-RELEASES/","strategy":"rss","includeAny":["/MEDIA/PUBLIC-RELEASES/Article/","/MEDIA/PRESS-RELEASES/Press-Release-View/Article/","/MEDIA/NEWS-ARTICLES/News-Article-View/Article/"],"filterMode":"path","maxItems":50,"enabled":true,"system":true,"fallbacks":[{"url":"https://www.centcom.mil/MEDIA/PUBLIC-RELEASES/","pageUrl":"https://www.centcom.mil/MEDIA/PUBLIC-RELEASES/","strategy":"html","label":"pagina ufficiale CENTCOM","selectors":["a[href*=\"/MEDIA/PUBLIC-RELEASES/Article/\"]","a[href*=\"/MEDIA/PRESS-RELEASES/Press-Release-View/Article/\"]","a[href*=\"/MEDIA/NEWS-ARTICLES/News-Article-View/Article/\"]"],"includeAny":["/MEDIA/PUBLIC-RELEASES/Article/","/MEDIA/PRESS-RELEASES/Press-Release-View/Article/","/MEDIA/NEWS-ARTICLES/News-Article-View/Article/"],"filterMode":"path"},{"url":"https://www.dvidshub.net/unit/CENTCOM","pageUrl":"https://www.dvidshub.net/unit/CENTCOM","strategy":"html","label":"DVIDS ufficiale CENTCOM","selectors":["a[href^=\"/news/\"]","a[href*=\"dvidshub.net/news/\"]"],"includeAny":["/news/"],"excludeAny":["/newswire/"],"filterMode":"path","maxItems":30}],"folder":"Fonti ufficiali"},{"id":"aljazeera-iran-war-live","name":"Al Jazeera â€“ Iran War Live","kind":"media","category":"liveblog","url":"https://www.aljazeera.com/news/liveblog/2026/7/23/iran-war-live-us-launches-new-attacks-houthis-attack-2-saudi-oil-tankers","pageUrl":"https://www.aljazeera.com/news/liveblog/2026/7/23/iran-war-live-us-launches-new-attacks-houthis-attack-2-saudi-oil-tankers","strategy":"liveblog","maxItems":120,"enabled":true,"system":true,"note":"Segue il live Al Jazeera corrente tramite versione AMP e passa al successivo quando la pagina contiene il collegamento di continuazione.","autoFollow":true,"staleAfterMinutes":180},{"id":"cnn-iran-war-live","name":"CNN â€“ Iran War Live","kind":"media","category":"liveblog","url":"https://edition.cnn.com/2026/07/23/world/live-news/iran-war-trump","pageUrl":"https://edition.cnn.com/2026/07/23/world/live-news/iran-war-trump","strategy":"liveblog","liveProvider":"cnn","liveSelectors":["[data-component-name=\"live-story\"]","[data-uri*=\"live-story\"]","[data-testid*=\"live-story\"]","[class*=\"live-story\"]","[id*=\"liveblog-card\"]","[data-last-modified]"],"maxItems":160,"enabled":true,"system":true,"note":"Cerca il live CNN piÃ¹ recente nella sitemap e nelle pagine datate. Se non esiste un live nuovo, segnala chiaramente che il flusso Ã¨ fermo.","autoFollow":true,"sitemapUrl":"https://www.cnn.com/sitemap/live-story.xml","staleAfterMinutes":180},{"id":"timesofisrael-live","name":"Times of Israel â€“ Live","kind":"media","category":"liveblog","url":"https://www.timesofisrael.com/live/","pageUrl":"https://www.timesofisrael.com/live/","strategy":"liveblog","liveProvider":"timesofisrael","timezoneOffset":"+03:00","maxItems":180,"enabled":true,"system":true,"autoFollow":false,"note":"Legge direttamente la pagina permanente Live Updates. Una sola richiesta per ciclo; dopo HTTP 429 applica una pausa automatica.","staleAfterMinutes":180},{"id":"reuters-iran-war-live","name":"Reuters â€“ Iran War Live","kind":"agency","category":"liveblog","url":"https://www.reuters.com/world/iran-war-live-houthis-strike-tankers-red-sea-enforce-blockade-against-saudi-oil-2026-07-23/","pageUrl":"https://www.reuters.com/world/iran-war-live-houthis-strike-tankers-red-sea-enforce-blockade-against-saudi-oil-2026-07-23/","strategy":"liveblog","liveProvider":"reuters","maxItems":120,"enabled":true,"system":true,"autoFollow":true,"sitemapUrls":["https://www.reuters.com/arc/outboundfeeds/news-sitemap/?outputType=xml","https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=100&outputType=xml","https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=200&outputType=xml","https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=300&outputType=xml"],"note":"Individua automaticamente il live Reuters piÃ¹ recente. Se Reuters blocca lâ€™estrazione, mostra soltanto il collegamento e non crea falsi aggiornamenti."}];
+window.NW_DEFAULT_SOURCES=[{"id":"aljazeera-middle-east","name":"Al Jazeera â€“ Middle East","kind":"media","url":"https://www.aljazeera.com/middle-east/","pageUrl":"https://www.aljazeera.com/middle-east/","strategy":"html","selectors":["article a[href]","main a[href]"],"includeAny":["/news/","/features/","/opinions/","/program/"],"excludeAny":["/tag/","/author/","/about-us/","/podcasts/"],"filterMode":"path","maxItems":35,"enabled":true,"system":true,"folder":"Internazionali"},{"id":"haaretz-middle-east","name":"Haaretz â€“ Middle East","kind":"media","url":"https://www.haaretz.com/middle-east-news","pageUrl":"https://www.haaretz.com/middle-east-news","strategy":"html","selectors":["article a[href]","main a[href]"],"includeAny":["/middle-east-news/"],"excludeAny":["/ty-article-opinion/","/ty-tag/"],"filterMode":"path","maxItems":30,"enabled":true,"system":true,"risk":"paywall/anti-bot","folder":"Israele"},{"id":"iranproject-middle-east","name":"The Iran Project â€“ Middle East","kind":"media","url":"https://www.theiranproject.com/en/International/middle-east","pageUrl":"https://www.theiranproject.com/en/International/middle-east","strategy":"html","selectors":["article a[href]","main a[href]","a[href*=\u0027/en/news/\u0027]"],"includeAny":["/en/news/","/en/International/"],"excludeAny":["/en/archive","/en/tag/"],"filterMode":"path","maxItems":35,"enabled":true,"system":true,"folder":"Iran"},{"id":"middleeasteye-war-iran","name":"Middle East Eye â€“ War on Iran","kind":"media","url":"https://www.middleeasteye.net/topics/war-on-iran","pageUrl":"https://www.middleeasteye.net/topics/war-on-iran","strategy":"html","selectors":["h2 a[href]","h3 a[href]","h4 a[href]","article a[href]","main a[href]"],"includeAny":["/news/","/live-blog/","/opinion/","/features/","/explainers/","/video/"],"excludeAny":["/topics/","/authors/","/users/"],"filterMode":"path","maxItems":40,"enabled":true,"system":true,"folder":"Internazionali"},{"id":"presstv-section-101","name":"PressTV â€“ Iran","kind":"state-media","url":"https://www.presstv.ir/Section/101","pageUrl":"https://www.presstv.ir/Section/101","strategy":"html","selectors":["article a[href]","main a[href]","a[href*=\u0027/Detail/\u0027]"],"includeAny":["/Detail/"],"excludeAny":["/Section/","/Video/"],"filterMode":"path","maxItems":40,"enabled":true,"system":true,"folder":"Iran"},{"id":"skynews-middle-east","name":"Sky News â€“ Middle East","kind":"media","url":"https://news.sky.com/topic/middle-east-6190","pageUrl":"https://news.sky.com/topic/middle-east-6190","strategy":"html","selectors":["article a[href]","main a[href]","a[href*=\u0027/story/\u0027]"],"includeAny":["/story/"],"excludeAny":["/topic/","/watch-live"],"filterMode":"path","maxItems":35,"enabled":true,"system":true,"folder":"Internazionali"},{"id":"jpost-middle-east","name":"Jerusalem Post â€“ Middle East","kind":"media","url":"https://www.jpost.com/middle-east","pageUrl":"https://www.jpost.com/middle-east","strategy":"html","selectors":["article a[href]","main a[href]"],"includeAny":["/middle-east/"],"excludeAny":["/tags/","/author/"],"filterMode":"path","maxItems":40,"enabled":true,"system":true,"folder":"Israele"},{"id":"jpost-israel-news","name":"Jerusalem Post â€“ Israel News","kind":"media","url":"https://www.jpost.com/israel-news","pageUrl":"https://www.jpost.com/israel-news","strategy":"html","selectors":["article a[href]","main a[href]"],"includeAny":["/israel-news/"],"excludeAny":["/tags/","/author/"],"filterMode":"path","maxItems":40,"enabled":true,"system":true,"folder":"Israele"},{"id":"timesofisrael-region","name":"Times of Israel â€“ Israel and the Region","kind":"media","url":"https://www.timesofisrael.com/israel-and-the-region/","pageUrl":"https://www.timesofisrael.com/israel-and-the-region/","strategy":"html","selectors":["article a[href]","main a[href]",".item a[href]"],"includeAny":["timesofisrael.com/"],"excludeAny":["/writers/","/topic/","/podcasts/","/about/"],"filterMode":"path","maxItems":40,"enabled":true,"system":true,"folder":"Israele"},{"id":"cnn-middle-east","name":"CNN â€“ Middle East","kind":"media","url":"https://edition.cnn.com/world/middle-east","pageUrl":"https://edition.cnn.com/world/middle-east","strategy":"html","selectors":["article a[href]","main a[href]","h2 a[href]","h3 a[href]","a[data-link-type=\u0027article\u0027][href]","a[href*=\u0027/middleeast/\u0027]"],"excludeAny":["/videos/","/profiles/","/audio/","/weather/","/style/","/travel/"],"filterMode":"none","maxItems":35,"enabled":true,"system":true,"note":"La pagina CNN puo essere caricata dinamicamente senza articoli nel codice HTML. News Watch prova soltanto la pagina originale CNN e non usa Google News come rilancio.","folder":"Internazionali"},{"id":"bbc-middle-east","name":"BBC â€“ Middle East","kind":"media","url":"https://www.bbc.com/news/world/middle_east","pageUrl":"https://www.bbc.com/news/world/middle_east","strategy":"html","selectors":["article a[href]","main a[href]","a[href*=\u0027/news/articles/\u0027]"],"includeAny":["/news/articles/","/news/world-middle-east-"],"excludeAny":["/news/topics/","/news/av/"],"filterMode":"path","maxItems":40,"enabled":true,"system":true,"folder":"Internazionali"},{"id":"reuters-iran","name":"Reuters â€“ Iran","kind":"agency","url":"https://www.reuters.com/arc/outboundfeeds/news-sitemap/?outputType=xml","pageUrl":"https://www.reuters.com/world/iran/","strategy":"sitemap","includeAny":["/world/middle-east/"],"includeKeywordsAny":["iran","iranian","tehran","irgc","hormuz","khamenei","pezeshkian","persian gulf"],"excludeAny":["/graphics/","/pictures/","/video/"],"filterMode":"path-and-keywords","maxItems":50,"enabled":true,"system":true,"folder":"Agenzie","fallbacks":[{"url":"https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=100\u0026outputType=xml","strategy":"sitemap","label":"sitemap Reuters pagina 2"},{"url":"https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=200\u0026outputType=xml","strategy":"sitemap","label":"sitemap Reuters pagina 3"}]},{"id":"reuters-middle-east","name":"Reuters â€“ Middle East","kind":"agency","url":"https://www.reuters.com/arc/outboundfeeds/news-sitemap/?outputType=xml","pageUrl":"https://www.reuters.com/world/middle-east/","strategy":"sitemap","includeAny":["/world/middle-east/"],"excludeAny":["/graphics/","/pictures/","/video/"],"filterMode":"path","maxItems":50,"enabled":true,"system":true,"folder":"Agenzie","fallbacks":[{"url":"https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=100\u0026outputType=xml","strategy":"sitemap","label":"sitemap Reuters pagina 2"},{"url":"https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=200\u0026outputType=xml","strategy":"sitemap","label":"sitemap Reuters pagina 3"},{"url":"https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=300\u0026outputType=xml","strategy":"sitemap","label":"sitemap Reuters pagina 4"}]},{"id":"nyt-middle-east","name":"New York Times â€“ Middle East","kind":"media","url":"https://www.nytimes.com/section/world/middleeast","pageUrl":"https://www.nytimes.com/section/world/middleeast","strategy":"html","selectors":["article a[href]","main a[href]","h2 a[href]","h3 a[href]"],"excludeAny":["/interactive/","/video/","/section/","/crosswords/"],"filterMode":"none","maxItems":35,"enabled":true,"system":true,"risk":"paywall/anti-bot","folder":"Internazionali"},{"id":"wsj-middle-east","name":"Wall Street Journal â€“ Middle East","kind":"media","url":"https://feeds.content.dowjones.io/public/rss/RSSWorldNews","pageUrl":"https://www.wsj.com/world/middle-east","strategy":"rss","includeAny":["/world/middle-east/"],"includeKeywordsAny":["iran","israel","gaza","lebanon","syria","iraq","saudi","yemen","middle east","hormuz","gulf"],"filterMode":"path-or-keywords","maxItems":40,"enabled":true,"system":true,"folder":"Internazionali"},{"id":"centcom-public-releases","name":"CENTCOM â€“ Public Releases","kind":"official","url":"https://www.centcom.mil/DesktopModules/ArticleCS/RSS.ashx?ContentType=1\u0026Site=808\u0026max=50","pageUrl":"https://www.centcom.mil/MEDIA/PUBLIC-RELEASES/","strategy":"rss","includeAny":["/MEDIA/PUBLIC-RELEASES/Article/","/MEDIA/PRESS-RELEASES/Press-Release-View/Article/","/MEDIA/NEWS-ARTICLES/News-Article-View/Article/"],"filterMode":"path","maxItems":50,"enabled":true,"system":true,"folder":"Fonti ufficiali","fallbacks":[{"url":"https://www.centcom.mil/MEDIA/PUBLIC-RELEASES/","pageUrl":"https://www.centcom.mil/MEDIA/PUBLIC-RELEASES/","strategy":"html","label":"pagina ufficiale CENTCOM","selectors":["a[href*=\"/MEDIA/PUBLIC-RELEASES/Article/\"]","a[href*=\"/MEDIA/PRESS-RELEASES/Press-Release-View/Article/\"]","a[href*=\"/MEDIA/NEWS-ARTICLES/News-Article-View/Article/\"]"],"includeAny":["/MEDIA/PUBLIC-RELEASES/Article/","/MEDIA/PRESS-RELEASES/Press-Release-View/Article/","/MEDIA/NEWS-ARTICLES/News-Article-View/Article/"],"filterMode":"path"},{"url":"https://www.dvidshub.net/unit/CENTCOM","pageUrl":"https://www.dvidshub.net/unit/CENTCOM","strategy":"html","label":"DVIDS ufficiale CENTCOM","selectors":["a[href^=\"/news/\"]","a[href*=\"dvidshub.net/news/\"]"],"includeAny":["/news/"],"excludeAny":["/newswire/"],"filterMode":"path","maxItems":30}]},{"id":"aljazeera-iran-war-live","name":"Al Jazeera â€“ Iran War Live","kind":"media","category":"liveblog","url":"https://www.aljazeera.com/news/liveblog/2026/7/23/iran-war-live-us-launches-new-attacks-houthis-attack-2-saudi-oil-tankers","pageUrl":"https://www.aljazeera.com/news/liveblog/2026/7/23/iran-war-live-us-launches-new-attacks-houthis-attack-2-saudi-oil-tankers","strategy":"liveblog","maxItems":120,"enabled":true,"system":true,"note":"Segue il live Al Jazeera corrente tramite versione AMP e passa al successivo quando la pagina contiene il collegamento di continuazione.","autoFollow":true,"staleAfterMinutes":180},{"id":"cnn-iran-war-live","name":"CNN â€“ Iran War Live","kind":"media","category":"liveblog","url":"https://edition.cnn.com/2026/07/23/world/live-news/iran-war-trump","pageUrl":"https://edition.cnn.com/2026/07/23/world/live-news/iran-war-trump","strategy":"liveblog","liveProvider":"cnn","liveSelectors":["[data-component-name=\"live-story\"]","[data-uri*=\"live-story\"]","[data-testid*=\"live-story\"]","[class*=\"live-story\"]","[id*=\"liveblog-card\"]","[data-last-modified]"],"maxItems":160,"enabled":true,"system":true,"note":"Cerca il live CNN piÃ¹ recente nella sitemap e nelle pagine datate. Se non esiste un live nuovo, segnala chiaramente che il flusso Ã¨ fermo.","autoFollow":true,"sitemapUrl":"https://www.cnn.com/sitemap/live-story.xml","staleAfterMinutes":180},{"id":"timesofisrael-live","name":"Times of Israel â€“ Live","kind":"media","category":"liveblog","url":"https://www.timesofisrael.com/live/","pageUrl":"https://www.timesofisrael.com/live/","strategy":"liveblog","liveProvider":"timesofisrael","timezoneOffset":"+03:00","maxItems":180,"enabled":true,"system":true,"autoFollow":false,"note":"Legge direttamente la pagina permanente Live Updates. Una sola richiesta per ciclo; dopo HTTP 429 applica una pausa automatica.","staleAfterMinutes":180},{"id":"reuters-iran-war-live","name":"Reuters â€“ Iran War Live","kind":"agency","category":"liveblog","url":"https://www.reuters.com/world/iran-war-live-houthis-strike-tankers-red-sea-enforce-blockade-against-saudi-oil-2026-07-23/","pageUrl":"https://www.reuters.com/world/iran-war-live-houthis-strike-tankers-red-sea-enforce-blockade-against-saudi-oil-2026-07-23/","strategy":"liveblog","liveProvider":"reuters","maxItems":120,"enabled":true,"system":true,"autoFollow":true,"sitemapUrls":["https://www.reuters.com/arc/outboundfeeds/news-sitemap/?outputType=xml","https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=100\u0026outputType=xml","https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=200\u0026outputType=xml","https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=300\u0026outputType=xml"],"note":"Individua automaticamente il live Reuters piÃ¹ recente. Se Reuters blocca lâ€™estrazione, mostra soltanto il collegamento e non crea falsi aggiornamenti."}];
 </script>
 <script data-file="utils.js">
 window.NWUtils=(()=>{const TRACK=new Set(['utm_source','utm_medium','utm_campaign','utm_term','utm_content','gclid','fbclid','mod']);function clean(v){return String(v||'').replace(/\s+/g,' ').trim()}function strip(v){const d=document.createElement('textarea');d.innerHTML=String(v||'').replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,' ').replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,' ').replace(/<[^>]+>/g,' ');return clean(d.value)}function truncate(v,n=320){const s=clean(v);return s.length<=n?s:s.slice(0,n-1).replace(/\s+\S*$/,'')+'â€¦'}function normUrl(v,base){try{const u=new URL(v,base);u.hash='';[...u.searchParams.keys()].forEach(k=>{if(TRACK.has(k.toLowerCase()))u.searchParams.delete(k)});u.hostname=u.hostname.toLowerCase().replace(/^www\./,'');if(u.pathname.length>1)u.pathname=u.pathname.replace(/\/+$/,'');return u.toString()}catch{return clean(v)}}function hash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(36)}function date(v){if(!v)return null;const d=new Date(v);return Number.isNaN(d.getTime())?null:d}function fmt(v){const d=v instanceof Date?v:date(v);return d?new Intl.DateTimeFormat('it-IT',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(d):''}function escape(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}function csv(v){const s=String(v??'');return /[;"\n\r]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s}function download(name,text,mime='text/plain;charset=utf-8'){const b=new Blob([text],{type:mime}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}async function copy(text){if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(text);const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove()}function lines(v){return String(v||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean)}function slug(v){return clean(v).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,60)||'fonte-'+Date.now()}return{clean,strip,truncate,normUrl,hash,date,fmt,escape,csv,download,copy,lines,slug}})();
@@ -1461,9 +1461,9 @@ window.NWLiveResolver = (() => {
 (()=>{
   'use strict';
   const U=NWUtils,S=NWStore,P=NWParsers,Q=NWQuery,Stories=NWStories,LiveAlert=NWLiveAlert,Resolver=NWLiveResolver;
-  const APP_VERSION='3.9';
+  const APP_VERSION='4.0';
   const $=id=>document.getElementById(id);
-  const ALLOWED=['aljazeera.com','haaretz.com','theiranproject.com','middleeasteye.net','presstv.ir','sky.com','jpost.com','timesofisrael.com','cnn.com','bbc.com','reuters.com','nytimes.com','wsj.com','feeds.content.dowjones.io','centcom.mil','dvidshub.net','news.google.com','edition-prod-cf.sitemirror.cnn.com','mehrnews.com','irna.ir'];
+  const ALLOWED=['aljazeera.com','haaretz.com','theiranproject.com','middleeasteye.net','presstv.ir','sky.com','jpost.com','timesofisrael.com','cnn.com','bbc.com','reuters.com','nytimes.com','wsj.com','feeds.content.dowjones.io','centcom.mil','dvidshub.net','edition-prod-cf.sitemirror.cnn.com','mehrnews.com','irna.ir'];
 
   const SOURCE_PROFILES=[
     {hosts:['reuters.com'],name:'Reuters',kind:'agency',folder:'Agenzie'},
@@ -1624,24 +1624,6 @@ window.NWLiveResolver = (() => {
     }catch{return[]}
   }
 
-  function indexedFeedUrl(pageUrl,name=''){
-    const currentHost=host(pageUrl);
-    const terms=sectionTerms(pageUrl);
-    const usefulName=U.clean(name)
-      .toLowerCase()
-      .replace(/[â€“â€”-]/g,' ')
-      .split(/\s+/)
-      .filter(item=>item.length>3&&!['news','media','middle','east','official'].includes(item))
-      .slice(0,3);
-    const query=[`site:${currentHost}`,...new Set([...terms,...usefulName])].join(' ');
-    const feed=new URL('https://news.google.com/rss/search');
-    feed.searchParams.set('q',query);
-    feed.searchParams.set('hl','en-US');
-    feed.searchParams.set('gl','US');
-    feed.searchParams.set('ceid','US:en');
-    return feed.toString();
-  }
-
 
   function sourceTokens(value){
     return new Set(
@@ -1693,7 +1675,6 @@ window.NWLiveResolver = (() => {
       enabled:input.enabled!==false,
       system:false,
       autoConfigured:true,
-      autoRecovery:true,
       note:mergeAutoNote(input.note||preset.note,`Configurazione ufficiale giÃ  presente in News Watch.`)
     };
 
@@ -1758,7 +1739,6 @@ window.NWLiveResolver = (() => {
       includeKeywordsAny:[],
       filterMode:'none',
       autoConfigured:true,
-      autoRecovery:true
     };
   }
 
@@ -1874,7 +1854,7 @@ window.NWLiveResolver = (() => {
   }
 
   async function indexedConfiguration(base,reason=''){
-    throw new Error(`${reason?reason+' ':''}Non Ã¨ stato trovato un feed RSS, una sitemap o una pagina diretta funzionante. Il recupero Google non viene usato perchÃ© il Worker lo riceve con HTTP 503.`);
+    throw new Error(`${reason?reason+' ':''}Non e stato trovato un feed RSS, una sitemap o una pagina diretta funzionante sulla fonte originale. Salva una bozza manuale o inserisci una configurazione avanzata della fonte.`);
   }
 
   async function autoConfigureRegularSource(input){
@@ -1946,7 +1926,7 @@ window.NWLiveResolver = (() => {
   const RECOVERY_BACKOFF_MINUTES=[0,5,15,30,60];
 
   function isIndexedCandidate(candidate){
-    return !!candidate&&(candidate.autoRecovery||candidate.recovery||host(candidate.url)==='news.google.com'||/indicizzato/i.test(candidate.label||''));
+    return !!candidate&&host(candidate.url)==='news.google.com';
   }
 
   function directCandidate(source){
@@ -1979,12 +1959,6 @@ window.NWLiveResolver = (() => {
       label:'collegamento diretto',
       direct:true
     };
-  }
-
-  function automaticRecoveryCandidate(source){
-    // Google News rifiuta in modo intermittente le richieste provenienti dal
-    // Worker. Non viene piÃ¹ creato come fallback generico automatico.
-    return null;
   }
 
   function backoffMinutes(table,count){
@@ -2043,11 +2017,6 @@ window.NWLiveResolver = (() => {
     const now=Date.now();
     const direct=directCandidate(source);
     const explicit=(source.fallbacks||[]).filter(item=>!isIndexedCandidate(item));
-    const indexed=[];
-    if(host(source.url)==='news.google.com')indexed.push({...source,url:source.url,label:'recupero alternativo RSS indicizzato',recovery:true});
-    (source.fallbacks||[]).filter(isIndexedCandidate).forEach(item=>indexed.push({...item,recovery:true}));
-    const auto=automaticRecoveryCandidate(source);
-    if(auto)indexed.push(auto);
 
     const directManualOnly=!!source.directManualOnly&&!forceDirect;
     const directDue=!directManualOnly&&(forceDirect||!Number(source.directRetryAt||0)||Number(source.directRetryAt)<=now);
@@ -2055,7 +2024,6 @@ window.NWLiveResolver = (() => {
     const candidates=[];
     if(directDue&&direct?.url)candidates.push(direct);
     if(!directOnly)explicit.forEach(item=>candidates.push({...item,label:item.label||'fallback configurato'}));
-    if(!directOnly&&recoveryDue)indexed.forEach(item=>candidates.push(item));
     const seen=new Set();
     return{
       candidates:candidates.filter(candidate=>{
@@ -2072,7 +2040,7 @@ window.NWLiveResolver = (() => {
   }
 
 
-  const state={defaults:JSON.parse(JSON.stringify(window.NW_DEFAULT_SOURCES||[])),sources:[],results:new Map(),articles:[],health:S.health(),timer:null,liveTimer:null,liveInitialTimer:null,liveNextDue:0,liveSnapshotReady:false,liveAlertCount:0,liveFreshIds:new Set(),folderCollapsed:S.folderState(),folderNames:S.folderNames(),ui:S.uiState(),baseTitle:document.title,view:'monitorView',pendingAction:null,refreshing:{news:null,live:null,all:null},sync:{timer:null,suspend:true,saving:false,pending:false,available:false,revision:'',updatedAt:'',lastPayload:''}};
+  const state={defaults:JSON.parse(JSON.stringify(window.NW_DEFAULT_SOURCES||[])),sources:[],results:new Map(),articles:[],health:S.health(),timer:null,liveTimer:null,liveInitialTimer:null,liveNextDue:0,liveSnapshotReady:false,liveAlertCount:0,liveFreshIds:new Set(),folderCollapsed:S.folderState(),folderNames:[],ui:S.uiState(),baseTitle:document.title,view:'monitorView',pendingAction:null,refreshing:{news:null,live:null,all:null},sync:{timer:null,suspend:true,saving:false,pending:false,available:false,revision:'',updatedAt:'',lastPayload:''}};
 
   function status(message,type=''){
     const element=$('statusBar');
@@ -2102,13 +2070,13 @@ window.NWLiveResolver = (() => {
   }
   function saveFolderCatalog(){
     state.folderNames=folderCatalog();
-    S.saveFolderNames(state.folderNames);
     queueRemoteSave();
   }
-  function registerFolder(name){
+  function registerFolder(name,options={}){
     const clean=cleanFolderName(name);if(!clean)return'';
     if(!folderCatalog().some(item=>item.localeCompare(clean,'it',{sensitivity:'accent'})===0))state.folderNames=[...state.folderNames,clean];
-    saveFolderCatalog();return clean;
+    if(!options.deferSave)saveFolderCatalog();
+    return clean;
   }
   function regularFolders(includeEmpty=false){
     const groups=new Map();
@@ -2154,7 +2122,7 @@ window.NWLiveResolver = (() => {
   function hasAutomaticIndexedRecovery(source){
     return host(source?.url)==='news.google.com'
       || host(source?.recoveryUrl)==='news.google.com'
-      || (source?.fallbacks||[]).some(item=>host(item?.url)==='news.google.com'&&(item.autoRecovery||item.recovery));
+      || (source?.fallbacks||[]).some(item=>host(item?.url)==='news.google.com');
   }
 
   function knownDirectReplacement(source){
@@ -2217,7 +2185,7 @@ window.NWLiveResolver = (() => {
     SOURCE_RUNTIME_KEYS.forEach(key=>delete source[key]);
     if(host(source.recoveryUrl)==='news.google.com')delete source.recoveryUrl;
     if(source.recoveryMode==='indexed')delete source.recoveryMode;
-    source.fallbacks=(source.fallbacks||[]).filter(item=>!(host(item?.url)==='news.google.com'&&(item.autoRecovery||item.recovery)));
+    source.fallbacks=(source.fallbacks||[]).filter(item=>host(item?.url)!=='news.google.com');
     if(!source.fallbacks.length)delete source.fallbacks;
     if(replacement||host(source.url)!=='news.google.com'){
       delete source.directConfig;
@@ -2238,22 +2206,13 @@ window.NWLiveResolver = (() => {
     SOURCE_RUNTIME_KEYS.forEach(key=>delete source[key]);
   }
 
-  function initialSources(){return Resolver.dedupeByUrl(cloneSources(state.defaults))}
+  function initialSources(){return Resolver.dedupeByUrl(portableSources(cloneSources(state.defaults)))}
   function loadSavedSources(){
-    const saved=S.sources();
-    if(Array.isArray(saved)){
-      const migrated=Resolver.dedupeByUrl(portableSources(saved));
-      S.saveSources(portableSources(migrated,{migrate:false}));
-      return migrated;
-    }
-    const seeded=initialSources();
-    S.saveSources(seeded);
-    return seeded;
+    return initialSources();
   }
-  function saveSources(){S.saveSources(portableSources(state.sources,{migrate:false}));queueRemoteSave()}
+  function saveSources(){queueRemoteSave()}
   function initSources(){
-    // Regola 3.2: dopo il primo avvio lo storage dell'utente Ã¨ autorevole.
-    // Nessuna fonte predefinita assente viene reinserita durante F5/riapertura.
+    // Fonti e cartelle sono autorevoli solo quando arrivano dalla configurazione online del Worker.
     state.sources=loadSavedSources();
     const settings=S.settings();
     if(settings.appVersion!==APP_VERSION){
@@ -2300,14 +2259,52 @@ window.NWLiveResolver = (() => {
     line.className='cloud-sync-line'+(type?' '+type:'');
   }
 
+  function requireOnlineEditingReady(){
+    if(!configurationEndpoint())throw new Error('URL Worker non valido: le fonti e le cartelle si salvano solo online.');
+    if(!S.settings().adminToken)throw new Error('Inserisci il token amministratore nelle Impostazioni: le fonti e le cartelle si salvano solo online.');
+  }
+
+  function waitForRemoteSaveSlot(){
+    return new Promise(resolve=>{
+      const check=()=>state.sync.saving?setTimeout(check,80):resolve();
+      check();
+    });
+  }
+
+  function configurationSnapshot(){
+    return{
+      sources:cloneSources(state.sources),
+      folderNames:[...state.folderNames],
+      folderCollapsed:{...state.folderCollapsed},
+      health:JSON.parse(JSON.stringify(state.health||{})),
+      results:new Map(state.results)
+    };
+  }
+
+  function restoreConfigurationSnapshot(snapshot){
+    if(!snapshot)return;
+    state.sources=snapshot.sources;
+    state.folderNames=snapshot.folderNames;
+    state.folderCollapsed=snapshot.folderCollapsed;
+    state.health=snapshot.health;
+    state.results=snapshot.results;
+    S.saveFolderState(state.folderCollapsed);
+  }
+
+  async function saveConfigurationOnlineOrRollback(snapshot){
+    const saved=await saveRemoteConfiguration({force:true});
+    if(saved)return true;
+    restoreConfigurationSnapshot(snapshot);
+    renderAll();
+    throw new Error('salvataggio online non completato. Controlla URL Worker e token amministratore.');
+  }
+
   function applyRemoteConfiguration(configuration){
     if(!configuration||!Array.isArray(configuration.sources))throw new Error('Configurazione online non valida');
     state.sync.suspend=true;
     try{
       state.sources=Resolver.dedupeByUrl(portableSources(configuration.sources));
       state.folderNames=[...new Set((configuration.folderNames||[]).map(cleanFolderName).filter(Boolean))];
-      S.saveSources(portableSources(state.sources,{migrate:false}));
-      S.saveFolderNames(state.folderNames);
       state.sync.revision=String(configuration.revision||'');
       state.sync.updatedAt=String(configuration.updatedAt||'');
       state.sync.lastPayload=JSON.stringify(localConfiguration());
@@ -2335,12 +2332,19 @@ window.NWLiveResolver = (() => {
 
   async function saveRemoteConfiguration(options={}){
     if(state.sync.suspend)return false;
-    if(state.sync.saving){state.sync.pending=true;return false}
+    if(state.sync.saving){
+      state.sync.pending=true;
+      if(options.force){
+        await waitForRemoteSaveSlot();
+        return saveRemoteConfiguration(options);
+      }
+      return false;
+    }
     const endpoint=configurationEndpoint(),token=S.settings().adminToken;
     if(!endpoint){setCloudSync('Sincronizzazione non disponibile: URL Worker non valido.','error');return false}
-    if(!token){setCloudSync('Modifiche salvate su questo PC. Inserisci il token per salvarle online.','warning');return false}
+    if(!token){setCloudSync('Modifica non salvata: inserisci il token amministratore per salvare online.','error');return false}
     const payload=JSON.stringify(localConfiguration());
-    if(!options.initial&&payload===state.sync.lastPayload)return true;
+    if(!options.initial&&!options.force&&payload===state.sync.lastPayload)return true;
     state.sync.saving=true;
     state.sync.pending=false;
     setCloudSync(options.initial?'Prima configurazione online in corsoâ€¦':'Salvataggio online in corsoâ€¦');
@@ -2367,7 +2371,7 @@ window.NWLiveResolver = (() => {
       return true;
     }catch(failure){
       const message=failure.status===403
-        ?'Token non valido: modifica salvata soltanto su questo PC.'
+        ?'Token non valido: modifica non salvata online.'
         :failure.code==='WORKER_CONFIG_KV_NOT_CONFIGURED'
           ?'Archivio online non ancora collegato al Worker.'
           :'Salvataggio online fallito: '+failure.message;
@@ -2397,12 +2401,10 @@ window.NWLiveResolver = (() => {
       state.sync.available=true;
       state.sync.suspend=false;
       if(hasLocalCustomization()&&S.settings().adminToken){
-        const saved=await saveRemoteConfiguration({initial:true});
+        const saved=await saveRemoteConfiguration({initial:true,force:true});
         return saved?'uploaded':'local';
       }
-      setCloudSync(hasLocalCustomization()
-        ?'Configurazione online vuota: inserisci il token per trasferire questa configurazione.'
-        :'Configurazione online vuota: apri prima la 3.6 sul PC giÃ  configurato.','warning');
+      setCloudSync('Configurazione online vuota: le nuove fonti saranno disponibili su tutti i PC dopo il primo salvataggio online.','warning');
       return 'empty';
     }catch(failure){
       state.sync.suspend=false;
@@ -2850,26 +2852,6 @@ window.NWLiveResolver = (() => {
             status:'ok',
             info:''
           };
-        }
-
-        if(isIndexedCandidate(candidate)){
-          clearRecoveryRetry(source);
-          source.recoveryMode='indexed';
-          source.recoveryUrl=candidate.url;
-          const exists=(source.fallbacks||[]).some(item=>U.normUrl(item.url)===U.normUrl(candidate.url));
-          if(!exists){
-            source.fallbacks=[...(source.fallbacks||[]),{
-              url:candidate.url,
-              pageUrl:candidate.pageUrl||source.pageUrl,
-              strategy:'rss',
-              filterMode:'none',
-              includeAny:[],
-              excludeAny:[],
-              label:'recupero alternativo RSS indicizzato',
-              autoRecovery:true
-            }];
-          }
-          if(state.sources.includes(source))saveSources();
         }
 
         return{
@@ -3348,7 +3330,6 @@ window.NWLiveResolver = (() => {
     }
     try {
       clearSourceRuntime(source);
-      saveSources();
       const fetched = await fetchSource(source,{forceDirect:true});
       if (resultElement) {
         resultElement.textContent = fetched.status === 'link'
@@ -3383,37 +3364,69 @@ window.NWLiveResolver = (() => {
     });
   }
 
-  function addFolder(){
+  async function addFolder(){
     const input=$('newFolderName'),name=cleanFolderName(input.value);
     if(!name){status('Inserisci un nome valido. â€œSenza cartellaâ€ Ã¨ riservato.','warning');return}
     if(folderCatalog().some(item=>item.localeCompare(name,'it',{sensitivity:'accent'})===0)){status('Esiste giÃ  una cartella con questo nome.','warning');return}
-    state.folderNames=[...state.folderNames,name];saveFolderCatalog();input.value='';renderFolderManager();renderSources();renderSourceOptions();status(`Cartella â€œ${name}â€ aggiunta.`,'success');
+    try{
+      requireOnlineEditingReady();
+      const snapshot=configurationSnapshot();
+      state.folderNames=[...state.folderNames,name];
+      state.folderNames=folderCatalog();
+      await saveConfigurationOnlineOrRollback(snapshot);
+      input.value='';
+      renderAll();
+      status(`Cartella salvata online: ${name}.`,'success');
+    }catch(error){
+      status('Cartella non salvata online: '+error.message,'error');
+    }
   }
 
-  function renameFolder(oldName,newValue){
+  async function renameFolder(oldName,newValue){
     const newName=cleanFolderName(newValue);
     if(!newName){status('Inserisci un nome valido. â€œSenza cartellaâ€ Ã¨ riservato.','warning');renderFolderManager();return}
     if(oldName===newName)return;
     if(folderCatalog().some(item=>item!==oldName&&item.localeCompare(newName,'it',{sensitivity:'accent'})===0)){status('Esiste giÃ  una cartella con questo nome.','warning');renderFolderManager();return}
-    regularSources().forEach(source=>{if(folderName(source)===oldName)source.folder=newName});
-    state.folderNames=state.folderNames.map(name=>name===oldName?newName:name);
-    if(Object.prototype.hasOwnProperty.call(state.folderCollapsed,oldName)){
-      const collapsed=state.folderCollapsed[oldName];delete state.folderCollapsed[oldName];state.folderCollapsed[newName]=collapsed;S.saveFolderState(state.folderCollapsed);
+    try{
+      requireOnlineEditingReady();
+      const snapshot=configurationSnapshot();
+      regularSources().forEach(source=>{if(folderName(source)===oldName)source.folder=newName});
+      state.folderNames=state.folderNames.map(name=>name===oldName?newName:name);
+      if(Object.prototype.hasOwnProperty.call(state.folderCollapsed,oldName)){
+        const collapsed=state.folderCollapsed[oldName];delete state.folderCollapsed[oldName];state.folderCollapsed[newName]=collapsed;S.saveFolderState(state.folderCollapsed);
+      }
+      if($('folderFilter').value===oldName)$('folderFilter').value=newName;
+      state.folderNames=folderCatalog();
+      await saveConfigurationOnlineOrRollback(snapshot);
+      renderAll();
+      status(`Cartella rinominata online: ${newName}.`,'success');
+    }catch(error){
+      renderFolderManager();
+      status('Cartella non rinominata online: '+error.message,'error');
     }
-    if($('folderFilter').value===oldName)$('folderFilter').value=newName;
-    saveSources();saveFolderCatalog();renderAll();renderFolderManager();status(`Cartella rinominata in â€œ${newName}â€.`,'success');
   }
 
-  function deleteFolder(name,button){
+  async function deleteFolder(name,button){
     const actionKey='folder-delete-'+name;
     if(state.pendingAction!==actionKey){
       state.pendingAction=actionKey;button.textContent='Conferma elimina';status(`Premi di nuovo per eliminare â€œ${name}â€. Le fonti passeranno in â€œSenza cartellaâ€.`,'warning');
       setTimeout(()=>{if(state.pendingAction===actionKey){state.pendingAction=null;button.textContent='Elimina'}},6000);return;
     }
-    regularSources().forEach(source=>{if(folderName(source)===name)source.folder=''});
-    state.folderNames=state.folderNames.filter(item=>item!==name);delete state.folderCollapsed[name];S.saveFolderState(state.folderCollapsed);
-    if($('folderFilter').value===name)$('folderFilter').value='';
-    state.pendingAction=null;saveSources();saveFolderCatalog();renderAll();renderFolderManager();status(`Cartella â€œ${name}â€ eliminata. Le fonti sono in â€œSenza cartellaâ€.`,'success');
+    try{
+      requireOnlineEditingReady();
+      const snapshot=configurationSnapshot();
+      regularSources().forEach(source=>{if(folderName(source)===name)source.folder=''});
+      state.folderNames=state.folderNames.filter(item=>item!==name);delete state.folderCollapsed[name];S.saveFolderState(state.folderCollapsed);
+      if($('folderFilter').value===name)$('folderFilter').value='';
+      state.pendingAction=null;
+      state.folderNames=folderCatalog();
+      await saveConfigurationOnlineOrRollback(snapshot);
+      renderAll();
+      status(`Cartella eliminata online: ${name}.`,'success');
+    }catch(error){
+      button.textContent='Elimina';
+      status('Cartella non eliminata online: '+error.message,'error');
+    }
   }
 
   function renderSources(){
@@ -3440,13 +3453,25 @@ window.NWLiveResolver = (() => {
           ? '<small class="recovery-note degraded-state">Ultimi articoli validi conservati; controlla la fonte manualmente</small>'
           : (result.status==='recovery'?'<small class="recovery-note recovery-state">OK fallback stabile; diretto riprovabile manualmente</small>':'');
         card.innerHTML=`<span class="dot ${result.status}"></span><div><strong>${escape(source.name)}</strong><small>${escape(source.strategy.toUpperCase())} Â· ${escape(host(source.url))}</small>${recoveryLabel}</div><div class="managed-actions"><button data-action="toggle">${source.enabled===false?'Attiva':'Disattiva'}</button><button data-action="test">Testa</button>${retryDirect}${recoveryButton}<button data-action="edit">Modifica</button><button data-action="delete" class="danger">Elimina</button></div>`;
-        card.querySelector('[data-action="toggle"]').addEventListener('click',()=>{source.enabled=source.enabled===false;saveSources();renderAll()});
+        card.querySelector('[data-action="toggle"]').addEventListener('click',async()=>{
+          const snapshot=configurationSnapshot();
+          try{
+            requireOnlineEditingReady();
+            source.enabled=source.enabled===false;
+            await saveConfigurationOnlineOrRollback(snapshot);
+            renderAll();
+            status(`${source.name}: modifica salvata online.`,'success');
+          }catch(error){
+            restoreConfigurationSnapshot(snapshot);
+            renderAll();
+            status(`${source.name}: modifica non salvata online - ${error.message}`,'error');
+          }
+        });
         card.querySelector('[data-action="test"]').addEventListener('click',async event=>{event.target.disabled=true;try{const fetched=await testSource(source);status(`Test completato: ${source.name} Â· ${fetched.items.length} articoli Â· ${fetched.route||'principale'}`,'success')}catch(error){status(source.name+': '+error.message,'error')}finally{event.target.disabled=false}});
         card.querySelector('[data-action="retry-direct"]')?.addEventListener('click',async event=>{
           event.target.disabled=true;event.target.textContent='Tentativoâ€¦';
           try{
             clearSourceRuntime(source);
-            saveSources();
             const fetched=await fetchRegularSource(source,{forceDirect:true,directOnly:true});
             fetched.items.forEach(item=>{item.isRead=S.isSeen(source.id,item.id)});
             const result={status:'ok',items:fetched.items,newCount:fetched.items.filter(item=>!item.isRead).length,route:fetched.route,duration:fetched.duration,info:'Collegamento diretto ripristinato.',error:''};
@@ -3462,11 +3487,12 @@ window.NWLiveResolver = (() => {
           event.target.textContent='Riparazioneâ€¦';
           try{
             const result=await autoConfigureRegularSource({...source,url:source.pageUrl||source.url,pageUrl:source.pageUrl||source.url});
+            const snapshot=configurationSnapshot();
             state.sources[index]={...source,...result.source,id:source.id,folder:source.folder||result.source.folder};
-            saveSources();
+            await saveConfigurationOnlineOrRollback(snapshot);
             state.results.delete(source.id);
             renderAll();
-            status(`${source.name}: ${result.message}`,'success');
+            status(`${source.name}: riparazione salvata online - ${result.message}`,'success');
           }catch(error){
             status(`${source.name}: riparazione fallita Â· ${error.message}`,'error');
           }finally{
@@ -3482,9 +3508,26 @@ window.NWLiveResolver = (() => {
   }
 
 
-  function deleteSource(index,button,actionKey){
+  async function deleteSource(index,button,actionKey){
     if(state.pendingAction===actionKey){
-      const source=state.sources[index];state.sources.splice(index,1);state.results.delete(source.id);delete state.health[source.id];S.saveHealth(state.health);saveSources();state.pendingAction=null;renderAll();status('Elemento eliminato.','success');return;
+      const snapshot=configurationSnapshot();
+      try{
+        requireOnlineEditingReady();
+        const source=state.sources[index];
+        state.sources.splice(index,1);
+        state.results.delete(source.id);
+        delete state.health[source.id];
+        S.saveHealth(state.health);
+        state.pendingAction=null;
+        await saveConfigurationOnlineOrRollback(snapshot);
+        renderAll();
+        status('Elemento eliminato online.','success');
+      }catch(error){
+        restoreConfigurationSnapshot(snapshot);
+        renderAll();
+        status('Elemento non eliminato online: '+error.message,'error');
+      }
+      return;
     }
     state.pendingAction=actionKey;button.textContent='Conferma elimina';status('Premi di nuovo â€œConferma eliminaâ€ entro 6 secondi.','warning');
     setTimeout(()=>{if(state.pendingAction===actionKey){state.pendingAction=null;button.textContent='Elimina'}},6000);
@@ -3605,7 +3648,7 @@ window.NWLiveResolver = (() => {
     $('sourceAdvancedPanel').classList.remove('hidden');
     $('sourceEditor').dataset.configuredUrl=U.normUrl(pageUrl);
     $('sourceEditor')._configuredSource=null;
-    $('autoConfigStatus').textContent=`Configurazione automatica non riuscita. Ho preparato una fonte manuale salvabile; usa Testa fonte o modifica le impostazioni avanzate. Dettaglio: ${reason}.`;
+    $('autoConfigStatus').textContent=`Configurazione automatica non riuscita. Ho preparato una fonte manuale salvabile online; usa Testa fonte o modifica le impostazioni avanzate. Dettaglio: ${reason}.`;
     $('autoConfigStatus').className='inline-warning';
     $('autoConfigStatus').classList.remove('hidden');
   }
@@ -3632,8 +3675,7 @@ window.NWLiveResolver = (() => {
       includeKeywordsAny:keywords,
       filterMode:preserved.filterMode||((strategy==='html'||strategy==='fars-social')?'none':(keywords.length?'path-or-keywords':'none')),
       note:U.clean($('editNote').value),
-      autoConfigured:true,
-      autoRecovery:true
+      autoConfigured:true
     };
   }
 
@@ -3641,6 +3683,8 @@ window.NWLiveResolver = (() => {
     if(!source.name)throw new Error('Nome obbligatorio');
     if(!/^[a-z0-9][a-z0-9-]*$/.test(source.id))throw new Error('ID non valido');
     const url=new URL(source.url);if(url.protocol!=='https:')throw new Error('Serve un URL HTTPS');
+    if(host(source.url)==='news.google.com')throw new Error('Google News non puo essere usato come fonte tecnica: inserisci la fonte originale.');
+    if((source.fallbacks||[]).some(item=>host(item?.url)==='news.google.com'))throw new Error('Rimuovi i fallback Google News: usa solo feed, sitemap o pagine della fonte originale.');
     if(state.sources.some((item,currentIndex)=>currentIndex!==index&&item.id===source.id))throw new Error('ID giÃ  presente');
   }
 
@@ -3650,8 +3694,8 @@ window.NWLiveResolver = (() => {
     const element=$('editorDomainStatus');
     if(!publicHost){element.className='domain-status';element.textContent='Inserisci un URL.';return}
     if(technicalHost==='news.google.com'){
-      element.className='domain-status ok';
-      element.textContent=`Il sito ${publicHost} viene letto tramite recupero RSS indicizzato.`;
+      element.className='domain-status warning';
+      element.textContent='Google News non viene usato come fonte: inserisci RSS, sitemap o pagina della fonte originale.';
       return;
     }
     if(allowedHost(publicHost)){
@@ -3686,12 +3730,17 @@ window.NWLiveResolver = (() => {
     return{id:U.slug(name||url),name,url,pageUrl:url,strategy:'liveblog',category:'liveblog',kind:'media',autoFollow:true,maxItems:Math.max(10,Math.min(300,Number($('liveEditMax').value)||120)),enabled:$('liveEditEnabled').checked,note:U.clean($('liveEditNote').value)};
   }
 
-  function saveLiveEditor(){
+  async function saveLiveEditor(){
     try{
+      requireOnlineEditingReady();
+      const snapshot=configurationSnapshot();
       const source=liveEditorData(),rawIndex=$('liveEditIndex').value,index=rawIndex===''?-1:Number(rawIndex);validateSource(source,index);
       if(index>=0)state.sources[index]={...state.sources[index],...source};else state.sources.push(source);
-      saveSources();$('liveEditorPanel').classList.add('hidden');renderAll();status('Live blog salvato.','success');
-    }catch(error){status(error.message,'error')}
+      await saveConfigurationOnlineOrRollback(snapshot);
+      $('liveEditorPanel').classList.add('hidden');
+      renderAll();
+      status('Live blog salvato online.','success');
+    }catch(error){status('Live blog non salvato online: '+error.message,'error')}
   }
 
   function renderLiveSources(){
@@ -3703,7 +3752,20 @@ window.NWLiveResolver = (() => {
       const card=document.createElement('div');card.className='live-source-card'+(source.enabled===false?' disabled':'');
       card.innerHTML=`<div class="live-source-head"><span class="dot ${result.status}"></span><div><strong>${escape(source.name)}</strong><small>${escape(resultMeta(result,'aggiornamenti'))}</small><small>${escape(source.url)}</small><div class="live-test-result" data-test-result></div></div><span class="count ${result.newCount?'new':''}">${result.newCount||0}</span></div><div class="live-source-actions"><button data-action="open">Apri</button><button data-action="toggle">${source.enabled===false?'Attiva':'Disattiva'}</button><button data-action="test">Testa</button><button data-action="edit">Modifica</button><button data-action="delete" class="danger">Elimina</button></div>`;
       card.querySelector('[data-action="open"]').addEventListener('click',()=>window.open(source.pageUrl||source.url,'_blank','noopener'));
-      card.querySelector('[data-action="toggle"]').addEventListener('click',()=>{source.enabled=source.enabled===false;saveSources();renderAll()});
+      card.querySelector('[data-action="toggle"]').addEventListener('click',async()=>{
+        const snapshot=configurationSnapshot();
+        try{
+          requireOnlineEditingReady();
+          source.enabled=source.enabled===false;
+          await saveConfigurationOnlineOrRollback(snapshot);
+          renderAll();
+          status(`${source.name}: modifica salvata online.`,'success');
+        }catch(error){
+          restoreConfigurationSnapshot(snapshot);
+          renderAll();
+          status(`${source.name}: modifica non salvata online - ${error.message}`,'error');
+        }
+      });
       card.querySelector('[data-action="test"]').addEventListener('click',async event=>{event.target.disabled=true;try{await testSource(source,card.querySelector('[data-test-result]'))}catch{}finally{event.target.disabled=false}});
       card.querySelector('[data-action="edit"]').addEventListener('click',()=>openLiveEditor(index));
       card.querySelector('[data-action="delete"]').addEventListener('click',event=>deleteSource(index,event.target,'live-delete-'+source.id));
@@ -3850,7 +3912,15 @@ window.NWLiveResolver = (() => {
       const saveButton=$('saveEditorSource');
       saveButton.disabled=true;
       saveButton.textContent='Salvataggioâ€¦';
+      let snapshot=null,changed=false;
       try{
+        requireOnlineEditingReady();
+        snapshot={
+          sources:cloneSources(state.sources),
+          folderNames:[...state.folderNames],
+          health:JSON.parse(JSON.stringify(state.health||{})),
+          results:new Map(state.results)
+        };
         const publicUrl=U.normUrl($('editSimpleUrl').value.trim());
         const configuredUrl=$('sourceEditor').dataset.configuredUrl||'';
         const rawIndex=$('editIndex').value;
@@ -3865,19 +3935,30 @@ window.NWLiveResolver = (() => {
         catch(error){fetchError=error}
         if(index>=0)state.sources[index]={...state.sources[index],...source};
         else state.sources.push(source);
-        registerFolder(source.folder);
-        saveSources();
+        changed=true;
+        registerFolder(source.folder,{deferSave:true});
+        state.folderNames=folderCatalog();
         if(fetchError){
-          state.results.set(source.id,{status:'error',items:[],newCount:0,route:'Da configurare manualmente',duration:0,info:'Fonte salvata anche se il test non e riuscito.',error:fetchError.message});
+          state.results.set(source.id,{status:'error',items:[],newCount:0,route:'Da configurare manualmente',duration:0,info:'Fonte salvata online anche se il test non e riuscito.',error:fetchError.message});
           updateHealth(source,{status:'error',lastCheck:new Date().toISOString(),route:'Da configurare manualmente',error:fetchError.message});
         }
+        const savedOnline=await saveRemoteConfiguration({force:true});
+        if(!savedOnline)throw new Error('salvataggio online non completato. Controlla URL Worker e token amministratore.');
         $('sourceEditor').classList.add('hidden');
         renderAll();
         renderFolderManager();
-        if(fetchError)status(`Fonte salvata da configurare: ${source.name} Â· ${fetchError.message}`,'warning');
-        else status(`Fonte salvata e verificata: ${source.name} Â· ${fetched.items.length} articoli Â· ${fetched.route||'principale'}.`,'success');
+        if(fetchError)status(`Fonte salvata online da configurare: ${source.name} - ${fetchError.message}`,'warning');
+        else status(`Fonte salvata online e verificata: ${source.name} - ${fetched.items.length} articoli - ${fetched.route||'principale'}.`,'success');
       }catch(error){
-        status('Fonte non salvata: '+error.message,'error');
+        if(changed&&snapshot){
+          state.sources=snapshot.sources;
+          state.folderNames=snapshot.folderNames;
+          state.health=snapshot.health;
+          state.results=snapshot.results;
+          renderAll();
+          renderFolderManager();
+        }
+        status('Fonte non salvata online: '+error.message,'error');
       }finally{
         saveButton.disabled=false;
         saveButton.textContent='Salva fonte';
@@ -3905,9 +3986,62 @@ window.NWLiveResolver = (() => {
       }
     });
     $('liveAddButton').addEventListener('click',()=>openLiveEditor(''));$('liveCloseEditor').addEventListener('click',()=>$('liveEditorPanel').classList.add('hidden'));$('liveEditUrl').addEventListener('input',liveEditorDomain);$('liveSaveButton').addEventListener('click',saveLiveEditor);$('liveTestButton').addEventListener('click',async()=>{const element=$('liveEditorTestResult');try{const source=liveEditorData(),index=$('liveEditIndex').value===''?-1:Number($('liveEditIndex').value);validateSource(source,index);element.textContent='Test in corsoâ€¦';element.classList.remove('hidden');const fetched=await fetchSource(source);element.textContent=`${fetched.items.length} aggiornamenti riconosciuti.`}catch(error){element.textContent='Test fallito: '+error.message;element.classList.remove('hidden')}});
-    $('importSources').addEventListener('click',()=>$('importFile').click());$('importFile').addEventListener('change',async()=>{try{const raw=JSON.parse(await $('importFile').files[0].text());if(!Array.isArray(raw))throw new Error('JSON non valido');const data=portableSources(raw);const ids=new Set();data.forEach(source=>{if(!source.name||!source.id||!source.url)throw new Error('Fonte incompleta');if(!/^[a-z0-9][a-z0-9-]*$/.test(source.id))throw new Error('ID non valido: '+source.id);const url=new URL(source.url);if(url.protocol!=='https:')throw new Error('URL non HTTPS: '+source.name);if(ids.has(source.id))throw new Error('ID duplicato: '+source.id);ids.add(source.id)});state.sources=data;saveSources();saveFolderCatalog();renderAll();renderFolderManager();status('Fonti importate senza pause o timer temporanei.','success')}catch(error){status('Importazione fallita: '+error.message,'error')}$('importFile').value=''});
+    $('importSources').addEventListener('click',()=>$('importFile').click());
+    $('importFile').addEventListener('change',async()=>{
+      try{
+        requireOnlineEditingReady();
+        const raw=JSON.parse(await $('importFile').files[0].text());
+        if(!Array.isArray(raw))throw new Error('JSON non valido');
+        const data=portableSources(raw);
+        const ids=new Set();
+        data.forEach(source=>{
+          if(!source.name||!source.id||!source.url)throw new Error('Fonte incompleta');
+          if(!/^[a-z0-9][a-z0-9-]*$/.test(source.id))throw new Error('ID non valido: '+source.id);
+          const url=new URL(source.url);
+          if(url.protocol!=='https:')throw new Error('URL non HTTPS: '+source.name);
+          if(host(source.url)==='news.google.com')throw new Error('Google News non puo essere importato come fonte: '+source.name);
+          if((source.fallbacks||[]).some(item=>host(item?.url)==='news.google.com'))throw new Error('Fallback Google News non ammesso: '+source.name);
+          if(ids.has(source.id))throw new Error('ID duplicato: '+source.id);
+          ids.add(source.id);
+        });
+        const snapshot=configurationSnapshot();
+        state.sources=data;
+        state.folderNames=folderCatalog();
+        await saveConfigurationOnlineOrRollback(snapshot);
+        renderAll();
+        status('Fonti importate e salvate online.','success');
+      }catch(error){
+        status('Importazione non salvata online: '+error.message,'error');
+      }
+      $('importFile').value='';
+    });
     $('exportSources').addEventListener('click',()=>U.download('news-watch-fonti.json',JSON.stringify(portableSources(state.sources),null,2),'application/json'));$('exportDomains').addEventListener('click',()=>{const domains=[...new Set(state.sources.flatMap(source=>[source.url,...(source.fallbacks||[]).map(item=>item.url)]).map(host).filter(Boolean))].sort();U.download('news-watch-domini.txt',domains.join('\n'))});
-    $('restoreSources').addEventListener('click',event=>{if(state.pendingAction==='restore'){state.sources=initialSources();state.folderNames=[];state.folderCollapsed={};S.saveFolderState(state.folderCollapsed);saveSources();saveFolderCatalog();state.pendingAction=null;event.target.textContent='Ripristina iniziali';renderAll();renderFolderManager();status('Fonti e cartelle iniziali ripristinate. Questa Ã¨ lâ€™unica azione che reinserisce i predefiniti.','success')}else{state.pendingAction='restore';event.target.textContent='Conferma ripristino';status('Premi di nuovo â€œConferma ripristinoâ€ entro 6 secondi.','warning');setTimeout(()=>{if(state.pendingAction==='restore'){state.pendingAction=null;event.target.textContent='Ripristina iniziali'}},6000)}});
+    $('restoreSources').addEventListener('click',async event=>{
+      if(state.pendingAction==='restore'){
+        const snapshot=configurationSnapshot();
+        try{
+          requireOnlineEditingReady();
+          state.sources=initialSources();
+          state.folderNames=[];
+          state.folderCollapsed={};
+          S.saveFolderState(state.folderCollapsed);
+          state.pendingAction=null;
+          event.target.textContent='Ripristina iniziali';
+          await saveConfigurationOnlineOrRollback(snapshot);
+          renderAll();
+          status('Fonti e cartelle iniziali ripristinate online.','success');
+        }catch(error){
+          restoreConfigurationSnapshot(snapshot);
+          renderAll();
+          status('Ripristino non salvato online: '+error.message,'error');
+        }
+      }else{
+        state.pendingAction='restore';
+        event.target.textContent='Conferma ripristino';
+        status('Premi di nuovo "Conferma ripristino" entro 6 secondi.','warning');
+        setTimeout(()=>{if(state.pendingAction==='restore'){state.pendingAction=null;event.target.textContent='Ripristina iniziali'}},6000);
+      }
+    });
     $('testWorker').addEventListener('click',async()=>{S.saveSettings({...S.settings(),proxyUrl:$('proxyUrl').value.trim(),adminToken:$('workerAdminToken').value.trim()});const ok=await testWorkerConnection();if(ok)await initRemoteConfiguration();renderAll()});
     $('settingsForm').addEventListener('submit',async event=>{event.preventDefault();S.saveSettings({...S.settings(),proxyUrl:$('proxyUrl').value.trim(),adminToken:$('workerAdminToken').value.trim(),concurrency:Math.max(1,Math.min(8,Number($('concurrency').value)||4)),timeoutSeconds:Math.max(5,Math.min(60,Number($('timeout').value)||22)),autoRefreshMinutes:Number($('autoRefresh').value)||0,liveAutoRefreshMinutes:Number($('liveAutoRefresh').value)||0,baselineFirstRun:$('baseline').checked});autoRefresh();liveAutoRefresh();renderDomainsWarning();const ok=await testWorkerConnection();if(ok){const remote=await fetchRemoteConfiguration().catch(()=>null);if(remote&&!hasLocalCustomization())applyRemoteConfiguration(remote);else await saveRemoteConfiguration()}renderAll();status('Impostazioni salvate.','success')});
     $('resetHistory').addEventListener('click',event=>{if(state.pendingAction==='history'){S.resetHistory();state.pendingAction=null;state.results.clear();state.articles=[];renderAll();status('Storico letture azzerato.','success')}else{state.pendingAction='history';event.target.textContent='Conferma azzeramento';status('Premi di nuovo entro 6 secondi.','warning');setTimeout(()=>{if(state.pendingAction==='history'){state.pendingAction=null;event.target.textContent='Azzera storico letture'}},6000)}});
