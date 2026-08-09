@@ -118,7 +118,7 @@
   <header class="app-header">
     <div>
       <div class="eyebrow">OSINT NEWS MONITOR</div>
-      <h1>News Watch <span class="version">3.6</span></h1>
+      <h1>News Watch <span class="version">3.9</span></h1>
       <p>Aggregatore operativo Middle East e fonti ufficiali.</p>
     </div>
     <nav class="main-nav" aria-label="Sezioni">
@@ -1461,7 +1461,7 @@ window.NWLiveResolver = (() => {
 (()=>{
   'use strict';
   const U=NWUtils,S=NWStore,P=NWParsers,Q=NWQuery,Stories=NWStories,LiveAlert=NWLiveAlert,Resolver=NWLiveResolver;
-  const APP_VERSION='3.6';
+  const APP_VERSION='3.9';
   const $=id=>document.getElementById(id);
   const ALLOWED=['aljazeera.com','haaretz.com','theiranproject.com','middleeasteye.net','presstv.ir','sky.com','jpost.com','timesofisrael.com','cnn.com','bbc.com','reuters.com','nytimes.com','wsj.com','feeds.content.dowjones.io','centcom.mil','dvidshub.net','news.google.com','edition-prod-cf.sitemirror.cnn.com','mehrnews.com','irna.ir'];
 
@@ -2181,6 +2181,31 @@ window.NWLiveResolver = (() => {
     return null;
   }
 
+  const CENTCOM_NEWS_ARTICLE_PATH='/MEDIA/NEWS-ARTICLES/News-Article-View/Article/';
+  const CENTCOM_NEWS_ARTICLE_SELECTOR='a[href*="/MEDIA/NEWS-ARTICLES/News-Article-View/Article/"]';
+
+  function withUniqueItem(value,item){
+    const list=Array.isArray(value)?[...value]:[];
+    if(!list.includes(item))list.push(item);
+    return list;
+  }
+
+  function repairKnownSource(source){
+    const identity=`${source?.id||''} ${source?.name||''} ${source?.url||''} ${source?.pageUrl||''}`.toLowerCase();
+    if(!/centcom/.test(identity))return source;
+    source.includeAny=withUniqueItem(source.includeAny,CENTCOM_NEWS_ARTICLE_PATH);
+    source.fallbacks=(source.fallbacks||[]).map(fallback=>{
+      const fallbackIdentity=`${fallback?.url||''} ${fallback?.pageUrl||''}`.toLowerCase();
+      if(!/centcom\.mil/.test(fallbackIdentity))return fallback;
+      return{
+        ...fallback,
+        selectors:withUniqueItem(fallback.selectors,CENTCOM_NEWS_ARTICLE_SELECTOR),
+        includeAny:withUniqueItem(fallback.includeAny,CENTCOM_NEWS_ARTICLE_PATH)
+      };
+    });
+    return source;
+  }
+
   function portableSource(value,{migrate=true}={}){
     let source=JSON.parse(JSON.stringify(value||{}));
     if(migrate&&host(source.url)==='news.google.com'&&source.directConfig?.url){
@@ -2188,6 +2213,7 @@ window.NWLiveResolver = (() => {
     }
     const replacement=migrate?knownDirectReplacement(source):null;
     if(replacement)source={...source,...replacement};
+    source=repairKnownSource(source);
     SOURCE_RUNTIME_KEYS.forEach(key=>delete source[key]);
     if(host(source.recoveryUrl)==='news.google.com')delete source.recoveryUrl;
     if(source.recoveryMode==='indexed')delete source.recoveryMode;
