@@ -108,13 +108,17 @@
 
 .worker-setup-panel{margin:0 0 14px}.worker-setup-panel h2{margin:0 0 5px;font-size:16px}.settings-help{margin:0 0 12px;color:var(--muted);font-size:12px;line-height:1.5}.worker-status{align-self:center;color:var(--muted);font-size:12px}.worker-status.ok{color:#9af0c3}.worker-status.warning{color:#ffe09a}.worker-status.error{color:#ffadb4}.domain-status.dynamic{border-color:#38658f;color:#b9dcff}.source-editor-help strong{color:#dbeeff}
 
+.persistent-search{position:relative;z-index:3}.top-tools{margin-bottom:11px}.top-tools.collapsed{display:none}.layout-toggle{white-space:nowrap}.source-panel-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}.source-panel-heading>div{min-width:0}.source-panel-toggle{padding:6px 8px;font-size:11px;white-space:nowrap}.monitor-layout.sources-collapsed{grid-template-columns:46px minmax(0,1fr)}.monitor-layout.sources-collapsed .source-summary-panel{min-width:46px}.monitor-layout.sources-collapsed .source-panel-heading{height:100%;min-height:560px;padding:8px 6px;align-items:flex-start;justify-content:center;border-bottom:0}.monitor-layout.sources-collapsed .source-panel-heading>div,.monitor-layout.sources-collapsed .source-summary{display:none}.monitor-layout.sources-collapsed .source-panel-toggle{width:32px;padding:8px 5px}.cloud-sync-line{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:9px;font-size:11px;color:var(--muted)}.cloud-sync-dot{width:8px;height:8px;border-radius:50%;background:#6e7d92}.cloud-sync-line.ok{color:#9af0c3}.cloud-sync-line.ok .cloud-sync-dot{background:var(--green)}.cloud-sync-line.warning{color:#ffe09a}.cloud-sync-line.warning .cloud-sync-dot{background:var(--yellow)}.cloud-sync-line.error{color:#ffadb4}.cloud-sync-line.error .cloud-sync-dot{background:var(--red)}
+@media(max-width:1050px){.monitor-layout.sources-collapsed{grid-template-columns:1fr}.monitor-layout.sources-collapsed .source-summary-panel{display:none}}
+@media(max-width:720px){.layout-toggle{width:100%}.monitor-layout.sources-collapsed{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
   <header class="app-header">
     <div>
       <div class="eyebrow">OSINT NEWS MONITOR</div>
-      <h1>News Watch <span class="version">3.5</span></h1>
+      <h1>News Watch <span class="version">3.6</span></h1>
       <p>Aggregatore operativo Middle East e fonti ufficiali.</p>
     </div>
     <nav class="main-nav" aria-label="Sezioni">
@@ -130,6 +134,7 @@
     <div id="statusBar" class="status-bar" role="status">Pronto.</div>
 
     <section id="monitorView" class="app-view">
+      <section id="topTools" class="top-tools">
       <section class="stats-grid">
         <article class="stat-card"><span>Fonti attive</span><strong id="statActive">0</strong></article>
         <article class="stat-card"><span>Fonti OK</span><strong id="statOk">0</strong></article>
@@ -137,13 +142,31 @@
         <article class="stat-card"><span>Articoli</span><strong id="statArticles">0</strong></article>
       </section>
 
-      <section class="panel search-panel">
+      <section class="panel filters-panel">
+        <div class="form-grid six">
+          <label>Periodo<select id="timeFilter"><option value="0">Tutto</option><option value="0.25">15 minuti</option><option value="0.5">30 minuti</option><option value="1">1 ora</option><option value="3">3 ore</option><option value="12">12 ore</option><option value="24">24 ore</option><option value="72">3 giorni</option></select></label>
+          <label>Cartella<select id="folderFilter"><option value="">Tutte</option></select></label>
+          <label>Fonte<select id="sourceFilter"><option value="">Tutte</option></select></label>
+          <label>Stato<select id="readFilter"><option value="">Tutti</option><option value="unread">Non letti</option><option value="read">Letti</option></select></label>
+          <label>Tipo<select id="kindFilter"><option value="">Tutti</option><option value="official">Fonti ufficiali</option><option value="agency">Agenzie</option><option value="state-media">Media statali</option><option value="media">Media</option></select></label>
+          <label>Visualizzazione<select id="viewMode"><option value="analysis">Analisi</option><option value="compact">Compatta</option><option value="stories">Storie raggruppate</option></select></label>
+        </div>
+        <div class="button-row right"><button id="markAllRead">Segna tutte come lette</button><button id="copyVisible">Copia risultati</button><button id="exportCsv">Esporta CSV</button></div>
+      </section>
+      <div class="saved-searches-wrap">
+        <span class="label-title">Ricerche salvate</span>
+        <div id="savedSearches" class="chip-list"></div>
+      </div>
+      </section>
+
+      <section class="panel search-panel persistent-search">
         <div class="search-row">
           <label class="grow">Ricerca booleana
             <input id="queryInput" type="search" placeholder='Iran AND (missile OR drone) NOT sport'>
           </label>
           <button id="advancedToggle">Ricerca avanzata</button>
           <button id="saveSearchToggle">Salva ricerca</button>
+          <button id="toggleTopTools" class="layout-toggle" type="button">Nascondi strumenti</button>
           <button id="refreshButton" class="primary">Aggiorna</button>
         </div>
         <div id="queryError" class="inline-error hidden"></div>
@@ -167,27 +190,11 @@
           <div class="search-row"><label class="grow">Nome<input id="savedSearchName" placeholder="Hormuz – Navi e attacchi"></label><button id="confirmSaveSearch" class="primary">Salva</button></div>
         </div>
 
-        <div class="saved-searches-wrap">
-          <span class="label-title">Ricerche salvate</span>
-          <div id="savedSearches" class="chip-list"></div>
-        </div>
       </section>
 
-      <section class="panel filters-panel">
-        <div class="form-grid six">
-          <label>Periodo<select id="timeFilter"><option value="0">Tutto</option><option value="0.25">15 minuti</option><option value="0.5">30 minuti</option><option value="1">1 ora</option><option value="3">3 ore</option><option value="12">12 ore</option><option value="24">24 ore</option><option value="72">3 giorni</option></select></label>
-          <label>Cartella<select id="folderFilter"><option value="">Tutte</option></select></label>
-          <label>Fonte<select id="sourceFilter"><option value="">Tutte</option></select></label>
-          <label>Stato<select id="readFilter"><option value="">Tutti</option><option value="unread">Non letti</option><option value="read">Letti</option></select></label>
-          <label>Tipo<select id="kindFilter"><option value="">Tutti</option><option value="official">Fonti ufficiali</option><option value="agency">Agenzie</option><option value="state-media">Media statali</option><option value="media">Media</option></select></label>
-          <label>Visualizzazione<select id="viewMode"><option value="analysis">Analisi</option><option value="compact">Compatta</option><option value="stories">Storie raggruppate</option></select></label>
-        </div>
-        <div class="button-row right"><button id="markAllRead">Segna tutte come lette</button><button id="copyVisible">Copia risultati</button><button id="exportCsv">Esporta CSV</button></div>
-      </section>
-
-      <section class="monitor-layout">
+      <section id="monitorLayout" class="monitor-layout">
         <aside class="panel source-summary-panel">
-          <div class="panel-heading"><div><h2>Fonti</h2><span id="lastCheck">Mai aggiornato</span></div></div>
+          <div class="panel-heading source-panel-heading"><div><h2>Fonti</h2><span id="lastCheck">Mai aggiornato</span></div><button id="toggleSourcesPanel" class="source-panel-toggle" type="button" title="Nascondi colonna Fonti">‹ Nascondi</button></div>
           <div id="sourceSummary" class="source-summary"></div>
         </aside>
         <section class="panel feed-panel">
@@ -380,11 +387,12 @@
         <div class="page-heading"><div><h2>Impostazioni</h2><p>Configurazione del proxy e del monitoraggio.</p></div></div>
         <form id="settingsForm">
           <div class="subpanel worker-setup-panel">
-            <h2>Cloudflare Worker 3.0</h2>
-            <p class="settings-help">Il Worker 3.0 può interrogare nuovi domini senza modificare e ripubblicare il codice. Per i domini non inclusi inizialmente usa un token amministratore salvato soltanto in questo browser.</p>
+            <h2>Cloudflare Worker 3.6</h2>
+            <p class="settings-help">Fonti e cartelle sono salvate online e caricate automaticamente su tutti i PC. Il token amministratore resta soltanto nel browser e serve per modificare la configurazione.</p>
             <label>URL Cloudflare Worker<input id="proxyUrl" type="url" placeholder="https://nome.workers.dev/?url="></label>
             <label>Token amministratore Worker<input id="workerAdminToken" type="password" autocomplete="off" placeholder="Inserisci il token configurato come secret ADMIN_TOKEN"></label>
             <div class="button-row"><button id="testWorker" type="button">Testa Worker</button><span id="workerStatus" class="worker-status">Non verificato.</span></div>
+            <div id="cloudSyncLine" class="cloud-sync-line"><span class="cloud-sync-dot"></span><span id="cloudSyncText">Sincronizzazione online non verificata.</span></div>
           </div>
           <div class="form-grid three">
             <label>Richieste simultanee<input id="concurrency" type="number" min="1" max="8"></label>
@@ -413,7 +421,7 @@ window.NW_DEFAULT_SOURCES=[{"id":"aljazeera-middle-east","name":"Al Jazeera – 
 window.NWUtils=(()=>{const TRACK=new Set(['utm_source','utm_medium','utm_campaign','utm_term','utm_content','gclid','fbclid','mod']);function clean(v){return String(v||'').replace(/\s+/g,' ').trim()}function strip(v){const d=document.createElement('textarea');d.innerHTML=String(v||'').replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,' ').replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,' ').replace(/<[^>]+>/g,' ');return clean(d.value)}function truncate(v,n=320){const s=clean(v);return s.length<=n?s:s.slice(0,n-1).replace(/\s+\S*$/,'')+'…'}function normUrl(v,base){try{const u=new URL(v,base);u.hash='';[...u.searchParams.keys()].forEach(k=>{if(TRACK.has(k.toLowerCase()))u.searchParams.delete(k)});u.hostname=u.hostname.toLowerCase().replace(/^www\./,'');if(u.pathname.length>1)u.pathname=u.pathname.replace(/\/+$/,'');return u.toString()}catch{return clean(v)}}function hash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(36)}function date(v){if(!v)return null;const d=new Date(v);return Number.isNaN(d.getTime())?null:d}function fmt(v){const d=v instanceof Date?v:date(v);return d?new Intl.DateTimeFormat('it-IT',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(d):''}function escape(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}function csv(v){const s=String(v??'');return /[;"\n\r]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s}function download(name,text,mime='text/plain;charset=utf-8'){const b=new Blob([text],{type:mime}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}async function copy(text){if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(text);const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove()}function lines(v){return String(v||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean)}function slug(v){return clean(v).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,60)||'fonte-'+Date.now()}return{clean,strip,truncate,normUrl,hash,date,fmt,escape,csv,download,copy,lines,slug}})();
 </script>
 <script data-file="storage.js">
-window.NWStore=(()=>{const P='newsWatchFinal.';const defaults={proxyUrl:'https://news-proxy.f-sormani-1985.workers.dev/?url=',concurrency:4,timeoutSeconds:22,autoRefreshMinutes:0,liveAutoRefreshMinutes:5,baselineFirstRun:true,adminToken:'',workerVersion:''};function get(k,f){try{const v=JSON.parse(localStorage.getItem(P+k));return v??f}catch{return f}}function set(k,v){localStorage.setItem(P+k,JSON.stringify(v))}function settings(){return{...defaults,...get('settings',{})}}function sources(){const v=get('sources',null);return Array.isArray(v)?v:null}function seen(){return get('seen',{})}function isSeen(source,id){const m=seen();return Array.isArray(m[source])&&m[source].includes(id)}function markSeen(source,ids,on=true){const m=seen(),s=new Set(Array.isArray(m[source])?m[source]:[]);ids.forEach(id=>on?s.add(id):s.delete(id));m[source]=[...s].slice(-1000);set('seen',m)}function initialized(){return get('initialized',{})}function setInitialized(id){const m=initialized();m[id]=true;set('initialized',m)}return{defaults,settings,saveSettings:v=>set('settings',v),sources,saveSources:v=>set('sources',v),clearSources:()=>localStorage.removeItem(P+'sources'),isSeen,markSeen,isInitialized:id=>!!initialized()[id],setInitialized,savedSearches:()=>get('savedSearches',[]),saveSavedSearches:v=>set('savedSearches',v),health:()=>get('health',{}),saveHealth:v=>set('health',v),folderState:()=>get('folderState',{}),saveFolderState:v=>set('folderState',v),folderNames:()=>get('folderNames',[]),saveFolderNames:v=>set('folderNames',v),resetHistory:()=>{localStorage.removeItem(P+'seen');localStorage.removeItem(P+'initialized')}}})();
+window.NWStore=(()=>{const P='newsWatchFinal.';const defaults={proxyUrl:'https://news-proxy.f-sormani-1985.workers.dev/?url=',concurrency:4,timeoutSeconds:22,autoRefreshMinutes:0,liveAutoRefreshMinutes:5,baselineFirstRun:true,adminToken:'',workerVersion:''};function get(k,f){try{const v=JSON.parse(localStorage.getItem(P+k));return v??f}catch{return f}}function set(k,v){localStorage.setItem(P+k,JSON.stringify(v))}function settings(){return{...defaults,...get('settings',{})}}function sources(){const v=get('sources',null);return Array.isArray(v)?v:null}function seen(){return get('seen',{})}function isSeen(source,id){const m=seen();return Array.isArray(m[source])&&m[source].includes(id)}function markSeen(source,ids,on=true){const m=seen(),s=new Set(Array.isArray(m[source])?m[source]:[]);ids.forEach(id=>on?s.add(id):s.delete(id));m[source]=[...s].slice(-1000);set('seen',m)}function initialized(){return get('initialized',{})}function setInitialized(id){const m=initialized();m[id]=true;set('initialized',m)}return{defaults,settings,saveSettings:v=>set('settings',v),sources,saveSources:v=>set('sources',v),clearSources:()=>localStorage.removeItem(P+'sources'),isSeen,markSeen,isInitialized:id=>!!initialized()[id],setInitialized,savedSearches:()=>get('savedSearches',[]),saveSavedSearches:v=>set('savedSearches',v),health:()=>get('health',{}),saveHealth:v=>set('health',v),folderState:()=>get('folderState',{}),saveFolderState:v=>set('folderState',v),folderNames:()=>get('folderNames',[]),saveFolderNames:v=>set('folderNames',v),uiState:()=>get('uiState',{topToolsCollapsed:false,sourcesCollapsed:false}),saveUiState:v=>set('uiState',v),resetHistory:()=>{localStorage.removeItem(P+'seen');localStorage.removeItem(P+'initialized')}}})();
 </script>
 <script data-file="query.js">
 window.NWQuery=(()=>{function tokenize(q){const out=[];let i=0;while(i<q.length){if(/\s/.test(q[i])){i++;continue}const c=q[i];if(c==='('||c===')'){out.push({t:c});i++;continue}const fm=q.slice(i).match(/^([a-z]+):"/i);if(fm){const field=fm[1];i+=field.length+2;let s='',closed=false;while(i<q.length){if(q[i]==='"'){closed=true;i++;break}s+=q[i++]}if(!closed)throw new Error('Virgolette non chiuse');out.push({t:'TERM',v:field+':'+s,quoted:true});continue}if(c==='"'){let s='',closed=false;i++;while(i<q.length){if(q[i]==='"'){closed=true;i++;break}s+=q[i++]}if(!closed)throw new Error('Virgolette non chiuse');out.push({t:'TERM',v:s,quoted:true});continue}let s='';while(i<q.length&&!/\s|\(|\)/.test(q[i]))s+=q[i++];const u=s.toUpperCase();out.push({t:['AND','OR','NOT'].includes(u)?u:'TERM',v:s})}const withAnd=[];for(const tok of out){const prev=withAnd.at(-1);if(prev&&['TERM',')'].includes(prev.t)&&['TERM','(','NOT'].includes(tok.t))withAnd.push({t:'AND'});withAnd.push(tok)}return withAnd}function parse(q){const ts=tokenize(q),prec={OR:1,AND:2,NOT:3},ops=[],out=[];for(const tok of ts){if(tok.t==='TERM')out.push(tok);else if(tok.t==='(')ops.push(tok);else if(tok.t===')'){while(ops.length&&ops.at(-1).t!=='(')out.push(ops.pop());if(!ops.length)throw new Error('Parentesi non bilanciate');ops.pop()}else{while(ops.length&&ops.at(-1).t!=='('&&((tok.t!=='NOT'&&prec[ops.at(-1).t]>=prec[tok.t])||(tok.t==='NOT'&&prec[ops.at(-1).t]>prec[tok.t])))out.push(ops.pop());ops.push(tok)}}while(ops.length){const x=ops.pop();if(x.t==='(')throw new Error('Parentesi non bilanciate');out.push(x)}const st=[];for(const tok of out){if(tok.t==='TERM')st.push(tok);else if(tok.t==='NOT'){const a=st.pop();if(!a)throw new Error('NOT senza termine');st.push({t:'NOT',a})}else{const b=st.pop(),a=st.pop();if(!a||!b)throw new Error('Operatore senza termine');st.push({t:tok.t,a,b})}}if(st.length>1)throw new Error('Query non valida');return st[0]||null}function term(article,raw){let field='',value=raw.v||'';const m=value.match(/^([a-z]+):(.*)$/i);if(m){field=m[1].toLowerCase();value=m[2]}value=value.toLowerCase();const hay={source:article.sourceName||'',title:article.title||'',abstract:article.abstract||'',tag:(article.tags||[]).join(' '),kind:article.kind||''};if(field==='is')return value==='read'?article.isRead:value==='unread'||value==='new'?!article.isRead:true;if(field==='has')return value==='abstract'?!!article.abstract:true;if(field==='after'){const d=new Date(value+'T00:00:00');return article.dateISO&&new Date(article.dateISO)>=d}if(field==='before'){const d=new Date(value+'T23:59:59');return article.dateISO&&new Date(article.dateISO)<=d}if(field&&hay[field]!==undefined)return hay[field].toLowerCase().includes(value);return Object.values(hay).join(' ').toLowerCase().includes(value)}function evalNode(n,a){if(!n)return true;if(n.t==='TERM')return term(a,n);if(n.t==='NOT')return!evalNode(n.a,a);return n.t==='AND'?evalNode(n.a,a)&&evalNode(n.b,a):evalNode(n.a,a)||evalNode(n.b,a)}function compile(q){const ast=parse(String(q||'').trim());return a=>evalNode(ast,a)}return{tokenize,parse,compile}})();
@@ -1452,7 +1460,7 @@ window.NWLiveResolver = (() => {
 (()=>{
   'use strict';
   const U=NWUtils,S=NWStore,P=NWParsers,Q=NWQuery,Stories=NWStories,LiveAlert=NWLiveAlert,Resolver=NWLiveResolver;
-  const APP_VERSION='3.5';
+  const APP_VERSION='3.6';
   const $=id=>document.getElementById(id);
   const ALLOWED=['aljazeera.com','haaretz.com','theiranproject.com','middleeasteye.net','presstv.ir','sky.com','jpost.com','timesofisrael.com','cnn.com','bbc.com','reuters.com','nytimes.com','wsj.com','feeds.content.dowjones.io','centcom.mil','dvidshub.net','news.google.com','edition-prod-cf.sitemirror.cnn.com','mehrnews.com','irna.ir'];
 
@@ -1718,8 +1726,8 @@ window.NWLiveResolver = (() => {
   function conciseHttpError(status,body,target='',code=''){
     const plain=U.strip(body||'');
     const currentHost=host(target);
-    if(code==='ADMIN_TOKEN_REQUIRED')return`Il dominio ${currentHost||'richiesto'} non è tra quelli iniziali. Inserisci nelle Impostazioni il token amministratore del Worker 3.0.`;
-    if(code==='WORKER_ADMIN_TOKEN_NOT_CONFIGURED')return'Il Worker 3.0 non ha ancora il secret ADMIN_TOKEN. Configuralo una sola volta su Cloudflare.';
+    if(code==='ADMIN_TOKEN_REQUIRED')return`Il dominio ${currentHost||'richiesto'} non è ancora autorizzato. Inserisci nelle Impostazioni il token amministratore del Worker 3.6.`;
+    if(code==='WORKER_ADMIN_TOKEN_NOT_CONFIGURED')return'Il Worker 3.6 non ha ancora il secret ADMIN_TOKEN. Configuralo una sola volta su Cloudflare.';
     if(code==='INVALID_ADMIN_TOKEN')return'Il token amministratore del Worker non è corretto.';
     if(code==='UNSAFE_TARGET')return'Il Worker ha rifiutato l’indirizzo perché non è un URL pubblico HTTPS valido.';
     if(code==='LEGACY_WORKER')return'Il Worker pubblicato è una versione precedente: sostituiscilo con worker.js della versione 3.0.';
@@ -2060,7 +2068,7 @@ window.NWLiveResolver = (() => {
   }
 
 
-  const state={defaults:JSON.parse(JSON.stringify(window.NW_DEFAULT_SOURCES||[])),sources:[],results:new Map(),articles:[],health:S.health(),timer:null,liveTimer:null,liveInitialTimer:null,liveNextDue:0,liveSnapshotReady:false,liveAlertCount:0,liveFreshIds:new Set(),folderCollapsed:S.folderState(),folderNames:S.folderNames(),baseTitle:document.title,view:'monitorView',pendingAction:null,refreshing:{news:null,live:null,all:null}};
+  const state={defaults:JSON.parse(JSON.stringify(window.NW_DEFAULT_SOURCES||[])),sources:[],results:new Map(),articles:[],health:S.health(),timer:null,liveTimer:null,liveInitialTimer:null,liveNextDue:0,liveSnapshotReady:false,liveAlertCount:0,liveFreshIds:new Set(),folderCollapsed:S.folderState(),folderNames:S.folderNames(),ui:S.uiState(),baseTitle:document.title,view:'monitorView',pendingAction:null,refreshing:{news:null,live:null,all:null},sync:{timer:null,suspend:true,saving:false,pending:false,available:false,revision:'',updatedAt:'',lastPayload:''}};
 
   function status(message,type=''){
     const element=$('statusBar');
@@ -2091,6 +2099,7 @@ window.NWLiveResolver = (() => {
   function saveFolderCatalog(){
     state.folderNames=folderCatalog();
     S.saveFolderNames(state.folderNames);
+    queueRemoteSave();
   }
   function registerFolder(name){
     const clean=cleanFolderName(name);if(!clean)return'';
@@ -2211,7 +2220,7 @@ window.NWLiveResolver = (() => {
     S.saveSources(seeded);
     return seeded;
   }
-  function saveSources(){S.saveSources(portableSources(state.sources,{migrate:false}))}
+  function saveSources(){S.saveSources(portableSources(state.sources,{migrate:false}));queueRemoteSave()}
   function initSources(){
     // Regola 3.2: dopo il primo avvio lo storage dell'utente è autorevole.
     // Nessuna fonte predefinita assente viene reinserita durante F5/riapertura.
@@ -2223,6 +2232,172 @@ window.NWLiveResolver = (() => {
       S.saveSettings({...settings,appVersion:APP_VERSION});
     }
     saveFolderCatalog();
+  }
+
+  function configurationEndpoint(){
+    const origin=workerOrigin();
+    return origin?origin+'/api/config':'';
+  }
+
+  function localConfiguration(){
+    return{
+      schemaVersion:1,
+      sources:portableSources(state.sources,{migrate:false}),
+      folderNames:folderCatalog()
+    };
+  }
+
+  function sameConfiguration(left,right){
+    const normalize=value=>JSON.stringify({
+      sources:portableSources(value?.sources||[],{migrate:false}),
+      folderNames:[...(value?.folderNames||[])].map(cleanFolderName).filter(Boolean).sort((a,b)=>a.localeCompare(b,'it'))
+    });
+    return normalize(left)===normalize(right);
+  }
+
+  function hasLocalCustomization(){
+    const defaultSources=initialSources();
+    return !sameConfiguration(localConfiguration(),{
+      sources:defaultSources,
+      folderNames:[...new Set(defaultSources.filter(source=>!isLiveSource(source)).map(source=>cleanFolderName(source.folder)).filter(Boolean))]
+    });
+  }
+
+  function setCloudSync(message,type=''){
+    const line=$('cloudSyncLine'),text=$('cloudSyncText');
+    if(!line||!text)return;
+    text.textContent=message;
+    line.className='cloud-sync-line'+(type?' '+type:'');
+  }
+
+  function applyRemoteConfiguration(configuration){
+    if(!configuration||!Array.isArray(configuration.sources))throw new Error('Configurazione online non valida');
+    state.sync.suspend=true;
+    try{
+      state.sources=Resolver.dedupeByUrl(portableSources(configuration.sources));
+      state.folderNames=[...new Set((configuration.folderNames||[]).map(cleanFolderName).filter(Boolean))];
+      S.saveSources(portableSources(state.sources,{migrate:false}));
+      S.saveFolderNames(state.folderNames);
+      state.sync.revision=String(configuration.revision||'');
+      state.sync.updatedAt=String(configuration.updatedAt||'');
+      state.sync.lastPayload=JSON.stringify(localConfiguration());
+      state.sync.available=true;
+    }finally{
+      state.sync.suspend=false;
+    }
+  }
+
+  async function fetchRemoteConfiguration(){
+    const endpoint=configurationEndpoint();
+    if(!endpoint)throw Object.assign(new Error('URL Worker non valido'),{code:'INVALID_WORKER_URL'});
+    const response=await fetch(endpoint,{cache:'no-store'});
+    const body=await response.text();
+    const errorCode=response.headers.get('X-News-Watch-Error-Code')||'';
+    if(response.status===404&&errorCode==='CONFIG_NOT_FOUND')return null;
+    if(!response.ok){
+      const failure=new Error(body||`HTTP ${response.status}`);
+      failure.status=response.status;
+      failure.code=errorCode;
+      throw failure;
+    }
+    return JSON.parse(body);
+  }
+
+  async function saveRemoteConfiguration(options={}){
+    if(state.sync.suspend)return false;
+    if(state.sync.saving){state.sync.pending=true;return false}
+    const endpoint=configurationEndpoint(),token=S.settings().adminToken;
+    if(!endpoint){setCloudSync('Sincronizzazione non disponibile: URL Worker non valido.','error');return false}
+    if(!token){setCloudSync('Modifiche salvate su questo PC. Inserisci il token per salvarle online.','warning');return false}
+    const payload=JSON.stringify(localConfiguration());
+    if(!options.initial&&payload===state.sync.lastPayload)return true;
+    state.sync.saving=true;
+    state.sync.pending=false;
+    setCloudSync(options.initial?'Prima configurazione online in corso…':'Salvataggio online in corso…');
+    try{
+      const response=await fetch(endpoint,{
+        method:'PUT',
+        cache:'no-store',
+        headers:{'Content-Type':'application/json','X-News-Watch-Admin':token},
+        body:payload
+      });
+      const body=await response.text();
+      if(!response.ok){
+        const failure=new Error(body||`HTTP ${response.status}`);
+        failure.status=response.status;
+        failure.code=response.headers.get('X-News-Watch-Error-Code')||'';
+        throw failure;
+      }
+      const saved=JSON.parse(body);
+      state.sync.revision=String(saved.revision||'');
+      state.sync.updatedAt=String(saved.updatedAt||'');
+      state.sync.lastPayload=payload;
+      state.sync.available=true;
+      setCloudSync('Configurazione salvata online. Sugli altri PC può impiegare fino a un minuto.','ok');
+      return true;
+    }catch(failure){
+      const message=failure.status===403
+        ?'Token non valido: modifica salvata soltanto su questo PC.'
+        :failure.code==='WORKER_CONFIG_KV_NOT_CONFIGURED'
+          ?'Archivio online non ancora collegato al Worker.'
+          :'Salvataggio online fallito: '+failure.message;
+      setCloudSync(message,'error');
+      return false;
+    }finally{
+      state.sync.saving=false;
+      if(state.sync.pending){state.sync.pending=false;queueRemoteSave(150)}
+    }
+  }
+
+  function queueRemoteSave(delay=500){
+    if(state.sync.suspend)return;
+    clearTimeout(state.sync.timer);
+    state.sync.timer=setTimeout(()=>saveRemoteConfiguration(),delay);
+  }
+
+  async function initRemoteConfiguration(){
+    setCloudSync('Caricamento configurazione online…');
+    try{
+      const remote=await fetchRemoteConfiguration();
+      if(remote){
+        applyRemoteConfiguration(remote);
+        setCloudSync(`Configurazione online caricata${remote.updatedAt?' · '+U.fmt(remote.updatedAt):''}.`,'ok');
+        return 'remote';
+      }
+      state.sync.available=true;
+      state.sync.suspend=false;
+      if(hasLocalCustomization()&&S.settings().adminToken){
+        const saved=await saveRemoteConfiguration({initial:true});
+        return saved?'uploaded':'local';
+      }
+      setCloudSync(hasLocalCustomization()
+        ?'Configurazione online vuota: inserisci il token per trasferire questa configurazione.'
+        :'Configurazione online vuota: apri prima la 3.6 sul PC già configurato.','warning');
+      return 'empty';
+    }catch(failure){
+      state.sync.suspend=false;
+      const message=failure.code==='WORKER_CONFIG_KV_NOT_CONFIGURED'
+        ?'Archivio online non ancora collegato al Worker.'
+        :'Configurazione online non raggiungibile: '+failure.message;
+      setCloudSync(message,'error');
+      return 'error';
+    }
+  }
+
+  function applyLayout(){
+    const topCollapsed=!!state.ui.topToolsCollapsed;
+    const sourcesCollapsed=!!state.ui.sourcesCollapsed;
+    $('topTools').classList.toggle('collapsed',topCollapsed);
+    $('toggleTopTools').textContent=topCollapsed?'Mostra strumenti':'Nascondi strumenti';
+    $('monitorLayout').classList.toggle('sources-collapsed',sourcesCollapsed);
+    $('toggleSourcesPanel').textContent=sourcesCollapsed?'›':'‹ Nascondi';
+    $('toggleSourcesPanel').title=sourcesCollapsed?'Mostra colonna Fonti':'Nascondi colonna Fonti';
+  }
+
+  function saveLayout(patch){
+    state.ui={...state.ui,...patch};
+    S.saveUiState(state.ui);
+    applyLayout();
   }
 
   function proxyUrl(target, fresh = false) {
@@ -2284,11 +2459,12 @@ window.NWLiveResolver = (() => {
       if(!health.ok)throw new Error('endpoint /api/health non disponibile');
       const data=await health.json();
       if(String(data.version||'').split('.')[0]!=='3')throw new Error('versione Worker non compatibile');
+      if(!data.sharedConfiguration)throw new Error('archivio online KV non collegato');
       if(S.settings().adminToken){
         const auth=await fetch(origin+'/api/auth-check',{cache:'no-store',headers:{'X-News-Watch-Admin':S.settings().adminToken}});
         if(!auth.ok){const code=auth.headers.get('X-News-Watch-Error-Code')||'';throw new Error(conciseHttpError(auth.status,await auth.text(),origin,code))}
       }
-      element.textContent=`Worker ${data.version} operativo${data.dynamicDomains?' · domini dinamici attivi':' · secret ADMIN_TOKEN mancante'}.`;
+      element.textContent=`Worker ${data.version} operativo · configurazione online attiva${data.dynamicDomains?' · domini dinamici attivi':' · secret ADMIN_TOKEN mancante'}.`;
       element.className='worker-status '+(data.dynamicDomains?'ok':'warning');
       S.saveSettings({...S.settings(),workerVersion:String(data.version||'')});
       return true;
@@ -3432,7 +3608,7 @@ window.NWLiveResolver = (() => {
     }
     if(S.settings().adminToken){
       element.className='domain-status dynamic';
-      element.textContent=`Nuovo dominio ${publicHost}: il Worker 3.0 lo interrogherà con autorizzazione dinamica. Non devi modificare il Worker.`;
+      element.textContent=`Nuovo dominio ${publicHost}: il Worker 3.6 lo interrogherà con autorizzazione dinamica. Non devi modificare il Worker.`;
     }else{
       element.className='domain-status warning';
       element.textContent=`Nuovo dominio ${publicHost}: inserisci una sola volta il token amministratore in Impostazioni.`;
@@ -3443,7 +3619,7 @@ window.NWLiveResolver = (() => {
     const currentHost=host($('liveEditUrl').value),element=$('liveEditorDomainStatus');
     if(!currentHost){element.className='domain-status';element.textContent='Inserisci un URL.';return}
     if(allowedHost(currentHost)){element.className='domain-status ok';element.textContent=`Dominio ${currentHost} incluso nelle fonti iniziali del Worker.`;return}
-    if(S.settings().adminToken){element.className='domain-status dynamic';element.textContent=`Nuovo dominio ${currentHost}: autorizzazione dinamica Worker 3.0 attiva.`}
+    if(S.settings().adminToken){element.className='domain-status dynamic';element.textContent=`Nuovo dominio ${currentHost}: autorizzazione dinamica Worker 3.6 attiva.`}
     else{element.className='domain-status warning';element.textContent=`Nuovo dominio ${currentHost}: configura il token amministratore in Impostazioni.`}
   }
 
@@ -3488,7 +3664,7 @@ window.NWLiveResolver = (() => {
     const element=$('domainWarning');
     if(!dynamic.length){element.classList.add('hidden');return}
     element.textContent=S.settings().adminToken
-      ? `Domini dinamici / recuperi gestiti dal Worker 3.0: ${dynamic.join(', ')}.`
+      ? `Domini dinamici / recuperi gestiti dal Worker 3.6: ${dynamic.join(', ')}.`
       : `Per usare questi nuovi domini configura il token amministratore del Worker nelle Impostazioni: ${dynamic.join(', ')}.`;
     element.className='inline-warning';element.classList.remove('hidden');
   }
@@ -3582,6 +3758,8 @@ window.NWLiveResolver = (() => {
 
   function bind(){
     document.querySelectorAll('.nav-button').forEach(button=>button.addEventListener('click',()=>showView(button.dataset.view)));
+    $('toggleTopTools').addEventListener('click',()=>saveLayout({topToolsCollapsed:!state.ui.topToolsCollapsed}));
+    $('toggleSourcesPanel').addEventListener('click',()=>saveLayout({sourcesCollapsed:!state.ui.sourcesCollapsed}));
     $('refreshButton').addEventListener('click',()=>refreshScope('news'));$('liveRefreshButton').addEventListener('click',()=>refreshScope('live'));$('healthRefresh').addEventListener('click',()=>refreshScope('all',{force:true}));
     $('queryInput').addEventListener('input',renderFeed);$('liveQueryInput').addEventListener('input',renderLiveFeed);
     $('folderFilter').addEventListener('change',()=>{renderSourceOptions();renderFeed()});['timeFilter','sourceFilter','readFilter','kindFilter','viewMode'].forEach(id=>$(id).addEventListener('change',renderFeed));['liveSourceFilter','liveReadFilter','liveSortOrder'].forEach(id=>$(id).addEventListener('change',renderLiveFeed));
@@ -3664,12 +3842,12 @@ window.NWLiveResolver = (() => {
     $('importSources').addEventListener('click',()=>$('importFile').click());$('importFile').addEventListener('change',async()=>{try{const raw=JSON.parse(await $('importFile').files[0].text());if(!Array.isArray(raw))throw new Error('JSON non valido');const data=portableSources(raw);const ids=new Set();data.forEach(source=>{if(!source.name||!source.id||!source.url)throw new Error('Fonte incompleta');if(!/^[a-z0-9][a-z0-9-]*$/.test(source.id))throw new Error('ID non valido: '+source.id);const url=new URL(source.url);if(url.protocol!=='https:')throw new Error('URL non HTTPS: '+source.name);if(ids.has(source.id))throw new Error('ID duplicato: '+source.id);ids.add(source.id)});state.sources=data;saveSources();saveFolderCatalog();renderAll();renderFolderManager();status('Fonti importate senza pause o timer temporanei.','success')}catch(error){status('Importazione fallita: '+error.message,'error')}$('importFile').value=''});
     $('exportSources').addEventListener('click',()=>U.download('news-watch-fonti.json',JSON.stringify(portableSources(state.sources),null,2),'application/json'));$('exportDomains').addEventListener('click',()=>{const domains=[...new Set(state.sources.flatMap(source=>[source.url,...(source.fallbacks||[]).map(item=>item.url)]).map(host).filter(Boolean))].sort();U.download('news-watch-domini.txt',domains.join('\n'))});
     $('restoreSources').addEventListener('click',event=>{if(state.pendingAction==='restore'){state.sources=initialSources();state.folderNames=[];state.folderCollapsed={};S.saveFolderState(state.folderCollapsed);saveSources();saveFolderCatalog();state.pendingAction=null;event.target.textContent='Ripristina iniziali';renderAll();renderFolderManager();status('Fonti e cartelle iniziali ripristinate. Questa è l’unica azione che reinserisce i predefiniti.','success')}else{state.pendingAction='restore';event.target.textContent='Conferma ripristino';status('Premi di nuovo “Conferma ripristino” entro 6 secondi.','warning');setTimeout(()=>{if(state.pendingAction==='restore'){state.pendingAction=null;event.target.textContent='Ripristina iniziali'}},6000)}});
-    $('testWorker').addEventListener('click',async()=>{S.saveSettings({...S.settings(),proxyUrl:$('proxyUrl').value.trim(),adminToken:$('workerAdminToken').value.trim()});await testWorkerConnection()});
-    $('settingsForm').addEventListener('submit',event=>{event.preventDefault();S.saveSettings({...S.settings(),proxyUrl:$('proxyUrl').value.trim(),adminToken:$('workerAdminToken').value.trim(),concurrency:Math.max(1,Math.min(8,Number($('concurrency').value)||4)),timeoutSeconds:Math.max(5,Math.min(60,Number($('timeout').value)||22)),autoRefreshMinutes:Number($('autoRefresh').value)||0,liveAutoRefreshMinutes:Number($('liveAutoRefresh').value)||0,baselineFirstRun:$('baseline').checked});autoRefresh();liveAutoRefresh();renderDomainsWarning();testWorkerConnection();status('Impostazioni salvate.','success')});
+    $('testWorker').addEventListener('click',async()=>{S.saveSettings({...S.settings(),proxyUrl:$('proxyUrl').value.trim(),adminToken:$('workerAdminToken').value.trim()});const ok=await testWorkerConnection();if(ok)await initRemoteConfiguration();renderAll()});
+    $('settingsForm').addEventListener('submit',async event=>{event.preventDefault();S.saveSettings({...S.settings(),proxyUrl:$('proxyUrl').value.trim(),adminToken:$('workerAdminToken').value.trim(),concurrency:Math.max(1,Math.min(8,Number($('concurrency').value)||4)),timeoutSeconds:Math.max(5,Math.min(60,Number($('timeout').value)||22)),autoRefreshMinutes:Number($('autoRefresh').value)||0,liveAutoRefreshMinutes:Number($('liveAutoRefresh').value)||0,baselineFirstRun:$('baseline').checked});autoRefresh();liveAutoRefresh();renderDomainsWarning();const ok=await testWorkerConnection();if(ok){const remote=await fetchRemoteConfiguration().catch(()=>null);if(remote&&!hasLocalCustomization())applyRemoteConfiguration(remote);else await saveRemoteConfiguration()}renderAll();status('Impostazioni salvate.','success')});
     $('resetHistory').addEventListener('click',event=>{if(state.pendingAction==='history'){S.resetHistory();state.pendingAction=null;state.results.clear();state.articles=[];renderAll();status('Storico letture azzerato.','success')}else{state.pendingAction='history';event.target.textContent='Conferma azzeramento';status('Premi di nuovo entro 6 secondi.','warning');setTimeout(()=>{if(state.pendingAction==='history'){state.pendingAction=null;event.target.textContent='Azzera storico letture'}},6000)}});
   }
 
-  async function init(){initSources();bind();loadSettings();autoRefresh();liveAutoRefresh(true);renderAll();showView('monitorView');renderLiveAlert();status('Pronto.','success');setTimeout(testWorkerConnection,250)}
+  async function init(){initSources();bind();loadSettings();applyLayout();renderAll();showView('monitorView');renderLiveAlert();status('Caricamento configurazione online…');await initRemoteConfiguration();renderAll();autoRefresh();liveAutoRefresh(true);status('Pronto.','success');setTimeout(testWorkerConnection,250)}
   init().catch(error=>status('Errore di avvio: '+error.message,'error'));
 })();
 </script>
