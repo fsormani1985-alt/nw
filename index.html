@@ -118,7 +118,7 @@
   <header class="app-header">
     <div>
       <div class="eyebrow">OSINT NEWS MONITOR</div>
-      <h1>News Watch <span class="version">4.2</span></h1>
+      <h1>News Watch <span class="version">4.2.1</span></h1>
       <p>Aggregatore operativo Middle East e fonti ufficiali.</p>
     </div>
     <nav class="main-nav" aria-label="Sezioni">
@@ -336,6 +336,7 @@
                     <option value="sitemap">Sitemap XML</option>
                     <option value="nna-api">API NNA English</option>
                     <option value="lorient-api">API L’Orient Today</option>
+                    <option value="ukmto">UKMTO incidenti</option>
                   </select>
                 </label>
                 <label>Tipo
@@ -828,6 +829,129 @@ window.NWParsers = (() => {
     return uniq(output, source.maxItems || 40);
   }
 
+
+  function ukmto(text, source) {
+    const documentHtml = new DOMParser().parseFromString(text, 'text/html');
+    const visible = U.clean(documentHtml.body?.innerText || documentHtml.body?.textContent || U.strip(text));
+    const output = [];
+    const monthIndex = {
+      jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6,
+      jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12
+    };
+
+    function isoDate(block, fallbackDate) {
+      const named = block.match(/\b(?:Incident|Report|Issue)\s*Date\s*:?\s*(\d{1,2})\s+([A-Za-z]{3,9})\s+(\d{2,4})\b/i);
+      let year, month, day;
+
+      if (named) {
+        day = Number(named[1]);
+        month = monthIndex[named[2].slice(0, 3).toLowerCase()];
+        year = Number(named[3]);
+        if (year < 100) year += 2000;
+      } else {
+        const numeric = String(fallbackDate || '').match(/\b(\d{1,2})\/(\d{1,2})\/(20\d{2})\b/);
+        if (!numeric) return '';
+        day = Number(numeric[1]);
+        month = Number(numeric[2]);
+        year = Number(numeric[3]);
+      }
+
+      if (!month || day < 1 || day > 31) return '';
+
+      const time = block.match(/\b(?:Incident|Report|Issue)\s*Time\s*:?\s*(\d{1,2})[:.]?(\d{2})\s*(?:UTC|GMT)\b/i)
+        || block.match(/\b(?:Incident|Report|Issue)\s*Time\s*:?\s*(\d{3,4})\s*(?:UTC|GMT)\b/i);
+
+      let hours = 12;
+      let minutes = 0;
+
+      if (time) {
+        if (time[2] != null) {
+          hours = Number(time[1]);
+          minutes = Number(time[2]);
+        } else {
+          const digits = time[1].padStart(4, '0');
+          hours = Number(digits.slice(0, 2));
+          minutes = Number(digits.slice(2));
+        }
+      }
+
+      if (hours > 23 || minutes > 59) {
+        hours = 12;
+        minutes = 0;
+      }
+
+      return `${String(year).padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}T${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:00Z`;
+    }
+
+    const marker = /(?:^|\s)(\d{1,2}\/\d{1,2}\/20\d{2})\s+(Attack|Advisory|Suspicious Activity|Boarding|Hijack|Illegal Boarding|Incident|Warning)\s*:/gi;
+    const matches = [...visible.matchAll(marker)];
+
+    for (let index = 0; index < matches.length; index += 1) {
+      const match = matches[index];
+      const start = match.index ?? 0;
+      const end = index + 1 < matches.length ? (matches[index + 1].index ?? visible.length) : visible.length;
+      const block = U.clean(visible.slice(start, end));
+      const warning = block.match(/\b(?:UKMTO\s+)?(?:WARNING|ADVISORY)?\s*#?\s*(\d{2,3}-\d{2})\b/i)
+        || block.match(/\bUKMTO\s*#\s*(\d{1,3})\b/i);
+
+      if (!warning) continue;
+
+      const category = U.clean(match[2]) || 'Incident';
+      const identifier = warning[1].includes('-') ? warning[1] : `${warning[1]}-26`;
+      const dateISO = isoDate(block, match[1]);
+      const title = `UKMTO ${identifier} – ${category}`;
+      const abstract = block
+        .replace(new RegExp(`^\\s*${match[1].replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s+${category.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*:\\s*`, 'i'), '')
+        .replace(/\bRead more\b[\s\S]*$/i, '')
+        .trim();
+
+      const publicBase = source.pageUrl || source.url || 'https://www.ukmto.org/recent-incidents';
+      let publicUrl = publicBase;
+      try {
+        const parsed = new URL(publicBase);
+        parsed.searchParams.set('nw_incident', identifier);
+        publicUrl = parsed.toString();
+      } catch {}
+
+      output.push(
+        make(
+          source,
+          title,
+          publicUrl,
+          dateISO,
+          abstract
+        )
+      );
+    }
+
+    // Alcune versioni della pagina non antepongono la data DD/MM/YYYY ai
+    // singoli blocchi. Fallback: cerca comunque WARNING/ADVISORY numerati.
+    if (!output.length) {
+      const fallback = /\bUKMTO\s+(WARNING|ADVISORY)\s+(\d{2,3}-\d{2})\b([\s\S]{0,900}?)(?=\bUKMTO\s+(?:WARNING|ADVISORY)\s+\d{2,3}-\d{2}\b|$)/gi;
+      let match;
+      while ((match = fallback.exec(visible))) {
+        const block = U.clean(match[0]);
+        const identifier = match[2];
+        const categoryMatch = block.match(/\b(ATTACK|ADVISORY|SUSPICIOUS ACTIVITY|BOARDING|HIJACK|ILLEGAL BOARDING)\b/i);
+        const category = categoryMatch ? U.clean(categoryMatch[1]).replace(/\b\w/g, value => value.toUpperCase()) : U.clean(match[1]);
+        const dateISO = isoDate(block, '');
+        const publicBase = source.pageUrl || source.url || 'https://www.ukmto.org/recent-incidents';
+        let publicUrl = publicBase;
+        try {
+          const parsed = new URL(publicBase);
+          parsed.searchParams.set('nw_incident', identifier);
+          publicUrl = parsed.toString();
+        } catch {}
+        output.push(make(source, `UKMTO ${identifier} – ${category}`, publicUrl, dateISO, block));
+      }
+    }
+
+    return uniq(
+      output.sort((a, b) => (Date.parse(b.dateISO || '') || 0) - (Date.parse(a.dateISO || '') || 0)),
+      source.maxItems || 60
+    );
+  }
+
   function candidateText(record) {
     const value = record.articleBody || record.description || record.text || record.content || record.summary || record.body || record.copy || '';
     if (typeof value === 'string') return value;
@@ -1116,6 +1240,7 @@ window.NWParsers = (() => {
     if (source.strategy === 'sitemap') return sitemap(trimmed, source);
     if (source.strategy === 'nna-api') return nnaApi(trimmed, source);
     if (source.strategy === 'lorient-api') return lorientApi(trimmed, source);
+    if (source.strategy === 'ukmto') return ukmto(trimmed, source);
     if (source.strategy === 'fars-social') return farsSocial(trimmed, source);
     if (source.strategy === 'liveblog') return liveblog(trimmed, source);
     return html(trimmed, source);
@@ -1580,7 +1705,7 @@ window.NWLiveResolver = (() => {
       id:'ukmto-recent-incidents',name:'UKMTO – Recent Incidents',folder:'Fonti ufficiali',kind:'official',
       pageUrl:'https://www.ukmto.org/recent-incidents',
       url:'https://www.ukmto.org/recent-incidents',
-      strategy:'html',
+      strategy:'ukmto',
       browserRender:true,
       maxItems:60,enabled:true,
       selectors:['main a[href]','article a[href]','h2 a[href]','h3 a[href]','h4 a[href]','a[href]'],
