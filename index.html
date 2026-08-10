@@ -118,7 +118,7 @@
   <header class="app-header">
     <div>
       <div class="eyebrow">OSINT NEWS MONITOR</div>
-      <h1>News Watch <span class="version">4.1</span></h1>
+      <h1>News Watch <span class="version">4.2</span></h1>
       <p>Aggregatore operativo Middle East e fonti ufficiali.</p>
     </div>
     <nav class="main-nav" aria-label="Sezioni">
@@ -198,7 +198,7 @@
           <div id="sourceSummary" class="source-summary"></div>
         </aside>
         <section class="panel feed-panel">
-          <div class="panel-heading"><div><h2 id="feedTitle">Notizie</h2><span id="resultCount">0 risultati</span></div></div>
+          <div class="panel-heading"><div><h2 id="feedTitle">Notizie</h2><span id="resultCount">0 risultati · ordine cronologico globale</span></div><span class="global-order-label">Tutte le fonti mescolate per orario</span></div>
           <div id="feed" class="feed"><div class="empty-state">Premi <strong>Aggiorna</strong> per controllare le fonti.</div></div>
         </section>
       </section>
@@ -387,7 +387,7 @@
         <div class="page-heading"><div><h2>Impostazioni</h2><p>Configurazione del proxy e del monitoraggio.</p></div></div>
         <form id="settingsForm">
           <div class="subpanel worker-setup-panel">
-            <h2>Cloudflare Worker 3.6</h2>
+            <h2>Cloudflare Worker 3.7</h2>
             <p class="settings-help">Fonti e cartelle sono salvate online e caricate automaticamente su tutti i PC. Il token amministratore resta soltanto nel browser e serve per modificare la configurazione.</p>
             <label>URL Cloudflare Worker<input id="proxyUrl" type="url" placeholder="https://nome.workers.dev/?url="></label>
             <label>Token amministratore Worker<input id="workerAdminToken" type="password" autocomplete="off" placeholder="Inserisci il token configurato come secret ADMIN_TOKEN"></label>
@@ -415,7 +415,7 @@
 
 
 <script data-file="default-sources.js">
-window.NW_DEFAULT_SOURCES=[{"id":"aljazeera-middle-east","name":"Al Jazeera – Middle East","kind":"media","url":"https://www.aljazeera.com/middle-east/","pageUrl":"https://www.aljazeera.com/middle-east/","strategy":"html","selectors":["article a[href]","main a[href]"],"includeAny":["/news/","/features/","/opinions/","/program/"],"excludeAny":["/tag/","/author/","/about-us/","/podcasts/"],"filterMode":"path","maxItems":35,"enabled":true,"system":true,"folder":"Internazionali"},{"id":"haaretz-middle-east","name":"Haaretz – Middle East","kind":"media","url":"https://www.haaretz.com/middle-east-news","pageUrl":"https://www.haaretz.com/middle-east-news","strategy":"html","selectors":["article a[href]","main a[href]"],"includeAny":["/middle-east-news/"],"excludeAny":["/ty-article-opinion/","/ty-tag/"],"filterMode":"path","maxItems":30,"enabled":true,"system":true,"risk":"paywall/anti-bot","folder":"Israele"},{"id":"iranproject-middle-east","name":"The Iran Project – Middle East","kind":"media","url":"https://www.theiranproject.com/en/International/middle-east","pageUrl":"https://www.theiranproject.com/en/International/middle-east","strategy":"html","selectors":["article a[href]","main a[href]","a[href*=\u0027/en/news/\u0027]"],"includeAny":["/en/news/","/en/International/"],"excludeAny":["/en/archive","/en/tag/"],"filterMode":"path","maxItems":35,"enabled":true,"system":true,"folder":"Iran"},{"id":"middleeasteye-war-iran","name":"Middle East Eye – War on Iran","kind":"media","url":"https://www.middleeasteye.net/topics/war-on-iran","pageUrl":"https://www.middleeasteye.net/topics/war-on-iran","strategy":"html","selectors":["h2 a[href]","h3 a[href]","h4 a[href]","article a[href]","main a[href]"],"includeAny":["/news/","/live-blog/","/opinion/","/features/","/explainers/","/video/"],"excludeAny":["/topics/","/authors/","/users/"],"filterMode":"path","maxItems":40,"enabled":true,"system":true,"folder":"Internazionali"},{"id":"presstv-section-101","name":"PressTV – Iran","kind":"state-media","url":"https://www.presstv.ir/Section/101","pageUrl":"https://www.presstv.ir/Section/101","strategy":"html","selectors":["article a[href]","main a[href]","a[href*=\u0027/Detail/\u0027]"],"includeAny":["/Detail/"],"excludeAny":["/Section/","/Video/"],"filterMode":"path","maxItems":40,"enabled":true,"system":true,"folder":"Iran"},{"id":"skynews-middle-east","name":"Sky News – Middle East","kind":"media","url":"https://news.sky.com/topic/middle-east-6190","pageUrl":"https://news.sky.com/topic/middle-east-6190","strategy":"html","selectors":["article a[href]","main a[href]","a[href*=\u0027/story/\u0027]"],"includeAny":["/story/"],"excludeAny":["/topic/","/watch-live"],"filterMode":"path","maxItems":35,"enabled":true,"system":true,"folder":"Internazionali"},{"id":"jpost-middle-east","name":"Jerusalem Post – Middle East","kind":"media","url":"https://www.jpost.com/middle-east","pageUrl":"https://www.jpost.com/middle-east","strategy":"html","selectors":["article a[href]","main a[href]"],"includeAny":["/middle-east/"],"excludeAny":["/tags/","/author/"],"filterMode":"path","maxItems":40,"enabled":true,"system":true,"folder":"Israele"},{"id":"jpost-israel-news","name":"Jerusalem Post – Israel News","kind":"media","url":"https://www.jpost.com/israel-news","pageUrl":"https://www.jpost.com/israel-news","strategy":"html","selectors":["article a[href]","main a[href]"],"includeAny":["/israel-news/"],"excludeAny":["/tags/","/author/"],"filterMode":"path","maxItems":40,"enabled":true,"system":true,"folder":"Israele"},{"id":"timesofisrael-region","name":"Times of Israel – Israel and the Region","kind":"media","url":"https://www.timesofisrael.com/israel-and-the-region/","pageUrl":"https://www.timesofisrael.com/israel-and-the-region/","strategy":"html","selectors":["article a[href]","main a[href]",".item a[href]"],"includeAny":["timesofisrael.com/"],"excludeAny":["/writers/","/topic/","/podcasts/","/about/"],"filterMode":"path","maxItems":40,"enabled":true,"system":true,"folder":"Israele"},{"id":"cnn-middle-east","name":"CNN – Middle East","kind":"media","url":"https://edition.cnn.com/world/middle-east","pageUrl":"https://edition.cnn.com/world/middle-east","strategy":"html","selectors":["article a[href]","main a[href]","h2 a[href]","h3 a[href]","a[data-link-type=\u0027article\u0027][href]","a[href*=\u0027/middleeast/\u0027]"],"excludeAny":["/videos/","/profiles/","/audio/","/weather/","/style/","/travel/"],"filterMode":"none","maxItems":35,"enabled":true,"system":true,"note":"La pagina CNN puo essere caricata dinamicamente senza articoli nel codice HTML. News Watch prova soltanto la pagina originale CNN e non usa Google News come rilancio.","folder":"Internazionali"},{"id":"bbc-middle-east","name":"BBC – Middle East","kind":"media","url":"https://www.bbc.com/news/world/middle_east","pageUrl":"https://www.bbc.com/news/world/middle_east","strategy":"html","selectors":["article a[href]","main a[href]","a[href*=\u0027/news/articles/\u0027]"],"includeAny":["/news/articles/","/news/world-middle-east-"],"excludeAny":["/news/topics/","/news/av/"],"filterMode":"path","maxItems":40,"enabled":true,"system":true,"folder":"Internazionali"},{"id":"reuters-iran","name":"Reuters – Iran","kind":"agency","url":"https://www.reuters.com/arc/outboundfeeds/news-sitemap/?outputType=xml","pageUrl":"https://www.reuters.com/world/iran/","strategy":"sitemap","includeAny":["/world/middle-east/"],"includeKeywordsAny":["iran","iranian","tehran","irgc","hormuz","khamenei","pezeshkian","persian gulf"],"excludeAny":["/graphics/","/pictures/","/video/"],"filterMode":"path-and-keywords","maxItems":50,"enabled":true,"system":true,"folder":"Agenzie","fallbacks":[{"url":"https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=100\u0026outputType=xml","strategy":"sitemap","label":"sitemap Reuters pagina 2"},{"url":"https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=200\u0026outputType=xml","strategy":"sitemap","label":"sitemap Reuters pagina 3"}]},{"id":"reuters-middle-east","name":"Reuters – Middle East","kind":"agency","url":"https://www.reuters.com/arc/outboundfeeds/news-sitemap/?outputType=xml","pageUrl":"https://www.reuters.com/world/middle-east/","strategy":"sitemap","includeAny":["/world/middle-east/"],"excludeAny":["/graphics/","/pictures/","/video/"],"filterMode":"path","maxItems":50,"enabled":true,"system":true,"folder":"Agenzie","fallbacks":[{"url":"https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=100\u0026outputType=xml","strategy":"sitemap","label":"sitemap Reuters pagina 2"},{"url":"https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=200\u0026outputType=xml","strategy":"sitemap","label":"sitemap Reuters pagina 3"},{"url":"https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=300\u0026outputType=xml","strategy":"sitemap","label":"sitemap Reuters pagina 4"}]},{"id":"nyt-middle-east","name":"New York Times – Middle East","kind":"media","url":"https://www.nytimes.com/section/world/middleeast","pageUrl":"https://www.nytimes.com/section/world/middleeast","strategy":"html","selectors":["article a[href]","main a[href]","h2 a[href]","h3 a[href]"],"excludeAny":["/interactive/","/video/","/section/","/crosswords/"],"filterMode":"none","maxItems":35,"enabled":true,"system":true,"risk":"paywall/anti-bot","folder":"Internazionali"},{"id":"wsj-middle-east","name":"Wall Street Journal – Middle East","kind":"media","url":"https://feeds.content.dowjones.io/public/rss/RSSWorldNews","pageUrl":"https://www.wsj.com/world/middle-east","strategy":"rss","includeAny":["/world/middle-east/"],"includeKeywordsAny":["iran","israel","gaza","lebanon","syria","iraq","saudi","yemen","middle east","hormuz","gulf"],"filterMode":"path-or-keywords","maxItems":40,"enabled":true,"system":true,"folder":"Internazionali"},{"id":"centcom-public-releases","name":"CENTCOM – Public Releases","kind":"official","url":"https://www.centcom.mil/DesktopModules/ArticleCS/RSS.ashx?ContentType=1\u0026Site=808\u0026max=50","pageUrl":"https://www.centcom.mil/MEDIA/PUBLIC-RELEASES/","strategy":"rss","includeAny":["/MEDIA/PUBLIC-RELEASES/Article/","/MEDIA/PRESS-RELEASES/Press-Release-View/Article/","/MEDIA/NEWS-ARTICLES/News-Article-View/Article/"],"filterMode":"path","maxItems":50,"enabled":true,"system":true,"folder":"Fonti ufficiali","fallbacks":[{"url":"https://www.centcom.mil/MEDIA/PUBLIC-RELEASES/","pageUrl":"https://www.centcom.mil/MEDIA/PUBLIC-RELEASES/","strategy":"html","label":"pagina ufficiale CENTCOM","selectors":["a[href*=\"/MEDIA/PUBLIC-RELEASES/Article/\"]","a[href*=\"/MEDIA/PRESS-RELEASES/Press-Release-View/Article/\"]","a[href*=\"/MEDIA/NEWS-ARTICLES/News-Article-View/Article/\"]"],"includeAny":["/MEDIA/PUBLIC-RELEASES/Article/","/MEDIA/PRESS-RELEASES/Press-Release-View/Article/","/MEDIA/NEWS-ARTICLES/News-Article-View/Article/"],"filterMode":"path"},{"url":"https://www.dvidshub.net/unit/CENTCOM","pageUrl":"https://www.dvidshub.net/unit/CENTCOM","strategy":"html","label":"DVIDS ufficiale CENTCOM","selectors":["a[href^=\"/news/\"]","a[href*=\"dvidshub.net/news/\"]"],"includeAny":["/news/"],"excludeAny":["/newswire/"],"filterMode":"path","maxItems":30}]},{"id":"aljazeera-iran-war-live","name":"Al Jazeera – Iran War Live","kind":"media","category":"liveblog","url":"https://www.aljazeera.com/news/liveblog/2026/7/23/iran-war-live-us-launches-new-attacks-houthis-attack-2-saudi-oil-tankers","pageUrl":"https://www.aljazeera.com/news/liveblog/2026/7/23/iran-war-live-us-launches-new-attacks-houthis-attack-2-saudi-oil-tankers","strategy":"liveblog","maxItems":120,"enabled":true,"system":true,"note":"Segue il live Al Jazeera corrente tramite versione AMP e passa al successivo quando la pagina contiene il collegamento di continuazione.","autoFollow":true,"staleAfterMinutes":180},{"id":"cnn-iran-war-live","name":"CNN – Iran War Live","kind":"media","category":"liveblog","url":"https://edition.cnn.com/2026/07/23/world/live-news/iran-war-trump","pageUrl":"https://edition.cnn.com/2026/07/23/world/live-news/iran-war-trump","strategy":"liveblog","liveProvider":"cnn","liveSelectors":["[data-component-name=\"live-story\"]","[data-uri*=\"live-story\"]","[data-testid*=\"live-story\"]","[class*=\"live-story\"]","[id*=\"liveblog-card\"]","[data-last-modified]"],"maxItems":160,"enabled":true,"system":true,"note":"Cerca il live CNN più recente nella sitemap e nelle pagine datate. Se non esiste un live nuovo, segnala chiaramente che il flusso è fermo.","autoFollow":true,"sitemapUrl":"https://www.cnn.com/sitemap/live-story.xml","staleAfterMinutes":180},{"id":"timesofisrael-live","name":"Times of Israel – Live","kind":"media","category":"liveblog","url":"https://www.timesofisrael.com/live/","pageUrl":"https://www.timesofisrael.com/live/","strategy":"liveblog","liveProvider":"timesofisrael","timezoneOffset":"+03:00","maxItems":180,"enabled":true,"system":true,"autoFollow":false,"note":"Legge direttamente la pagina permanente Live Updates. Una sola richiesta per ciclo; dopo HTTP 429 applica una pausa automatica.","staleAfterMinutes":180},{"id":"reuters-iran-war-live","name":"Reuters – Iran War Live","kind":"agency","category":"liveblog","url":"https://www.reuters.com/world/iran-war-live-houthis-strike-tankers-red-sea-enforce-blockade-against-saudi-oil-2026-07-23/","pageUrl":"https://www.reuters.com/world/iran-war-live-houthis-strike-tankers-red-sea-enforce-blockade-against-saudi-oil-2026-07-23/","strategy":"liveblog","liveProvider":"reuters","maxItems":120,"enabled":true,"system":true,"autoFollow":true,"sitemapUrls":["https://www.reuters.com/arc/outboundfeeds/news-sitemap/?outputType=xml","https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=100\u0026outputType=xml","https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=200\u0026outputType=xml","https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=300\u0026outputType=xml"],"note":"Individua automaticamente il live Reuters più recente. Se Reuters blocca l’estrazione, mostra soltanto il collegamento e non crea falsi aggiornamenti."}];
+window.NW_DEFAULT_SOURCES=[{"id":"aljazeera-middle-east","name":"Al Jazeera – Middle East","kind":"media","url":"https://www.aljazeera.com/middle-east/","pageUrl":"https://www.aljazeera.com/middle-east/","strategy":"html","selectors":["article a[href]","main a[href]"],"includeAny":["/news/","/features/","/opinions/","/program/"],"excludeAny":["/tag/","/author/","/about-us/","/podcasts/"],"filterMode":"path","maxItems":35,"enabled":true,"system":true,"folder":"Internazionali"},{"id":"haaretz-middle-east","name":"Haaretz – Middle East","kind":"media","url":"https://www.haaretz.com/middle-east-news","pageUrl":"https://www.haaretz.com/middle-east-news","strategy":"html","selectors":["article a[href]","main a[href]"],"includeAny":["/middle-east-news/"],"excludeAny":["/ty-article-opinion/","/ty-tag/"],"filterMode":"path","maxItems":30,"enabled":true,"system":true,"risk":"paywall/anti-bot","folder":"Israele"},{"id":"iranproject-middle-east","name":"The Iran Project – Middle East","kind":"media","url":"https://www.theiranproject.com/en/International/middle-east","pageUrl":"https://www.theiranproject.com/en/International/middle-east","strategy":"html","selectors":["article a[href]","main a[href]","a[href*=\u0027/en/news/\u0027]"],"includeAny":["/en/news/","/en/International/"],"excludeAny":["/en/archive","/en/tag/"],"filterMode":"path","maxItems":35,"enabled":true,"system":true,"folder":"Iran"},{"id":"middleeasteye-war-iran","name":"Middle East Eye – War on Iran","kind":"media","url":"https://www.middleeasteye.net/topics/war-on-iran","pageUrl":"https://www.middleeasteye.net/topics/war-on-iran","strategy":"html","selectors":["h2 a[href]","h3 a[href]","h4 a[href]","article a[href]","main a[href]"],"includeAny":["/news/","/live-blog/","/opinion/","/features/","/explainers/","/video/"],"excludeAny":["/topics/","/authors/","/users/"],"filterMode":"path","maxItems":40,"enabled":true,"system":true,"folder":"Internazionali"},{"id":"presstv-section-101","name":"PressTV – Iran","kind":"state-media","url":"https://www.presstv.ir/Section/101","pageUrl":"https://www.presstv.ir/Section/101","strategy":"html","selectors":["article a[href]","main a[href]","a[href*=\u0027/Detail/\u0027]"],"includeAny":["/Detail/"],"excludeAny":["/Section/","/Video/"],"filterMode":"path","maxItems":40,"enabled":true,"system":true,"folder":"Iran"},{"id":"skynews-middle-east","name":"Sky News – Middle East","kind":"media","url":"https://news.sky.com/topic/middle-east-6190","pageUrl":"https://news.sky.com/topic/middle-east-6190","strategy":"html","selectors":["article a[href]","main a[href]","a[href*=\u0027/story/\u0027]"],"includeAny":["/story/"],"excludeAny":["/topic/","/watch-live"],"filterMode":"path","maxItems":35,"enabled":true,"system":true,"folder":"Internazionali"},{"id":"jpost-middle-east","name":"Jerusalem Post – Middle East","kind":"media","url":"https://www.jpost.com/middle-east","pageUrl":"https://www.jpost.com/middle-east","strategy":"html","selectors":["article a[href]","main a[href]"],"includeAny":["/middle-east/"],"excludeAny":["/tags/","/author/"],"filterMode":"path","maxItems":40,"enabled":true,"system":true,"folder":"Israele"},{"id":"jpost-israel-news","name":"Jerusalem Post – Israel News","kind":"media","url":"https://www.jpost.com/israel-news","pageUrl":"https://www.jpost.com/israel-news","strategy":"html","selectors":["article a[href]","main a[href]"],"includeAny":["/israel-news/"],"excludeAny":["/tags/","/author/"],"filterMode":"path","maxItems":40,"enabled":true,"system":true,"folder":"Israele"},{"id":"timesofisrael-region","name":"Times of Israel – Israel and the Region","kind":"media","url":"https://www.timesofisrael.com/israel-and-the-region/","pageUrl":"https://www.timesofisrael.com/israel-and-the-region/","strategy":"html","selectors":["article a[href]","main a[href]",".item a[href]"],"includeAny":["timesofisrael.com/"],"excludeAny":["/writers/","/topic/","/podcasts/","/about/"],"filterMode":"path","maxItems":40,"enabled":true,"system":true,"folder":"Israele"},{"id":"cnn-middle-east","name":"CNN – Middle East","kind":"media","url":"https://edition.cnn.com/world/middle-east","pageUrl":"https://edition.cnn.com/world/middle-east","strategy":"html","selectors":["article a[href]","main a[href]","h2 a[href]","h3 a[href]","a[data-link-type=\u0027article\u0027][href]","a[href*=\u0027/middleeast/\u0027]"],"excludeAny":["/videos/","/profiles/","/audio/","/weather/","/style/","/travel/"],"filterMode":"none","maxItems":35,"enabled":true,"system":true,"note":"La pagina CNN puo essere caricata dinamicamente senza articoli nel codice HTML. News Watch prova soltanto la pagina originale CNN e non usa Google News come rilancio.","folder":"Internazionali"},{"id":"bbc-middle-east","name":"BBC – Middle East","kind":"media","url":"https://www.bbc.com/news/world/middle_east","pageUrl":"https://www.bbc.com/news/world/middle_east","strategy":"html","selectors":["article a[href]","main a[href]","a[href*=\u0027/news/articles/\u0027]"],"includeAny":["/news/articles/","/news/world-middle-east-"],"excludeAny":["/news/topics/","/news/av/"],"filterMode":"path","maxItems":40,"enabled":true,"system":true,"folder":"Internazionali"},{"id":"reuters-iran","name":"Reuters – Iran","kind":"agency","url":"https://www.reuters.com/arc/outboundfeeds/news-sitemap/?outputType=xml","pageUrl":"https://www.reuters.com/world/iran/","strategy":"sitemap","includeAny":["/world/middle-east/"],"includeKeywordsAny":["iran","iranian","tehran","irgc","hormuz","khamenei","pezeshkian","persian gulf"],"excludeAny":["/graphics/","/pictures/","/video/"],"filterMode":"path-and-keywords","maxItems":50,"enabled":true,"system":true,"folder":"Agenzie","fallbacks":[{"url":"https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=100\u0026outputType=xml","strategy":"sitemap","label":"sitemap Reuters pagina 2"},{"url":"https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=200\u0026outputType=xml","strategy":"sitemap","label":"sitemap Reuters pagina 3"}]},{"id":"reuters-middle-east","name":"Reuters – Middle East","kind":"agency","url":"https://www.reuters.com/arc/outboundfeeds/news-sitemap/?outputType=xml","pageUrl":"https://www.reuters.com/world/middle-east/","strategy":"sitemap","includeAny":["/world/middle-east/"],"excludeAny":["/graphics/","/pictures/","/video/"],"filterMode":"path","maxItems":50,"enabled":true,"system":true,"folder":"Agenzie","fallbacks":[{"url":"https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=100\u0026outputType=xml","strategy":"sitemap","label":"sitemap Reuters pagina 2"},{"url":"https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=200\u0026outputType=xml","strategy":"sitemap","label":"sitemap Reuters pagina 3"},{"url":"https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=300\u0026outputType=xml","strategy":"sitemap","label":"sitemap Reuters pagina 4"}]},{"id":"nyt-middle-east","name":"New York Times – Middle East","kind":"media","url":"https://www.nytimes.com/section/world/middleeast","pageUrl":"https://www.nytimes.com/section/world/middleeast","strategy":"html","selectors":["article a[href]","main a[href]","h2 a[href]","h3 a[href]"],"excludeAny":["/interactive/","/video/","/section/","/crosswords/"],"filterMode":"none","maxItems":35,"enabled":true,"system":true,"risk":"paywall/anti-bot","folder":"Internazionali"},{"id":"wsj-middle-east","name":"Wall Street Journal – Middle East","kind":"media","url":"https://feeds.content.dowjones.io/public/rss/RSSWorldNews","pageUrl":"https://www.wsj.com/world/middle-east","strategy":"rss","includeAny":["/world/middle-east/"],"includeKeywordsAny":["iran","israel","gaza","lebanon","syria","iraq","saudi","yemen","middle east","hormuz","gulf"],"filterMode":"path-or-keywords","maxItems":40,"enabled":true,"system":true,"folder":"Internazionali"},{"id":"centcom-public-releases","name":"CENTCOM – Public Releases","kind":"official","url":"https://www.centcom.mil/DesktopModules/ArticleCS/RSS.ashx?ContentType=1\u0026Site=808\u0026max=50","pageUrl":"https://www.centcom.mil/MEDIA/PUBLIC-RELEASES/","strategy":"rss","includeAny":["/MEDIA/PUBLIC-RELEASES/Article/","/MEDIA/PRESS-RELEASES/Press-Release-View/Article/","/MEDIA/NEWS-ARTICLES/News-Article-View/Article/"],"filterMode":"path","maxItems":50,"enabled":true,"system":true,"folder":"Fonti ufficiali","fallbacks":[{"url":"https://www.centcom.mil/MEDIA/PUBLIC-RELEASES/","pageUrl":"https://www.centcom.mil/MEDIA/PUBLIC-RELEASES/","strategy":"html","label":"pagina ufficiale CENTCOM","selectors":["a[href*=\"/MEDIA/PUBLIC-RELEASES/Article/\"]","a[href*=\"/MEDIA/PRESS-RELEASES/Press-Release-View/Article/\"]","a[href*=\"/MEDIA/NEWS-ARTICLES/News-Article-View/Article/\"]"],"includeAny":["/MEDIA/PUBLIC-RELEASES/Article/","/MEDIA/PRESS-RELEASES/Press-Release-View/Article/","/MEDIA/NEWS-ARTICLES/News-Article-View/Article/"],"filterMode":"path"},{"url":"https://www.dvidshub.net/unit/CENTCOM","pageUrl":"https://www.dvidshub.net/unit/CENTCOM","strategy":"html","label":"DVIDS ufficiale CENTCOM","selectors":["a[href^=\"/news/\"]","a[href*=\"dvidshub.net/news/\"]"],"includeAny":["/news/"],"excludeAny":["/newswire/"],"filterMode":"path","maxItems":30}]},{"id":"aljazeera-iran-war-live","name":"Al Jazeera – Iran War Live","kind":"media","category":"liveblog","url":"https://www.aljazeera.com/news/liveblog/2026/7/23/iran-war-live-us-launches-new-attacks-houthis-attack-2-saudi-oil-tankers","pageUrl":"https://www.aljazeera.com/news/liveblog/2026/7/23/iran-war-live-us-launches-new-attacks-houthis-attack-2-saudi-oil-tankers","strategy":"liveblog","maxItems":120,"enabled":true,"system":true,"note":"Segue il live Al Jazeera corrente tramite versione AMP e passa al successivo quando la pagina contiene il collegamento di continuazione.","autoFollow":true,"staleAfterMinutes":180},{"id":"cnn-iran-war-live","name":"CNN – Iran War Live","kind":"media","category":"liveblog","url":"https://edition.cnn.com/2026/07/23/world/live-news/iran-war-trump","pageUrl":"https://edition.cnn.com/2026/07/23/world/live-news/iran-war-trump","strategy":"liveblog","liveProvider":"cnn","liveSelectors":["[data-component-name=\"live-story\"]","[data-uri*=\"live-story\"]","[data-testid*=\"live-story\"]","[class*=\"live-story\"]","[id*=\"liveblog-card\"]","[data-last-modified]"],"maxItems":160,"enabled":true,"system":true,"note":"Cerca il live CNN più recente nella sitemap e nelle pagine datate. Se non esiste un live nuovo, segnala chiaramente che il flusso è fermo.","autoFollow":true,"sitemapUrl":"https://www.cnn.com/sitemap/live-story.xml","staleAfterMinutes":180},{"id":"timesofisrael-live","name":"Times of Israel – Live","kind":"media","category":"liveblog","url":"https://www.timesofisrael.com/live/","pageUrl":"https://www.timesofisrael.com/live/","strategy":"liveblog","liveProvider":"timesofisrael","timezone":"Asia/Jerusalem","maxItems":180,"enabled":true,"system":true,"autoFollow":false,"note":"Legge direttamente la pagina permanente Live Updates. Una sola richiesta per ciclo; dopo HTTP 429 applica una pausa automatica.","staleAfterMinutes":180},{"id":"reuters-iran-war-live","name":"Reuters – Iran War Live","kind":"agency","category":"liveblog","url":"https://www.reuters.com/world/iran-war-live-houthis-strike-tankers-red-sea-enforce-blockade-against-saudi-oil-2026-07-23/","pageUrl":"https://www.reuters.com/world/iran-war-live-houthis-strike-tankers-red-sea-enforce-blockade-against-saudi-oil-2026-07-23/","strategy":"liveblog","liveProvider":"reuters","maxItems":120,"enabled":true,"system":true,"autoFollow":true,"sitemapUrls":["https://www.reuters.com/arc/outboundfeeds/news-sitemap/?outputType=xml","https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=100\u0026outputType=xml","https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=200\u0026outputType=xml","https://www.reuters.com/arc/outboundfeeds/news-sitemap/?from=300\u0026outputType=xml"],"note":"Individua automaticamente il live Reuters più recente. Se Reuters blocca l’estrazione, mostra soltanto il collegamento e non crea falsi aggiornamenti."}];
 </script>
 <script data-file="utils.js">
 window.NWUtils=(()=>{const TRACK=new Set(['utm_source','utm_medium','utm_campaign','utm_term','utm_content','gclid','fbclid','mod']);function clean(v){return String(v||'').replace(/\s+/g,' ').trim()}function strip(v){const d=document.createElement('textarea');d.innerHTML=String(v||'').replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,' ').replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,' ').replace(/<[^>]+>/g,' ');return clean(d.value)}function truncate(v,n=320){const s=clean(v);return s.length<=n?s:s.slice(0,n-1).replace(/\s+\S*$/,'')+'…'}function normUrl(v,base){try{const u=new URL(v,base);u.hash='';[...u.searchParams.keys()].forEach(k=>{if(TRACK.has(k.toLowerCase()))u.searchParams.delete(k)});u.hostname=u.hostname.toLowerCase().replace(/^www\./,'');if(u.pathname.length>1)u.pathname=u.pathname.replace(/\/+$/,'');return u.toString()}catch{return clean(v)}}function hash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(36)}function date(v){if(!v)return null;const d=new Date(v);return Number.isNaN(d.getTime())?null:d}function fmt(v){const d=v instanceof Date?v:date(v);return d?new Intl.DateTimeFormat('it-IT',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(d):''}function escape(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}function csv(v){const s=String(v??'');return /[;"\n\r]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s}function download(name,text,mime='text/plain;charset=utf-8'){const b=new Blob([text],{type:mime}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}async function copy(text){if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(text);const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove()}function lines(v){return String(v||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean)}function slug(v){return clean(v).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,60)||'fonte-'+Date.now()}return{clean,strip,truncate,normUrl,hash,date,fmt,escape,csv,download,copy,lines,slug}})();
@@ -661,13 +661,22 @@ window.NWParsers = (() => {
 
 
   function relativeSocialDate(value){
-    const text=U.clean(value).toLowerCase();
+    const normalizeDigits=input=>String(input||'')
+      .replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+      .replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+    const text=U.clean(normalizeDigits(value)).toLowerCase();
     const now=Date.now();
     let match=text.match(/\b(\d+)\s*(minute|minutes|min|mins|hour|hours|hr|hrs|day|days)\s+ago\b/);
     if(match){
       const n=Number(match[1]);
       const unit=match[2];
       const ms=/minute|min/.test(unit)?60000:/hour|hr/.test(unit)?3600000:86400000;
+      return new Date(now-n*ms).toISOString();
+    }
+    match=text.match(/(\d+)\s*(دقیقه|ساعت|روز)\s*پیش/);
+    if(match){
+      const n=Number(match[1]);
+      const ms=match[2]==='دقیقه'?60000:match[2]==='ساعت'?3600000:86400000;
       return new Date(now-n*ms).toISOString();
     }
     if(/\ban?\s+hour\s+ago\b/.test(text))return new Date(now-3600000).toISOString();
@@ -678,64 +687,76 @@ window.NWParsers = (() => {
   function farsSocial(text,source){
     const doc=new DOMParser().parseFromString(text,'text/html');
     const output=[];
+    const pageHost=(()=>{try{return new URL(source.pageUrl||source.url).hostname.replace(/^www\./,'')}catch{return'farsnews.ir'}})();
 
+    const pushItem=(title,urlValue,block,dateValue='',abstract='')=>{
+      const cleanTitle=U.clean(title);
+      if(!validTitle(cleanTitle))return;
+      if(!/[A-Za-z]{3}/.test(cleanTitle)||/[\u0600-\u06FF]/.test(cleanTitle))return;
+      let url;
+      try{url=new URL(urlValue,source.pageUrl||source.url)}catch{return}
+      const currentHost=url.hostname.replace(/^www\./,'');
+      if(currentHost!==pageHost&&!currentHost.endsWith('.'+pageHost)&&pageHost!=='farsnews.ir')return;
+      const relative=relativeSocialDate(dateValue||U.clean(block?.textContent||''));
+      const parsedDate=!Number.isNaN(Date.parse(dateValue||''))?dateValue:relative;
+      const item=make(source,cleanTitle,url,parsedDate,abstract||'Aggiornamento pubblicato su una pagina ufficiale Fars.');
+      item.tags=['Fars','ufficiale'];
+      item.discovery='official-fars';
+      output.push(item);
+    };
+
+    // Prima prova la struttura della pagina ufficiale Fars: titoli e card.
+    doc.querySelectorAll('h2,h3,h4').forEach(heading=>{
+      const title=U.clean(heading.textContent||'');
+      if(!validTitle(title)||!/[\p{L}]/u.test(title))return;
+      const block=heading.closest('article,li,section,div')||heading.parentElement;
+      const candidates=[
+        heading.closest('a[href]'),
+        ...[...(block?.querySelectorAll('a[href]')||[])]
+      ].filter(Boolean);
+      const anchor=candidates.find(item=>{
+        const href=item.getAttribute('href')||'';
+        if(!href||/^(#|javascript:|mailto:)/i.test(href))return false;
+        try{
+          const u=new URL(href,source.pageUrl||source.url);
+          const h=u.hostname.replace(/^www\./,'');
+          return h==='farsnews.ir'||h.endsWith('.farsnews.ir');
+        }catch{return false}
+      });
+      if(!anchor)return;
+      const dateNode=[...(block?.querySelectorAll('time,span,small')||[])]
+        .map(node=>U.clean(node.getAttribute?.('datetime')||node.textContent||''))
+        .find(value=>/\b(?:ago|yesterday)\b/i.test(value)||/(?:دقیقه|ساعت|روز)\s*پیش/.test(value)||!Number.isNaN(Date.parse(value)));
+      const abstract=[...(block?.querySelectorAll('p')||[])]
+        .map(node=>U.clean(node.textContent||''))
+        .find(value=>value.length>35&&value!==title)||'';
+      pushItem(title,anchor.getAttribute('href')||'',block,dateNode||'',abstract);
+    });
+
+    // Compatibilità con eventuali card che contengono URL Fars in chiaro.
     const anchors=[...doc.querySelectorAll('a[href]')].filter(anchor=>{
       const label=U.clean(anchor.textContent);
       const href=anchor.getAttribute('href')||'';
-      if(!/^https?:/i.test(href))return false;
-      return /farsnews\.ir\//i.test(label)||/farsnews\.ir\//i.test(href);
+      try{
+        const u=new URL(href,source.pageUrl||source.url);
+        const h=u.hostname.replace(/^www\./,'');
+        return h==='farsnews.ir'||h.endsWith('.farsnews.ir')||/farsnews\.ir\//i.test(label);
+      }catch{return false}
     });
 
     anchors.forEach(anchor=>{
       const href=anchor.getAttribute('href')||'';
-      let url;
-      try{url=new URL(href,source.url)}catch{return}
-
-      // TwStalker usually wraps the Fars link inside the tweet text.
-      let textBox=anchor.closest('p');
-      if(!textBox||U.clean(textBox.textContent).length<20){
-        textBox=anchor.parentElement;
-      }
-      let raw=U.clean(textBox?.textContent||'');
-      const linkLabel=U.clean(anchor.textContent||'');
-      if(linkLabel)raw=U.clean(raw.replace(linkLabel,''));
-
-      // If the direct parent is too small, climb only a few levels.
-      let container=textBox;
-      for(let i=0;i<3 && (!validTitle(raw)||raw.length>420);i++){
-        container=container?.parentElement;
-        if(!container)break;
-        const candidate=U.clean(container.textContent||'')
-          .replace(/Fars News Agency\s*@EnglishFars/ig,' ')
-          .replace(/\b\d+\s*(?:minutes?|mins?|hours?|hrs?|days?)\s+ago\b/ig,' ')
-          .replace(/\b(?:View Details|Load More)\b/ig,' ')
-          .replace(linkLabel,' ');
-        const clean=U.clean(candidate);
-        if(clean.length>=14&&clean.length<=420)raw=clean;
-      }
-
-      raw=U.clean(raw)
-        .replace(/Fars News Agency\s*@EnglishFars/ig,' ')
-        .replace(/\b\d+\s*(?:minutes?|mins?|hours?|hrs?|days?)\s+ago\b/ig,' ')
-        .replace(/\b(?:View Details|Load More)\b/ig,' ')
-        .replace(/\s+\d+\s+\d+\s+\d+\s+\d+[KMB]?\s+\d+\s*$/i,' ')
-        .trim();
-
+      const block=anchor.closest('article,li,section,div')||anchor.parentElement;
+      const heading=block?.querySelector('h2,h3,h4,h5');
+      let raw=U.clean(heading?.textContent||anchor.textContent||'');
       if(!validTitle(raw))return;
-      if(!/[A-Za-z]{3}/.test(raw)||/[\u0600-\u06FF]/.test(raw))return;
-
-      const block=anchor.closest('article,li,section,div')||textBox;
       const dateNode=[...(block?.querySelectorAll('time,a,span,small')||[])]
         .map(node=>U.clean(node.getAttribute?.('datetime')||node.textContent||''))
-        .find(value=>/\b(?:ago|yesterday)\b/i.test(value)||!Number.isNaN(Date.parse(value)));
-      const date=dateNode && !Number.isNaN(Date.parse(dateNode))
-        ? dateNode
-        : relativeSocialDate(dateNode||U.clean(block?.textContent||''));
-
-      const item=make(source,raw,url,date,'Titolo pubblicato dall’account ufficiale @EnglishFars.');
-      item.tags=['Fars','@EnglishFars','recupero alternativo'];
-      item.discovery='official-social';
-      output.push(item);
+        .find(value=>/\b(?:ago|yesterday)\b/i.test(value)||/(?:دقیقه|ساعت|روز)\s*پیش/.test(value)||!Number.isNaN(Date.parse(value)));
+      const abstract=[...(block?.querySelectorAll('p')||[])]
+        .map(node=>U.clean(node.textContent||''))
+        .find(value=>value.length>35&&value!==raw)||'';
+      pushItem(raw,href,block,dateNode||'',abstract);
     });
 
     return uniq(output,source.maxItems||50,item=>`${item.title.toLowerCase()}|${item.url}`);
@@ -875,6 +896,26 @@ window.NWParsers = (() => {
     return hours * 60 + minutes;
   }
 
+  function timezoneOffsetForZone(zone,parts){
+    if(!zone||!parts)return'';
+    try{
+      const sample=new Date(Date.UTC(parts.year,parts.month-1,parts.day,12,0,0));
+      const value=new Intl.DateTimeFormat('en-US',{
+        timeZone:zone,
+        timeZoneName:'longOffset',
+        hour:'2-digit',
+        minute:'2-digit'
+      }).formatToParts(sample).find(part=>part.type==='timeZoneName')?.value||'';
+      const match=value.match(/GMT([+-])(\d{1,2}):(\d{2})/i);
+      if(!match)return'';
+      return `${match[1]}${String(Number(match[2])).padStart(2,'0')}:${match[3]}`;
+    }catch{return''}
+  }
+
+  function sourceTimezoneOffset(source,parts){
+    return timezoneOffsetForZone(source?.timezone,parts)||source?.timezoneOffset||'+00:00';
+  }
+
   function dateFromParts(parts, minutes, offset = '+00:00', dayOffset = 0) {
     if (!parts || minutes == null) return '';
     const base = new Date(Date.UTC(parts.year, parts.month - 1, parts.day + dayOffset));
@@ -894,7 +935,8 @@ window.NWParsers = (() => {
     const full = text.match(/(\d{1,2}\s+[A-Z][a-z]{2}\s+\d{4})\s*[-–]\s*(\d{1,2}:\d{2})/);
     if (full) return `${full[1]} ${full[2]} GMT`;
     const minutes = clockMinutes(time?.textContent || text);
-    return dateFromParts(sourceDateParts(source), minutes, source.timezoneOffset || '+00:00');
+    const parts=sourceDateParts(source);
+    return dateFromParts(parts,minutes,sourceTimezoneOffset(source,parts));
   }
 
   function updateBlockForHeading(heading, root) {
@@ -991,7 +1033,7 @@ window.NWParsers = (() => {
     records.forEach(record => {
       if (record.minutes != null && previousMinutes != null && record.minutes > previousMinutes + 180) dayOffset -= 1;
       if (record.minutes != null) previousMinutes = record.minutes;
-      const date = dateFromParts(parts, record.minutes, source.timezoneOffset || '+03:00', dayOffset);
+      const date = dateFromParts(parts,record.minutes,sourceTimezoneOffset(source,parts),dayOffset);
       output.push(makeLive(source, record.title, date, textParagraphs(record.block, record.title), record.href || updateUrlFromBlock(record.block, source)));
     });
 
@@ -1054,9 +1096,13 @@ window.NWParsers = (() => {
         if ((!previous.abstract && item.abstract) || item.abstract.length > previous.abstract.length) grouped.set(key, item);
       }
     });
+    const time=item=>{
+      const value=Date.parse(item?.dateISO||'');
+      return Number.isFinite(value)?value:0;
+    };
     return [...grouped.values()]
-      .sort((a, b) => (b.dateISO || '').localeCompare(a.dateISO || ''))
-      .slice(0, max);
+      .sort((a,b)=>time(b)-time(a)||String(b.id||'').localeCompare(String(a.id||'')))
+      .slice(0,max);
   }
 
   function liveblog(text, source) {
@@ -1461,7 +1507,7 @@ window.NWLiveResolver = (() => {
 (()=>{
   'use strict';
   const U=NWUtils,S=NWStore,P=NWParsers,Q=NWQuery,Stories=NWStories,LiveAlert=NWLiveAlert,Resolver=NWLiveResolver;
-  const APP_VERSION='4.1';
+  const APP_VERSION='4.2';
   const $=id=>document.getElementById(id);
   const ALLOWED=['aljazeera.com','haaretz.com','theiranproject.com','middleeasteye.net','presstv.ir','sky.com','jpost.com','timesofisrael.com','cnn.com','bbc.com','reuters.com','nytimes.com','wsj.com','feeds.content.dowjones.io','centcom.mil','dvidshub.net','edition-prod-cf.sitemirror.cnn.com','mehrnews.com','irna.ir'];
 
@@ -1474,6 +1520,9 @@ window.NWLiveResolver = (() => {
     {hosts:['state.gov','defense.gov','whitehouse.gov'],kind:'official',folder:'Fonti ufficiali'},
     {hosts:['presstv.ir','irna.ir'],kind:'state-media',folder:'Iran'},
     {hosts:['farsnews.ir'],name:'Fars News Agency',kind:'agency',folder:'Iran'},
+    {hosts:['axios.com'],name:'Axios',kind:'media',folder:'Internazionali'},
+    {hosts:['ukmto.org'],name:'UKMTO',kind:'official',folder:'Fonti ufficiali'},
+    {hosts:['bloomberg.com'],name:'Bloomberg',kind:'media',folder:'Internazionali'},
     {hosts:['theiranproject.com'],folder:'Iran'},
     {hosts:['haaretz.com','jpost.com','timesofisrael.com'],folder:'Israele'},
     {hosts:['aljazeera.com','bbc.com','cnn.com','nytimes.com','wsj.com','sky.com','middleeasteye.net'],folder:'Internazionali'}
@@ -1495,41 +1544,48 @@ window.NWLiveResolver = (() => {
       note:'Feed RSS ufficiale Mehr News – Middle East.'
     },
     {
+      id:'axios-news',name:'Axios',folder:'Internazionali',kind:'media',
+      pageUrl:'https://www.axios.com/',url:'https://www.axios.com/sitemap.xml',strategy:'sitemap',
+      maxItems:60,enabled:true,selectors:[],includeAny:[],excludeAny:[],includeKeywordsAny:[],filterMode:'none',
+      note:'Sitemap ufficiale dichiarata da Axios nel robots.txt. La pagina principale può rifiutare richieste automatiche, quindi News Watch usa la sitemap.'
+    },
+    {
       id:'farsnews-english',name:'Fars News Agency – English',folder:'Iran',kind:'agency',
       pageUrl:'https://farsnews.ir/showcase?lang=en',
       url:'https://farsnews.ir/showcase?lang=en',
-      strategy:'html',
+      strategy:'fars-social',
+      browserRender:true,
       maxItems:50,enabled:true,
-      selectors:['article a[href]','main a[href]','h2 a[href]','h3 a[href]'],
+      selectors:['article a[href]','main a[href]','h2 a[href]','h3 a[href]','a[href]'],
       includeAny:[],excludeAny:[],includeKeywordsAny:[],filterMode:'none',
       languageFilter:'latin',
       fallbacks:[
         {
-          url:'https://w.twstalker.com/EnglishFars',
-          pageUrl:'https://farsnews.ir/showcase?lang=en',
+          url:'https://farsnews.ir/FarsNews_eng',
+          pageUrl:'https://farsnews.ir/FarsNews_eng',
           strategy:'fars-social',
+          browserRender:true,
           maxItems:50,
           includeAny:[],
           excludeAny:[],
           includeKeywordsAny:[],
           filterMode:'none',
           languageFilter:'latin',
-          label:'@EnglishFars ufficiale · mirror pubblico'
-        },
-        {
-          url:'https://mobile.twstalker.com/EnglishFars',
-          pageUrl:'https://farsnews.ir/showcase?lang=en',
-          strategy:'fars-social',
-          maxItems:50,
-          includeAny:[],
-          excludeAny:[],
-          includeKeywordsAny:[],
-          filterMode:'none',
-          languageFilter:'latin',
-          label:'@EnglishFars ufficiale · mirror mobile'
+          label:'pagina ufficiale @FarsNews_eng'
         }
       ],
-      note:'Fars inglese: tenta prima il sito. Se la web-app non espone gli articoli, usa il flusso pubblico dell’account ufficiale @EnglishFars come canale di scoperta; i link restano quelli pubblicati da Fars.'
+      note:'Solo canali ufficiali Fars. Usa Browser Run esclusivamente per renderizzare la web-app JavaScript; nessun mirror di terze parti.'
+    },
+    {
+      id:'ukmto-recent-incidents',name:'UKMTO – Recent Incidents',folder:'Fonti ufficiali',kind:'official',
+      pageUrl:'https://www.ukmto.org/recent-incidents',
+      url:'https://www.ukmto.org/recent-incidents',
+      strategy:'html',
+      browserRender:true,
+      maxItems:60,enabled:true,
+      selectors:['main a[href]','article a[href]','h2 a[href]','h3 a[href]','h4 a[href]','a[href]'],
+      includeAny:[],excludeAny:['/privacy','/terms','/contact'],includeKeywordsAny:[],filterMode:'none',
+      note:'Pagina ufficiale UKMTO renderizzata con Browser Run perché l’elenco degli incidenti è caricato lato JavaScript.'
     }
   ];
 
@@ -1675,11 +1731,11 @@ window.NWLiveResolver = (() => {
       enabled:input.enabled!==false,
       system:false,
       autoConfigured:true,
-      note:mergeAutoNote(input.note||preset.note,`Configurazione ufficiale già presente in News Watch.`)
+      note:mergeAutoNote(input.note||preset.note,`Configurazione nota già presente in News Watch.`)
     };
 
     const candidates=[
-      {url:configured.url,strategy:configured.strategy,label:'configurazione ufficiale'},
+      {...configured,label:'configurazione ufficiale'},
       ...(configured.fallbacks||[])
     ];
     const errors=[];
@@ -1691,16 +1747,14 @@ window.NWLiveResolver = (() => {
           source:configured,
           items:tested.items,
           route,
-          message:candidate.label
-            ? `Configurazione Fars riconosciuta: ${tested.items.length} articoli tramite ${route}.`
-            : `Configurazione nota riconosciuta automaticamente (${tested.items.length} articoli).`
+          message:`Configurazione nota riconosciuta: ${configured.name} · ${tested.items.length} articoli tramite ${route}.`
         };
       }catch(error){
         errors.push(`${candidate.label||candidate.url}: ${error.message}`);
       }
     }
 
-    const failure=new Error(`La configurazione ufficiale è stata riconosciuta, ma al momento non risponde: ${errors.join(' · ')}`);
+    const failure=new Error(`La configurazione nota è stata riconosciuta, ma al momento non risponde: ${errors.join(' · ')}`);
     failure.knownPreset=true;
     throw failure;
   }
@@ -1708,11 +1762,15 @@ window.NWLiveResolver = (() => {
   function conciseHttpError(status,body,target='',code=''){
     const plain=U.strip(body||'');
     const currentHost=host(target);
-    if(code==='ADMIN_TOKEN_REQUIRED')return`Il dominio ${currentHost||'richiesto'} non è ancora autorizzato. Inserisci nelle Impostazioni il token amministratore del Worker 3.6.`;
-    if(code==='WORKER_ADMIN_TOKEN_NOT_CONFIGURED')return'Il Worker 3.6 non ha ancora il secret ADMIN_TOKEN. Configuralo una sola volta su Cloudflare.';
+    if(code==='ADMIN_TOKEN_REQUIRED')return`Il dominio ${currentHost||'richiesto'} non è ancora autorizzato. Inserisci nelle Impostazioni il token amministratore del Worker 3.7.`;
+    if(code==='WORKER_ADMIN_TOKEN_NOT_CONFIGURED')return'Il Worker 3.7 non ha ancora il secret ADMIN_TOKEN. Configuralo una sola volta su Cloudflare.';
     if(code==='INVALID_ADMIN_TOKEN')return'Il token amministratore del Worker non è corretto.';
     if(code==='UNSAFE_TARGET')return'Il Worker ha rifiutato l’indirizzo perché non è un URL pubblico HTTPS valido.';
-    if(code==='LEGACY_WORKER')return'Il Worker pubblicato è una versione precedente: sostituiscilo con worker.js della versione 3.0.';
+    if(code==='BROWSER_RUN_NOT_CONFIGURED')return'Browser Run non è ancora collegato al Worker. Aggiungi il binding BROWSER e usa una compatibility date dal 2026-03-24 in poi.';
+    if(code==='BROWSER_RENDER_NOT_ALLOWED')return`Il rendering browser non è autorizzato per ${currentHost||'questo dominio'}.`;
+    if(code==='BROWSER_RUN_LIMIT')return'Limite gratuito giornaliero di Browser Run raggiunto. I dati già validi restano visibili; riprova dopo il reset giornaliero.';
+    if(code==='BROWSER_RUN_FAILED')return`Browser Run non è riuscito a renderizzare ${currentHost||'la pagina'}.`;
+    if(code==='LEGACY_WORKER')return'Il Worker pubblicato è una versione precedente: sostituiscilo con worker.js aggiornato.';
     if(/automated queries|unusual traffic|we'?re sorry|computer or network may be sending/i.test(plain))return`HTTP ${status}: il servizio remoto ha bloccato temporaneamente le richieste automatiche.`;
     if(/access denied|forbidden|request blocked|not authorized/i.test(plain))return`HTTP ${status}: ${currentHost||'il sito'} ha rifiutato la richiesta automatica.`;
     if(/<html[\s>]/i.test(String(body||''))||plain.length>260)return`HTTP ${status}: risposta non utilizzabile ricevuta da ${currentHost||'sito remoto'}.`;
@@ -1845,9 +1903,10 @@ window.NWLiveResolver = (() => {
   async function parseWorkingCandidate(source,candidate,fresh=true){
     const effective={...source,...candidate};
     delete effective.fallbacks;
-    const fetched=await fetchRaw(effective.url,fresh);
+    const rendered=!!effective.browserRender;
+    const fetched=await fetchRaw(effective.url,rendered?false:fresh,rendered);
     const items=effective.strategy==='sitemap'
-      ? await parseSitemapTree(source,effective,fetched,fresh)
+      ? await parseSitemapTree(source,effective,fetched,rendered?false:fresh)
       : P.parse(fetched.text,effective);
     if(!items.length)throw new Error('Nessun articolo riconosciuto');
     return{effective,fetched,items};
@@ -1871,40 +1930,45 @@ window.NWLiveResolver = (() => {
     const known=await knownPresetConfiguration(base,input);
     if(known)return known;
 
-    let direct;
+    let direct=null;
+    let directError=null;
     try{
       direct=await fetchRaw(pageUrl,true);
     }catch(error){
-      const reason=error.status?`La pagina diretta restituisce HTTP ${error.status}.`:'La pagina diretta non è raggiungibile.';
-      return indexedConfiguration(base,reason);
+      directError=error;
     }
 
-    const detected=detectedName(direct.text,pageUrl);
-    if(!U.clean(input.name)){
-      base.name=detected;
-      base.id=U.slug(detected);
-      const updatedProfile=sourceProfile(pageUrl,detected);
-      base.kind=updatedProfile.kind||base.kind;
-      base.folder=U.clean(input.folder)||updatedProfile.folder||base.folder;
+    const directText=direct?.text||'';
+    if(direct){
+      const detected=detectedName(direct.text,pageUrl);
+      if(!U.clean(input.name)){
+        base.name=detected;
+        base.id=U.slug(detected);
+        const updatedProfile=sourceProfile(pageUrl,detected);
+        base.kind=updatedProfile.kind||base.kind;
+        base.folder=U.clean(input.folder)||updatedProfile.folder||base.folder;
+      }
+
+      const strategy=payloadStrategy(direct.text);
+      if(strategy==='rss'||strategy==='sitemap'){
+        const configured={...base,url:pageUrl,strategy,selectors:[],excludeAny:[],filterMode:'none',note:mergeAutoNote(base.note,`Rilevato automaticamente come ${strategy==='rss'?'RSS/Atom':'sitemap XML'}.`)};
+        const tested=await parseWorkingCandidate(configured,configured,true);
+        return{source:configured,items:tested.items,route:strategy,message:`Rilevato automaticamente ${strategy==='rss'?'un feed RSS/Atom':'una sitemap XML'} (${tested.items.length} articoli).`};
+      }
     }
 
-    const strategy=payloadStrategy(direct.text);
-    if(strategy==='rss'||strategy==='sitemap'){
-      const configured={...base,url:pageUrl,strategy,selectors:[],excludeAny:[],filterMode:'none',note:mergeAutoNote(base.note,`Rilevato automaticamente come ${strategy==='rss'?'RSS/Atom':'sitemap XML'}.`)};
-      const tested=await parseWorkingCandidate(configured,configured,true);
-      return{source:configured,items:tested.items,route:strategy,message:`Rilevato automaticamente ${strategy==='rss'?'un feed RSS/Atom':'una sitemap XML'} (${tested.items.length} articoli).`};
-    }
-
-    const discovered=feedDiscoveryUrls(direct.text,pageUrl);
+    // Anche se la homepage restituisce 403, prova comunque i percorsi RSS convenzionali.
+    const discovered=feedDiscoveryUrls(directText,pageUrl);
     for(const feedUrl of discovered){
       try{
-        const candidate={...base,url:feedUrl,pageUrl,strategy:'rss',selectors:[],includeAny:[],excludeAny:[],includeKeywordsAny:[],filterMode:'none',note:mergeAutoNote(base.note,'Feed RSS individuato automaticamente nella pagina.')};
+        const candidate={...base,url:feedUrl,pageUrl,strategy:'rss',selectors:[],includeAny:[],excludeAny:[],includeKeywordsAny:[],filterMode:'none',note:mergeAutoNote(base.note,'Feed RSS individuato automaticamente sulla fonte originale.')};
         const tested=await parseWorkingCandidate(candidate,candidate,true);
         return{source:candidate,items:tested.items,route:'RSS scoperto automaticamente',message:`Trovato e configurato automaticamente un feed RSS (${tested.items.length} articoli).`};
       }catch{}
     }
 
-    const sitemapCandidates=sitemapCandidateUrls(pageUrl,direct.text);
+    // Stessa regola per sitemap e sitemap index: non dipendono dal successo della homepage.
+    const sitemapCandidates=sitemapCandidateUrls(pageUrl,directText);
     for(const sitemapUrl of sitemapCandidates){
       try{
         const candidate={...base,url:sitemapUrl,pageUrl,strategy:'sitemap',selectors:[],includeAny:[],excludeAny:[],includeKeywordsAny:[],filterMode:'none',note:mergeAutoNote(base.note,'Sitemap individuata automaticamente; supporto sitemap index e sitemap figlie attivo.')};
@@ -1913,13 +1977,18 @@ window.NWLiveResolver = (() => {
       }catch{}
     }
 
-    const htmlSource={...base,url:pageUrl,pageUrl,strategy:'html',selectors:[...AUTO_HTML_SELECTORS],includeAny:[],excludeAny:[...AUTO_EXCLUDES],includeKeywordsAny:[],filterMode:'none',note:mergeAutoNote(base.note,'Pagina HTML configurata automaticamente con selettori generici.')};
-    try{
-      const tested=await parseWorkingCandidate(htmlSource,htmlSource,true);
-      return{source:htmlSource,items:tested.items,route:'pagina HTML',message:`Pagina HTML configurata automaticamente (${tested.items.length} articoli).`};
-    }catch{
-      return indexedConfiguration(base,'La pagina è raggiungibile, ma non espone articoli leggibili.');
+    if(direct){
+      const htmlSource={...base,url:pageUrl,pageUrl,strategy:'html',selectors:[...AUTO_HTML_SELECTORS],includeAny:[],excludeAny:[...AUTO_EXCLUDES],includeKeywordsAny:[],filterMode:'none',note:mergeAutoNote(base.note,'Pagina HTML configurata automaticamente con selettori generici.')};
+      try{
+        const tested=await parseWorkingCandidate(htmlSource,htmlSource,true);
+        return{source:htmlSource,items:tested.items,route:'pagina HTML',message:`Pagina HTML configurata automaticamente (${tested.items.length} articoli).`};
+      }catch{}
     }
+
+    const reason=directError
+      ? (directError.status?`La pagina diretta restituisce HTTP ${directError.status}.`:'La pagina diretta non è raggiungibile.')
+      : 'La pagina è raggiungibile, ma non espone articoli leggibili.';
+    return indexedConfiguration(base,reason);
   }
 
   const DIRECT_BACKOFF_MINUTES=[0,15,30,60,120,180];
@@ -1956,6 +2025,8 @@ window.NWLiveResolver = (() => {
       excludeAny:source.excludeAny,
       includeKeywordsAny:source.includeKeywordsAny,
       filterMode:source.filterMode,
+      languageFilter:source.languageFilter,
+      browserRender:!!source.browserRender,
       label:'collegamento diretto',
       direct:true
     };
@@ -1968,10 +2039,20 @@ window.NWLiveResolver = (() => {
   function scheduleDirectRetry(source,error){
     const count=Math.min(20,Number(source.directFailureCount||0)+1);
     source.directFailureCount=count;
-    delete source.directRetryAt;
-    source.directManualOnly=true;
     source.lastDirectAttemptAt=new Date().toISOString();
     source.lastDirectError=error?.message||'Collegamento diretto non disponibile';
+
+    // Le fonti renderizzate non vanno sospese in modo permanente per un
+    // limite temporaneo di Browser Run: applica un backoff automatico.
+    if(source.browserRender||/^BROWSER_RUN_/.test(String(error?.code||''))){
+      const minutes=error?.status===429?60:30;
+      source.directManualOnly=false;
+      source.directRetryAt=Date.now()+minutes*60000;
+      return minutes;
+    }
+
+    delete source.directRetryAt;
+    source.directManualOnly=true;
     return 0;
   }
 
@@ -2160,17 +2241,99 @@ window.NWLiveResolver = (() => {
 
   function repairKnownSource(source){
     const identity=`${source?.id||''} ${source?.name||''} ${source?.url||''} ${source?.pageUrl||''}`.toLowerCase();
-    if(!/centcom/.test(identity))return source;
-    source.includeAny=withUniqueItem(source.includeAny,CENTCOM_NEWS_ARTICLE_PATH);
-    source.fallbacks=(source.fallbacks||[]).map(fallback=>{
-      const fallbackIdentity=`${fallback?.url||''} ${fallback?.pageUrl||''}`.toLowerCase();
-      if(!/centcom\.mil/.test(fallbackIdentity))return fallback;
-      return{
-        ...fallback,
-        selectors:withUniqueItem(fallback.selectors,CENTCOM_NEWS_ARTICLE_SELECTOR),
-        includeAny:withUniqueItem(fallback.includeAny,CENTCOM_NEWS_ARTICLE_PATH)
+
+    if(/centcom/.test(identity)){
+      source.includeAny=withUniqueItem(source.includeAny,CENTCOM_NEWS_ARTICLE_PATH);
+      source.fallbacks=(source.fallbacks||[]).map(fallback=>{
+        const fallbackIdentity=`${fallback?.url||''} ${fallback?.pageUrl||''}`.toLowerCase();
+        if(!/centcom\.mil/.test(fallbackIdentity))return fallback;
+        return{
+          ...fallback,
+          selectors:withUniqueItem(fallback.selectors,CENTCOM_NEWS_ARTICLE_SELECTOR),
+          includeAny:withUniqueItem(fallback.includeAny,CENTCOM_NEWS_ARTICLE_PATH)
+        };
+      });
+    }
+
+    // Migrazioni trasparenti per fonti già salvate online.
+    if(/axios\.com/.test(identity)){
+      source={
+        ...source,
+        url:'https://www.axios.com/sitemap.xml',
+        pageUrl:'https://www.axios.com/',
+        strategy:'sitemap',
+        selectors:[],
+        includeAny:[],
+        excludeAny:[],
+        includeKeywordsAny:[],
+        filterMode:'none',
+        browserRender:false,
+        note:mergeAutoNote(source.note,'Sitemap ufficiale Axios; non dipende dalla homepage che può restituire HTTP 403.')
       };
-    });
+      delete source.fallbacks;
+    }
+
+    if(/farsnews\.ir/.test(identity)||/\bfars\b/.test(identity)){
+      source={
+        ...source,
+        url:'https://farsnews.ir/showcase?lang=en',
+        pageUrl:'https://farsnews.ir/showcase?lang=en',
+        strategy:'fars-social',
+        browserRender:true,
+        selectors:['article a[href]','main a[href]','h2 a[href]','h3 a[href]','a[href]'],
+        includeAny:[],
+        excludeAny:[],
+        includeKeywordsAny:[],
+        filterMode:'none',
+        languageFilter:'latin',
+        fallbacks:[{
+          url:'https://farsnews.ir/FarsNews_eng',
+          pageUrl:'https://farsnews.ir/FarsNews_eng',
+          strategy:'fars-social',
+          browserRender:true,
+          maxItems:Number(source.maxItems)||50,
+          includeAny:[],
+          excludeAny:[],
+          includeKeywordsAny:[],
+          filterMode:'none',
+          languageFilter:'latin',
+          label:'pagina ufficiale @FarsNews_eng'
+        }],
+        note:mergeAutoNote(source.note,'Solo pagine ufficiali Fars; rendering JavaScript tramite Browser Run.')
+      };
+    }
+
+    if(/ukmto\.org/.test(identity)){
+      source={
+        ...source,
+        url:'https://www.ukmto.org/recent-incidents',
+        pageUrl:'https://www.ukmto.org/recent-incidents',
+        strategy:'html',
+        kind:'official',
+        browserRender:true,
+        selectors:['main a[href]','article a[href]','h2 a[href]','h3 a[href]','h4 a[href]','a[href]'],
+        includeAny:[],
+        excludeAny:['/privacy','/terms','/contact'],
+        includeKeywordsAny:[],
+        filterMode:'none',
+        note:mergeAutoNote(source.note,'Pagina ufficiale UKMTO renderizzata lato browser per leggere gli incidenti caricati via JavaScript.')
+      };
+      delete source.fallbacks;
+    }
+
+    if(/bloomberg\.com/.test(identity)){
+      source={
+        ...source,
+        browserRender:false,
+        note:mergeAutoNote(source.note,'Bloomberg resta best-effort: News Watch non forza il superamento di protezioni anti-bot o paywall.')
+      };
+    }
+
+    if(/timesofisrael\.com/.test(identity)&&isLiveSource(source)){
+      source.timezone='Asia/Jerusalem';
+      delete source.timezoneOffset;
+    }
+
     return source;
   }
 
@@ -2432,23 +2595,25 @@ window.NWLiveResolver = (() => {
     applyLayout();
   }
 
-  function proxyUrl(target, fresh = false) {
+  function proxyUrl(target, fresh = false, render = false) {
     const proxy = S.settings().proxyUrl.trim();
     if (!proxy) return target;
     let value;
     if (proxy.includes('{url}')) value = proxy.replace('{url}', encodeURIComponent(target));
     else if (/[?&]url=$/.test(proxy)) value = proxy + encodeURIComponent(target);
     else value = proxy + (proxy.includes('?') ? '&url=' : '?url=') + encodeURIComponent(target);
-    if (fresh) value += (value.includes('?') ? '&' : '?') + 'nw_fresh=' + Date.now();
+    if (render) value += (value.includes('?') ? '&' : '?') + 'nw_render=1';
+    if (fresh && !render) value += (value.includes('?') ? '&' : '?') + 'nw_fresh=' + Date.now();
     return value;
   }
 
-  async function fetchRaw(target, fresh = false) {
+  async function fetchRaw(target, fresh = false, render = false) {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), S.settings().timeoutSeconds * 1000);
+    const timeoutSeconds=Math.max(S.settings().timeoutSeconds,render?35:0);
+    const timer = setTimeout(() => controller.abort(), timeoutSeconds * 1000);
     const start = performance.now();
     try {
-      const response = await fetch(proxyUrl(target, fresh), {
+      const response = await fetch(proxyUrl(target, fresh, render), {
         cache: 'no-store',
         signal: controller.signal,
         headers: { Accept: 'text/html,application/xhtml+xml,application/xml,text/xml,application/rss+xml;q=.9,*/*;q=.7', ...(S.settings().adminToken?{'X-News-Watch-Admin':S.settings().adminToken}:{}) }
@@ -2470,7 +2635,9 @@ window.NWLiveResolver = (() => {
       return {
         text: body,
         duration: Math.round(performance.now() - start),
-        finalUrl: response.headers.get('X-News-Watch-Final-URL') || target
+        finalUrl: response.headers.get('X-News-Watch-Final-URL') || target,
+        mode: response.headers.get('X-News-Watch-Mode') || '',
+        browserMs: Number(response.headers.get('X-News-Watch-Browser-Ms') || 0)
       };
     } finally {
       clearTimeout(timer);
@@ -2496,7 +2663,8 @@ window.NWLiveResolver = (() => {
         const auth=await fetch(origin+'/api/auth-check',{cache:'no-store',headers:{'X-News-Watch-Admin':S.settings().adminToken}});
         if(!auth.ok){const code=auth.headers.get('X-News-Watch-Error-Code')||'';throw new Error(conciseHttpError(auth.status,await auth.text(),origin,code))}
       }
-      element.textContent=`Worker ${data.version} operativo · configurazione online attiva${data.dynamicDomains?' · domini dinamici attivi':' · secret ADMIN_TOKEN mancante'}.`;
+      const browserText=data.browserRun?' · Browser Run attivo':' · Browser Run non collegato';
+      element.textContent=`Worker ${data.version} operativo · configurazione online attiva${data.dynamicDomains?' · domini dinamici attivi':' · secret ADMIN_TOKEN mancante'}${browserText}.`;
       element.className='worker-status '+(data.dynamicDomains?'ok':'warning');
       S.saveSettings({...S.settings(),workerVersion:String(data.version||'')});
       return true;
@@ -2621,7 +2789,8 @@ window.NWLiveResolver = (() => {
   async function parseLiveCandidate(source, candidate) {
     const effective = { ...source, ...candidate };
     delete effective.fallbacks;
-    const fetched = await fetchRaw(effective.url, candidate.fresh !== false);
+    const rendered=!!effective.browserRender;
+    const fetched = await fetchRaw(effective.url, rendered?false:candidate.fresh !== false, rendered);
     const items = P.parse(fetched.text, effective);
     if (!items.length) throw new Error('Nessun aggiornamento live riconosciuto');
     return {
@@ -2835,9 +3004,10 @@ window.NWLiveResolver = (() => {
       const effective={...source,...candidate};
       delete effective.fallbacks;
       try{
-        const fetched=await fetchRaw(effective.url,!!candidate.direct);
+        const rendered=!!effective.browserRender;
+        const fetched=await fetchRaw(effective.url,rendered?false:!!candidate.direct,rendered);
         const items=effective.strategy==='sitemap'
-          ? await parseSitemapTree(source,effective,fetched,!!candidate.direct)
+          ? await parseSitemapTree(source,effective,fetched,rendered?false:!!candidate.direct)
           : P.parse(fetched.text,effective);
         if(!items.length)throw new Error('Nessun articolo riconosciuto');
 
@@ -3088,9 +3258,15 @@ window.NWLiveResolver = (() => {
         state.liveSnapshotReady = true;
         if (discovered.length && (document.hidden || state.view !== 'liveBlogsView')) notifyLive(discovered.length);
       }
-      if(scope==='live')status('Controllo live blog completato.','success');
-      else{
-        const ids=new Set(active.map(source=>source.id));
+      const ids=new Set(active.map(source=>source.id));
+      if(scope==='live'){
+        const failed=[...state.results.entries()].filter(([id,result])=>ids.has(id)&&['error','cooldown'].includes(result.status)).length;
+        const stale=[...state.results.entries()].filter(([id,result])=>ids.has(id)&&['stale','link'].includes(result.status)).length;
+        const message=failed
+          ? `Controllo live completato: ${failed} fonti non aggiornate; gli ultimi dati validi sono stati mantenuti.`
+          : (stale?`Controllo live completato: ${stale} fonti senza aggiornamenti recenti o disponibili solo come link.`:'Controllo live blog completato.');
+        status(message,failed||stale?'warning':'success');
+      }else{
         const degraded=[...state.results.entries()].filter(([id,result])=>ids.has(id)&&['error','degraded'].includes(result.status)).length;
         status(degraded?`Controllo completato: ${degraded} fonti non aggiornate; gli ultimi dati validi sono stati mantenuti.`:'Controllo completato.',degraded?'warning':'success');
       }
@@ -3104,6 +3280,17 @@ window.NWLiveResolver = (() => {
     }
   }
 
+  function articleTime(article){
+    const timestamp=Date.parse(article?.dateISO||'');
+    return Number.isFinite(timestamp)?timestamp:0;
+  }
+
+  function compareNewestArticles(a,b){
+    const difference=articleTime(b)-articleTime(a);
+    if(difference)return difference;
+    return String(b.id||'').localeCompare(String(a.id||''));
+  }
+
   function rebuildArticles(){
     const map=new Map();
     state.results.forEach(result=>(result.items||[]).forEach(item=>{
@@ -3115,10 +3302,13 @@ window.NWLiveResolver = (() => {
         if(!article.sourceIds.includes(item.sourceId))article.sourceIds.push(item.sourceId);
         if(!article.sourceNames.includes(item.sourceName))article.sourceNames.push(item.sourceName);
         if(!article.abstract&&item.abstract)article.abstract=item.abstract;
-        article.isRead=article.isRead&&item.isRead;article.isCachedResult=article.isCachedResult||cached;
+        // Se la stessa URL è vista da più fonti, conserva l'orario di pubblicazione più recente valido.
+        if(articleTime(item)>articleTime(article))article.dateISO=item.dateISO;
+        article.isRead=article.isRead&&item.isRead;
+        article.isCachedResult=article.isCachedResult||cached;
       }
     }));
-    state.articles=[...map.values()].sort((a,b)=>(b.dateISO||'').localeCompare(a.dateISO||''));
+    state.articles=[...map.values()].sort(compareNewestArticles);
   }
 
   function compileQuery(inputId,errorId){
@@ -3130,7 +3320,10 @@ window.NWLiveResolver = (() => {
     const predicate=compileQuery('queryInput','queryError');
     const source=$('sourceFilter').value,folder=$('folderFilter').value,read=$('readFilter').value,kind=$('kindFilter').value,hours=Number($('timeFilter').value),cut=hours?Date.now()-hours*3600000:0;
     const folderIds=folder?new Set(regularSources().filter(item=>folderName(item)===folder).map(item=>item.id)):null;
-    return state.articles.filter(article=>!article.isLiveBlog&&predicate(article)&&(!source||article.sourceIds.includes(source))&&(!folderIds||article.sourceIds.some(id=>folderIds.has(id)))&&(!read||(read==='read'?article.isRead:!article.isRead))&&(!kind||article.kind===kind)&&(!cut||(article.dateISO&&new Date(article.dateISO).getTime()>=cut)));
+    return state.articles
+      .filter(article=>!article.isLiveBlog&&predicate(article)&&(!source||article.sourceIds.includes(source))&&(!folderIds||article.sourceIds.some(id=>folderIds.has(id)))&&(!read||(read==='read'?article.isRead:!article.isRead))&&(!kind||article.kind===kind)&&(!cut||(article.dateISO&&new Date(article.dateISO).getTime()>=cut)))
+      .slice()
+      .sort(compareNewestArticles);
   }
 
   function liveTime(article) {
@@ -3705,7 +3898,7 @@ window.NWLiveResolver = (() => {
     }
     if(S.settings().adminToken){
       element.className='domain-status dynamic';
-      element.textContent=`Nuovo dominio ${publicHost}: il Worker 3.6 lo interrogherà con autorizzazione dinamica. Non devi modificare il Worker.`;
+      element.textContent=`Nuovo dominio ${publicHost}: il Worker 3.7 lo interrogherà con autorizzazione dinamica. Non devi modificare il Worker.`;
     }else{
       element.className='domain-status warning';
       element.textContent=`Nuovo dominio ${publicHost}: inserisci una sola volta il token amministratore in Impostazioni.`;
@@ -3716,7 +3909,7 @@ window.NWLiveResolver = (() => {
     const currentHost=host($('liveEditUrl').value),element=$('liveEditorDomainStatus');
     if(!currentHost){element.className='domain-status';element.textContent='Inserisci un URL.';return}
     if(allowedHost(currentHost)){element.className='domain-status ok';element.textContent=`Dominio ${currentHost} incluso nelle fonti iniziali del Worker.`;return}
-    if(S.settings().adminToken){element.className='domain-status dynamic';element.textContent=`Nuovo dominio ${currentHost}: autorizzazione dinamica Worker 3.6 attiva.`}
+    if(S.settings().adminToken){element.className='domain-status dynamic';element.textContent=`Nuovo dominio ${currentHost}: autorizzazione dinamica Worker 3.7 attiva.`}
     else{element.className='domain-status warning';element.textContent=`Nuovo dominio ${currentHost}: configura il token amministratore in Impostazioni.`}
   }
 
@@ -3778,10 +3971,14 @@ window.NWLiveResolver = (() => {
     const dynamic=[...new Set(state.sources.flatMap(source=>[source.url,...(source.fallbacks||[]).map(item=>item.url)]).map(host).filter(value=>value&&!allowedHost(value)))];
     const element=$('domainWarning');
     if(!dynamic.length){element.classList.add('hidden');return}
-    element.textContent=S.settings().adminToken
-      ? `Domini dinamici / recuperi gestiti dal Worker 3.6: ${dynamic.join(', ')}.`
-      : `Per usare questi nuovi domini configura il token amministratore del Worker nelle Impostazioni: ${dynamic.join(', ')}.`;
-    element.className='inline-warning';element.classList.remove('hidden');
+    if(S.settings().adminToken){
+      element.textContent=`✓ Domini aggiuntivi autorizzati dal Worker: ${dynamic.join(', ')}.`;
+      element.className='inline-message';
+    }else{
+      element.textContent=`Per usare questi nuovi domini configura il token amministratore del Worker nelle Impostazioni: ${dynamic.join(', ')}.`;
+      element.className='inline-warning';
+    }
+    element.classList.remove('hidden');
   }
 
   function showView(id){
