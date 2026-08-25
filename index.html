@@ -1769,7 +1769,7 @@ window.NWLiveResolver = (() => {
 (()=>{
   'use strict';
   const U=NWUtils,S=NWStore,P=NWParsers,Q=NWQuery,Stories=NWStories,LiveAlert=NWLiveAlert,Resolver=NWLiveResolver;
-  const APP_VERSION='4.3.0';
+  const APP_VERSION='4.3.1';
   const $=id=>document.getElementById(id);
   const ALLOWED=['aljazeera.com','haaretz.com','theiranproject.com','middleeasteye.net','presstv.ir','sky.com','jpost.com','timesofisrael.com','t.me','cnn.com','bbc.com','reuters.com','nytimes.com','wsj.com','feeds.content.dowjones.io','centcom.mil','dvidshub.net','edition-prod-cf.sitemirror.cnn.com','mehrnews.com','irna.ir'];
 
@@ -2785,7 +2785,14 @@ window.NWLiveResolver = (() => {
       state.folderNames=[...new Set((configuration.folderNames||[]).map(cleanFolderName).filter(Boolean))];
       state.sync.revision=String(configuration.revision||'');
       state.sync.updatedAt=String(configuration.updatedAt||'');
-      state.sync.lastPayload=JSON.stringify(localConfiguration());
+      const originalById=new Map((configuration.sources||[]).map(item=>[item.id,item]));
+      state.sync.migrationPending=state.sources.some(source=>{
+        const identity=[source?.id,source?.name,source?.url,source?.pageUrl].join(' ').toLowerCase();
+        if(isLiveSource(source)||!/timesofisrael\.com/.test(identity))return false;
+        const original=originalById.get(source.id)||{};
+        return !(original.fallbacks||[]).some(item=>host(item?.url)==='t.me');
+      });
+      state.sync.lastPayload=state.sync.migrationPending?'':JSON.stringify(localConfiguration());
       state.sync.available=true;
     }finally{
       state.sync.suspend=false;
@@ -2873,7 +2880,13 @@ window.NWLiveResolver = (() => {
       const remote=await fetchRemoteConfiguration();
       if(remote){
         applyRemoteConfiguration(remote);
-        setCloudSync(`Configurazione online caricata${remote.updatedAt?' · '+U.fmt(remote.updatedAt):''}.`,'ok');
+        if(state.sync.migrationPending&&S.settings().adminToken){
+          const migrated=await saveRemoteConfiguration({force:true});
+          if(migrated)state.sync.migrationPending=false;
+        }
+        if(!state.sync.migrationPending){
+          setCloudSync(`Configurazione online caricata${remote.updatedAt?' · '+U.fmt(remote.updatedAt):''}.`,'ok');
+        }
         return 'remote';
       }
       state.sync.available=true;
