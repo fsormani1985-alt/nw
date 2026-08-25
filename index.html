@@ -763,6 +763,54 @@ window.NWParsers = (() => {
     return uniq(output,source.maxItems||50,item=>`${item.title.toLowerCase()}|${item.url}`);
   }
 
+  function timesOfIsraelTelegram(text,source){
+    const doc=new DOMParser().parseFromString(text,'text/html');
+    const output=[];
+    const wrappers=[...doc.querySelectorAll('.tgme_widget_message_wrap')];
+    const messages=wrappers.length
+      ?wrappers.map(node=>node.querySelector('.tgme_widget_message')).filter(Boolean)
+      :[...doc.querySelectorAll('.tgme_widget_message[data-post]')];
+
+    messages.forEach(message=>{
+      const textNode=message.querySelector('.tgme_widget_message_text');
+      if(!textNode)return;
+      const link=[...textNode.querySelectorAll('a[href]')]
+        .map(anchor=>anchor.getAttribute('href')||'')
+        .find(value=>/^https:\/\/(?:www\.)?(?:toi\.li|timesofisrael\.com)\//i.test(value));
+      if(!link)return;
+
+      const readable=textNode.cloneNode(true);
+      readable.querySelectorAll('br').forEach(br=>br.replaceWith('\n'));
+      const lines=String(readable.textContent||'')
+        .split(/\r?\n/)
+        .map(value=>U.clean(value))
+        .filter(value=>value&&!/^https?:\/\//i.test(value)&&!/^read more\b/i.test(value));
+      let title=lines.find(validTitle)||'';
+      if(title.length>300){
+        const sentence=title.match(/^(.{14,300}?[.!?])(?:\s|$)/)?.[1]||'';
+        title=validTitle(sentence)?U.clean(sentence):'';
+      }
+      if(!validTitle(title))return;
+
+      const description=lines.filter(value=>value!==title).join(' ');
+      const date=message.querySelector('time[datetime]')?.getAttribute('datetime')
+        ||message.querySelector('time')?.textContent
+        ||'';
+      const item=source.category==='liveblog'
+        ?makeLive(source,title,date,description,link)
+        :make(source,title,link,date,description);
+      item.tags=source.category==='liveblog'
+        ?['live blog','Times of Israel','canale ufficiale']
+        :['Times of Israel','canale ufficiale'];
+      item.discovery='official-social';
+      output.push(item);
+    });
+
+    return source.category==='liveblog'
+      ?dedupeLive(output,source.maxItems||180)
+      :uniq(output,source.maxItems||40,item=>`${item.title.toLowerCase()}|${item.url}`);
+  }
+
   function typeList(value) {
     const type = value?.['@type'];
     return Array.isArray(type) ? type : [type].filter(Boolean);
@@ -1329,6 +1377,7 @@ window.NWParsers = (() => {
     if (source.strategy === 'lorient-api') return lorientApi(trimmed, source);
     if (source.strategy === 'ukmto') return ukmto(trimmed, source);
     if (source.strategy === 'fars-social') return farsSocial(trimmed, source);
+    if (source.strategy === 'toi-telegram') return timesOfIsraelTelegram(trimmed, source);
     if (source.strategy === 'liveblog') return liveblog(trimmed, source);
     return html(trimmed, source);
   }
@@ -1343,6 +1392,7 @@ window.NWParsers = (() => {
       sourceDateParts,
       clockMinutes,
       farsSocial,
+      timesOfIsraelTelegram,
       relativeSocialDate
     }
   };
@@ -1719,9 +1769,9 @@ window.NWLiveResolver = (() => {
 (()=>{
   'use strict';
   const U=NWUtils,S=NWStore,P=NWParsers,Q=NWQuery,Stories=NWStories,LiveAlert=NWLiveAlert,Resolver=NWLiveResolver;
-  const APP_VERSION='4.2.2';
+  const APP_VERSION='4.3.0';
   const $=id=>document.getElementById(id);
-  const ALLOWED=['aljazeera.com','haaretz.com','theiranproject.com','middleeasteye.net','presstv.ir','sky.com','jpost.com','timesofisrael.com','cnn.com','bbc.com','reuters.com','nytimes.com','wsj.com','feeds.content.dowjones.io','centcom.mil','dvidshub.net','edition-prod-cf.sitemirror.cnn.com','mehrnews.com','irna.ir'];
+  const ALLOWED=['aljazeera.com','haaretz.com','theiranproject.com','middleeasteye.net','presstv.ir','sky.com','jpost.com','timesofisrael.com','t.me','cnn.com','bbc.com','reuters.com','nytimes.com','wsj.com','feeds.content.dowjones.io','centcom.mil','dvidshub.net','edition-prod-cf.sitemirror.cnn.com','mehrnews.com','irna.ir'];
 
   const SOURCE_PROFILES=[
     {hosts:['reuters.com'],name:'Reuters',kind:'agency',folder:'Agenzie'},
@@ -2575,9 +2625,28 @@ window.NWLiveResolver = (() => {
       };
     }
 
-    if(/timesofisrael\.com/.test(identity)&&isLiveSource(source)){
-      source.timezone='Asia/Jerusalem';
-      delete source.timezoneOffset;
+    if(/timesofisrael\.com/.test(identity)){
+      if(isLiveSource(source)){
+        source.timezone='Asia/Jerusalem';
+        delete source.timezoneOffset;
+      }else{
+        const officialFallback={
+          url:'https://t.me/s/TheTimesOfIsrael2022',
+          pageUrl:source.pageUrl||source.url,
+          strategy:'toi-telegram',
+          maxItems:Number(source.maxItems)||40,
+          includeAny:[],
+          excludeAny:[],
+          includeKeywordsAny:[],
+          filterMode:'none',
+          label:'canale ufficiale Times of Israel'
+        };
+        source.fallbacks=[
+          officialFallback,
+          ...(source.fallbacks||[]).filter(item=>host(item?.url)!=='t.me')
+        ];
+        source.note=mergeAutoNote(source.note,'Se il sito blocca il Worker, usa il canale ufficiale verificato di Times of Israel e mantiene i collegamenti originali TOI.');
+      }
     }
 
     return source;
@@ -3169,7 +3238,23 @@ window.NWLiveResolver = (() => {
       return await firstWorkingLiveCandidate(source, candidates);
     } catch (error) {
       if (indexHtml) return inactiveLiveResult('NESSUN LIVE ATTIVO: Times of Israel non espone aggiornamenti live oggi.', permanentUrl);
-      throw indexError || error;
+      const directError=indexError||error;
+      try{
+        const recovered=await firstWorkingLiveCandidate(source,[{
+          url:'https://t.me/s/TheTimesOfIsrael2022',
+          pageUrl:permanentUrl,
+          strategy:'toi-telegram',
+          label:'canale ufficiale Times of Israel',
+          fresh:false
+        }]);
+        return{
+          ...recovered,
+          status:'recovery',
+          info:'Aggiornamenti recuperati dal canale ufficiale verificato di Times of Israel; il sito diretto resta bloccato al Worker.'
+        };
+      }catch(recoveryError){
+        throw new Error(`Sito diretto non disponibile (${conciseAttemptError(directError.message)}); anche il canale ufficiale non è raggiungibile (${conciseAttemptError(recoveryError.message)}).`);
+      }
     }
   }
 
@@ -3318,6 +3403,9 @@ window.NWLiveResolver = (() => {
 
     if (fetched.status === 'link') return fetched;
     const stateInfo = liveResultStatus(source, fetched);
+    if(fetched.status==='recovery'&&stateInfo.status==='ok'){
+      return{...fetched,...stateInfo,status:'recovery',info:fetched.info||stateInfo.info};
+    }
     return { ...fetched, ...stateInfo };
   }
 
@@ -3612,7 +3700,7 @@ window.NWLiveResolver = (() => {
     const ids=new Set(sources.map(source=>source.id));
     const updates=state.articles.filter(article=>article.isLiveBlog);
     $('liveStatActive').textContent=sources.filter(source=>source.enabled!==false).length;
-    $('liveStatOk').textContent=[...state.results.entries()].filter(([id,result])=>ids.has(id)&&['ok','stale','link'].includes(result.status)).length;
+    $('liveStatOk').textContent=[...state.results.entries()].filter(([id,result])=>ids.has(id)&&['ok','recovery','stale','link'].includes(result.status)).length;
     $('liveStatNew').textContent=state.liveFreshIds.size;
     $('liveStatUpdates').textContent=updates.length;
   }
