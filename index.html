@@ -1319,6 +1319,59 @@ window.NWParsers = (() => {
     return dedupeLive(output, source.maxItems || 180);
   }
 
+  function iranIntlLive(text, source) {
+    const documentHtml = new DOMParser().parseFromString(text, 'text/html');
+    const root = documentHtml.querySelector('main') || documentHtml.body;
+    const output = [];
+
+    root.querySelectorAll('article[id][class*="LiveblogUpdate"],article[id][class*="liveblog"]').forEach(block => {
+      const domId = U.clean(block.id || '');
+      if (!/^\d{8,}$/.test(domId)) return;
+      const header = block.querySelector('header') || block;
+      const heading = header.querySelector('h1,h2,h3,h4,h5,[role="heading"]') || block.querySelector('h1,h2,h3,h4,h5,[role="heading"]');
+      const title = U.clean(heading?.textContent || '');
+      if (!validTitle(title)) return;
+      const relative = relativeSocialDate(U.clean(header.textContent || block.textContent || ''));
+      const date = relative || liveDateFromBlock(block, source);
+      const description = textParagraphs(block, title);
+      let href = '';
+      try {
+        const target = new URL(source.pageUrl || source.url);
+        target.hash = encodeURIComponent(domId);
+        href = target.toString();
+      } catch {}
+      output.push(makeLive(source, title, date, description, href));
+    });
+
+    return output.length
+      ? dedupeLive(output, source.maxItems || 180)
+      : genericLive(text, source);
+  }
+
+  function middleEastEyeLive(text, source) {
+    const documentHtml = new DOMParser().parseFromString(text, 'text/html');
+    const root = documentHtml.querySelector('main,article') || documentHtml.body;
+    const output = [];
+    const selector = 'a[href*="/live-blog/live-blog-update/"]';
+
+    root.querySelectorAll(selector).forEach(anchor => {
+      const href = anchor.getAttribute('href') || '';
+      if (!href) return;
+      const block = nearestSingleLinkBlock(anchor, selector, root);
+      const heading = anchor.closest('h1,h2,h3,h4,h5') || anchor.querySelector('h1,h2,h3,h4,h5') || block.querySelector('h1,h2,h3,h4,h5');
+      const title = U.clean(heading?.textContent || anchor.textContent || '');
+      if (!validTitle(title)) return;
+      const relative = relativeSocialDate(U.clean(block.textContent || ''));
+      const date = relative || liveDateFromBlock(block, source);
+      const description = textParagraphs(block, title);
+      output.push(makeLive(source, title, date, description, href));
+    });
+
+    return output.length
+      ? dedupeLive(output, source.maxItems || 180)
+      : genericLive(text, source);
+  }
+
   function genericLive(text, source) {
     const documentHtml = new DOMParser().parseFromString(text, 'text/html');
     const output = [];
@@ -1385,7 +1438,10 @@ window.NWParsers = (() => {
   }
 
   function liveblog(text, source) {
-    if (liveProvider(source) === 'timesofisrael') return timesOfIsraelLive(text, source);
+    const provider = liveProvider(source);
+    if (provider === 'timesofisrael') return timesOfIsraelLive(text, source);
+    if (provider === 'iranintl') return iranIntlLive(text, source);
+    if (provider === 'middleeasteye') return middleEastEyeLive(text, source);
     return genericLive(text, source);
   }
 
@@ -1406,6 +1462,8 @@ window.NWParsers = (() => {
     _test: {
       liveObjectCandidates,
       timesOfIsraelLive,
+      iranIntlLive,
+      middleEastEyeLive,
       genericLive,
       dedupeLive,
       sourceDateParts,
@@ -1856,9 +1914,9 @@ window.NWLiveResolver = (() => {
 (()=>{
   'use strict';
   const U=NWUtils,S=NWStore,P=NWParsers,Q=NWQuery,Stories=NWStories,LiveAlert=NWLiveAlert,Resolver=NWLiveResolver;
-  const APP_VERSION='4.2.3';
-  const SOURCE_BUNDLE_VERSION='4.2.3';
-  const SOURCE_BUNDLE_IDS=new Set(["usni-news","ukmto-warnings","app-pakistan","spa-saudi","bahrain-national-portal","bahrain-government-directory","qna-qatar","qatar-gco","petra-jordan","jordan-government-entities","ina-iraq","iraq-cabinet","iraq-presidency","iraq-mofa","wam-uae","dubai-media-office","abudhabi-media-office","saba-yemen-sanaa","ypa-yemen","sabanew-aden","insideover","euronews-it","alarabiya-english","idf-x","centcom-x","trump-truthsocial","us-treasury","tehran-times","iranintl-english","iranintl-live","middleeasteye-live","bloomberg-europe","lorient-today","nna-lebanon","axios-news","foxnews-world","farsnews-english","irna-english","mehrnews-english"]);
+  const APP_VERSION='4.2.4';
+  const SOURCE_BUNDLE_VERSION='4.2.4';
+  const SOURCE_BUNDLE_IDS=new Set(["usni-news","ukmto-warnings","app-pakistan","spa-saudi","bahrain-national-portal","bahrain-government-directory","qna-qatar","qatar-gco","petra-jordan","jordan-government-entities","ina-iraq","iraq-cabinet","iraq-presidency","iraq-mofa","wam-uae","dubai-media-office","abudhabi-media-office","saba-yemen-sanaa","ypa-yemen","sabanew-aden","insideover","euronews-it","alarabiya-english","idf-x","centcom-x","trump-truthsocial","us-treasury","tehran-times","iranintl-english","iranintl-live","middleeasteye-live","cnn-iran-war-live","timesofisrael-live","reuters-iran-war-live","bloomberg-europe","lorient-today","nna-lebanon","axios-news","foxnews-world","farsnews-english","irna-english","mehrnews-english"]);
   const $=id=>document.getElementById(id);
   const ALLOWED=["aljazeera.com","haaretz.com","theiranproject.com","middleeasteye.net","presstv.ir","sky.com","jpost.com","timesofisrael.com","cnn.com","bbc.com","reuters.com","nytimes.com","wsj.com","feeds.content.dowjones.io","centcom.mil","dvidshub.net","edition-prod-cf.sitemirror.cnn.com","mehrnews.com","irna.ir","usni.org","ukmto.org","app.com.pk","spa.gov.sa","bahrain.bh","qna.org.qa","gco.gov.qa","petra.gov.jo","jordan.gov.jo","ina.iq","cabinet.iq","presidency.iq","mofa.gov.iq","wam.ae","mediaoffice.ae","mediaoffice.abudhabi","saba.ye","ypagency.net","sabanew.net","insideover.com","euronews.com","alarabiya.net","x.com","truthsocial.com","treasury.gov","tehrantimes.com","iranintl.com","foxnews.com","bloomberg.com","lorientlejour.com","nna-leb.gov.lb","farsnews.ir"];
 
