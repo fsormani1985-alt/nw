@@ -118,7 +118,7 @@
   <header class="app-header">
     <div>
       <div class="eyebrow">FLUSSO AGGREGATO DI RASSEGNA ONLINE</div>
-      <h1>FARO <span class="version">4.2.6</span></h1>
+      <h1>FARO <span class="version">4.2.7</span></h1>
       <p>Flusso Aggregato di Rassegna Online · fonti e live blog in ordine cronologico globale.</p>
     </div>
     <nav class="main-nav" aria-label="Sezioni">
@@ -708,6 +708,47 @@ window.NWParsers = (() => {
       output.push(makeLive(source,title,date,description,link));
     });
     return dedupeLive(output,source.maxItems||180);
+  }
+
+  function telegramChannel(text,source){
+    const doc=new DOMParser().parseFromString(text,'text/html');
+    const output=[];
+    const messages=[...doc.querySelectorAll('.tgme_widget_message[data-post]')];
+
+    messages.forEach(message=>{
+      const textNode=message.querySelector('.tgme_widget_message_text');
+      if(!textNode)return;
+
+      const readable=textNode.cloneNode(true);
+      readable.querySelectorAll('br').forEach(br=>br.replaceWith('\n'));
+      const lines=String(readable.textContent||'')
+        .split(/\r?\n/)
+        .map(value=>U.clean(value))
+        .filter(Boolean);
+
+      let title=lines.find(validTitle)||'';
+      if(title.length>300){
+        const sentence=title.match(/^(.{14,300}?[.!?؟])(?:\s|$)/)?.[1]||'';
+        title=validTitle(sentence)?U.clean(sentence):U.clean(title.slice(0,300));
+      }
+      if(!validTitle(title))return;
+
+      const permalink=message.querySelector('a.tgme_widget_message_date[href]')?.getAttribute('href')
+        ||message.querySelector('.tgme_widget_message_date[href]')?.getAttribute('href')
+        ||'';
+      if(!permalink)return;
+
+      const date=message.querySelector('time[datetime]')?.getAttribute('datetime')
+        ||message.querySelector('time')?.textContent
+        ||'';
+      const description=lines.filter(value=>value!==title).join(' ');
+      const item=make(source,title,permalink,date,description);
+      item.tags=['canale ufficiale','Telegram'];
+      item.discovery='official-social';
+      output.push(item);
+    });
+
+    return uniq(output,source.maxItems||40,item=>item.url);
   }
 
   function timesOfIsraelTelegram(text,source){
@@ -1516,6 +1557,7 @@ window.NWParsers = (() => {
     if (source.strategy === 'lorient-api') return lorientApi(trimmed, source);
     if (source.strategy === 'ukmto') return ukmto(trimmed, source);
     if (source.strategy === 'fars-social') return farsSocial(trimmed, source);
+    if (source.strategy === 'telegram-channel') return telegramChannel(trimmed, source);
     if (source.strategy === 'toi-live-rss') return timesOfIsraelLiveRss(trimmed, source);
     if (source.strategy === 'toi-telegram') return timesOfIsraelTelegram(trimmed, source);
     if (source.strategy === 'liveblog') return liveblog(trimmed, source);
@@ -1534,6 +1576,7 @@ window.NWParsers = (() => {
       sourceDateParts,
       clockMinutes,
       farsSocial,
+      telegramChannel,
       timesOfIsraelLiveRss,
       timesOfIsraelTelegram,
       relativeSocialDate
@@ -1981,7 +2024,7 @@ window.NWLiveResolver = (() => {
 (()=>{
   'use strict';
   const U=NWUtils,S=NWStore,P=NWParsers,Q=NWQuery,Stories=NWStories,LiveAlert=NWLiveAlert,Resolver=NWLiveResolver;
-  const APP_VERSION='4.2.6';
+  const APP_VERSION='4.2.7';
   const SOURCE_BUNDLE_VERSION='4.2.5';
   const SOURCE_BUNDLE_IDS=new Set(["usni-news","ukmto-warnings","app-pakistan","spa-saudi","bahrain-national-portal","bahrain-government-directory","qna-qatar","qatar-gco","petra-jordan","jordan-government-entities","ina-iraq","iraq-cabinet","iraq-presidency","iraq-mofa","wam-uae","dubai-media-office","abudhabi-media-office","saba-yemen-sanaa","ypa-yemen","sabanew-aden","insideover","euronews-it","alarabiya-english","idf-x","centcom-x","trump-truthsocial","us-treasury","tehran-times","iranintl-english","iranintl-live","middleeasteye-live","cnn-iran-war-live","timesofisrael-live","reuters-iran-war-live","bloomberg-europe","lorient-today","nna-lebanon","axios-news","foxnews-world","farsnews-english","irna-english","mehrnews-english"]);
   const $=id=>document.getElementById(id);
@@ -2799,8 +2842,8 @@ window.NWLiveResolver = (() => {
     if(/ukmto\.org/.test(identity)){
       source={
         ...source,
-        url:'https://www.ukmto.org/ukmto-products/warnings',
-        pageUrl:'https://www.ukmto.org/ukmto-products/warnings',
+        url:'https://www.ukmto.org/recent-incidents',
+        pageUrl:'https://www.ukmto.org/recent-incidents',
         strategy:'ukmto',
         kind:'official',
         browserRender:true,
@@ -2811,24 +2854,116 @@ window.NWLiveResolver = (() => {
         filterMode:'none',
         fallbacks:[
           {
-            url:'https://www.ukmto.org/recent-incidents',
-            pageUrl:'https://www.ukmto.org/recent-incidents',
+            url:'https://www.ukmto.org/',
+            pageUrl:'https://www.ukmto.org/',
             strategy:'ukmto',
             browserRender:true,
             maxItems:Number(source.maxItems)||60,
-            label:'Recent Incidents ufficiale'
+            label:'Recent Incidents in homepage ufficiale'
           },
           {
-            url:'https://www.ukmto.org/ukmto-products/warnings/2026',
-            pageUrl:'https://www.ukmto.org/ukmto-products/warnings/2026',
+            url:'https://www.ukmto.org/ukmto-products/warnings',
+            pageUrl:'https://www.ukmto.org/ukmto-products/warnings',
             strategy:'ukmto',
             browserRender:true,
             maxItems:Number(source.maxItems)||60,
-            label:'Warnings 2026 ufficiale'
+            label:'Warnings ufficiali'
           }
         ],
-        note:mergeAutoNote(source.note,'UKMTO: parser dedicato per Warning/Advisory numerati; Browser Run solo sulle pagine ufficiali UKMTO.')
+        note:mergeAutoNote(source.note,'UKMTO: usa prima Recent Incidents, dove sono pubblicati gli avvisi correnti; fallback su homepage e Warnings ufficiali.')
       };
+    }
+
+    if(source?.id==='spa-saudi'){
+      source={
+        ...source,
+        url:'https://www.spa.gov.sa/en/news/latest-news?page=1',
+        pageUrl:'https://www.spa.gov.sa/en/news/latest-news?page=1',
+        strategy:'html',
+        selectors:["a[href*='/en/N']"],
+        includeAny:['/en/N'],
+        excludeAny:[],
+        includeKeywordsAny:[],
+        filterMode:'path',
+        maxItems:Number(source.maxItems)||60,
+        note:mergeAutoNote(source.note,'SPA: usa la pagina ufficiale Latest News e i permalink /en/N... degli articoli.')
+      };
+    }
+
+    if(source?.id==='iraq-cabinet'){
+      source={
+        ...source,
+        url:'https://t.me/s/cabinetmedia',
+        pageUrl:'https://www.cabinet.iq/en',
+        strategy:'telegram-channel',
+        kind:'official',
+        selectors:[],
+        includeAny:[],
+        excludeAny:[],
+        includeKeywordsAny:[],
+        filterMode:'none',
+        maxItems:Number(source.maxItems)||40,
+        note:mergeAutoNote(source.note,'Il sito del Consiglio dei Ministri carica le notizie via JavaScript; FARO usa il canale Telegram ufficiale collegato dal sito istituzionale.')
+      };
+      delete source.browserRender;
+      delete source.fallbacks;
+    }
+
+    if(source?.id==='iraq-presidency'){
+      source={
+        ...source,
+        url:'https://t.me/s/IraqiPresidency',
+        pageUrl:'https://presidency.iq/',
+        strategy:'telegram-channel',
+        kind:'official',
+        selectors:[],
+        includeAny:[],
+        excludeAny:[],
+        includeKeywordsAny:[],
+        filterMode:'none',
+        maxItems:Number(source.maxItems)||40,
+        note:mergeAutoNote(source.note,'Il sito della Presidenza blocca le richieste automatiche; FARO usa il canale Telegram ufficiale dell’ufficio stampa della Presidenza.')
+      };
+      delete source.browserRender;
+      delete source.fallbacks;
+    }
+
+    if(source?.id==='iraq-mofa'){
+      source={
+        ...source,
+        url:'https://mofa.gov.iq/en/feed/',
+        pageUrl:'https://mofa.gov.iq/en/',
+        strategy:'rss',
+        kind:'official',
+        selectors:[],
+        includeAny:[],
+        excludeAny:[],
+        includeKeywordsAny:[],
+        filterMode:'none',
+        maxItems:Number(source.maxItems)||50,
+        note:mergeAutoNote(source.note,'Feed RSS ufficiale in inglese del Ministero degli Esteri iracheno.')
+      };
+      delete source.browserRender;
+      delete source.fallbacks;
+    }
+
+    if(source?.id==='wam-uae'){
+      source={
+        ...source,
+        url:'https://www.wam.ae/en/list/latest-news',
+        pageUrl:'https://www.wam.ae/en/list/latest-news',
+        strategy:'html',
+        kind:'agency',
+        selectors:["a[href*='/en/article/']"],
+        includeAny:['/en/article/'],
+        excludeAny:[],
+        includeKeywordsAny:[],
+        filterMode:'path',
+        maxItems:Number(source.maxItems)||50,
+        note:mergeAutoNote(source.note,'WAM: pagina ufficiale Latest News in inglese e permalink /en/article/...')
+      };
+      delete source.browserRender;
+      delete source.fallbacks;
     }
 
     if(/bloomberg\.com/.test(identity)){
@@ -3008,6 +3143,22 @@ window.NWLiveResolver = (() => {
     throw new Error('salvataggio online non completato. Controlla URL Worker e token amministratore.');
   }
 
+  function lot1RepairNeeded(configuration){
+    const byId=new Map((configuration?.sources||[]).map(source=>[source?.id,source]));
+    const tests=[
+      ['ukmto-warnings',source=>source.url!=='https://www.ukmto.org/recent-incidents'||source.strategy!=='ukmto'],
+      ['spa-saudi',source=>source.url!=='https://www.spa.gov.sa/en/news/latest-news?page=1'||source.strategy!=='html'],
+      ['iraq-cabinet',source=>source.url!=='https://t.me/s/cabinetmedia'||source.strategy!=='telegram-channel'],
+      ['iraq-presidency',source=>source.url!=='https://t.me/s/IraqiPresidency'||source.strategy!=='telegram-channel'],
+      ['iraq-mofa',source=>source.url!=='https://mofa.gov.iq/en/feed/'||source.strategy!=='rss'],
+      ['wam-uae',source=>source.url!=='https://www.wam.ae/en/list/latest-news'||source.strategy!=='html']
+    ];
+    return tests.some(([id,test])=>{
+      const source=byId.get(id);
+      return source?test(source):false;
+    });
+  }
+
   function applyRemoteConfiguration(configuration){
     if(!configuration||!Array.isArray(configuration.sources))throw new Error('Configurazione online non valida');
     state.sync.suspend=true;
@@ -3141,18 +3292,22 @@ window.NWLiveResolver = (() => {
     try{
       const remote=await fetchRemoteConfiguration();
       if(remote){
+        const repairNeeded=lot1RepairNeeded(remote);
         applyRemoteConfiguration(remote);
         const added=mergeReleaseSources(remote);
-        if(added&&S.settings().adminToken){
+        if((added||repairNeeded)&&S.settings().adminToken){
           const saved=await saveRemoteConfiguration({force:true});
+          const detail=added
+            ? `${added} nuove fonti aggiunte${repairNeeded?' e fonti note corrette':''}`
+            : 'fonti del lotto 1 corrette';
           setCloudSync(saved
-            ? `Configurazione online aggiornata a FARO ${SOURCE_BUNDLE_VERSION}: ${added} nuove fonti aggiunte.`
-            : `Configurazione caricata, ma ${added} nuove fonti non sono state salvate: verifica il token amministratore.`,
+            ? `Configurazione online aggiornata: ${detail}.`
+            : `Configurazione caricata, ma le correzioni non sono state salvate: verifica il token amministratore.`,
             saved?'ok':'warning');
           return saved?'remote-upgraded':'remote';
         }
-        if(added&&!S.settings().adminToken){
-          setCloudSync(`Configurazione caricata. ${added} nuove fonti FARO sono pronte ma serve il token amministratore per salvarle online.`,'warning');
+        if((added||repairNeeded)&&!S.settings().adminToken){
+          setCloudSync(`Configurazione caricata. Le correzioni FARO sono attive in questa sessione ma serve il token amministratore per salvarle online.`,'warning');
           return 'remote';
         }
         setCloudSync(`Configurazione online caricata${remote.updatedAt?' · '+U.fmt(remote.updatedAt):''}.`,'ok');
