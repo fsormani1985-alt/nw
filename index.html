@@ -118,7 +118,7 @@
   <header class="app-header">
     <div>
       <div class="eyebrow">FLUSSO AGGREGATO DI RASSEGNA ONLINE</div>
-      <h1>FARO <span class="version">4.3.2</span></h1>
+      <h1>FARO <span class="version">4.3.3</span></h1>
       <p>Flusso Aggregato di Rassegna Online · fonti e live blog in ordine cronologico globale.</p>
     </div>
     <nav class="main-nav" aria-label="Sezioni">
@@ -733,10 +733,14 @@ window.NWParsers = (() => {
       }
       if(!validTitle(title))return;
 
-      const officialHost=host(source.pageUrl||'');
+      const hostname=value=>{
+        try{return new URL(value,source.pageUrl||source.url).hostname.toLowerCase().replace(/^www\./,'')}
+        catch{return''}
+      };
+      const officialHost=hostname(source.pageUrl||'');
       const officialLink=[...textNode.querySelectorAll('a[href]')]
         .map(anchor=>anchor.getAttribute('href')||'')
-        .find(value=>officialHost&&host(value)===officialHost);
+        .find(value=>officialHost&&hostname(value)===officialHost);
       const permalink=officialLink
         ||message.querySelector('a.tgme_widget_message_date[href]')?.getAttribute('href')
         ||message.querySelector('.tgme_widget_message_date[href]')?.getAttribute('href')
@@ -967,11 +971,12 @@ window.NWParsers = (() => {
       const href=anchor.getAttribute('href')||'';
       let url;
       try{url=new URL(href,source.pageUrl||source.url)}catch{return}
-      const box=anchor.closest('li')||anchor.closest('.news-content-wrap')||anchor.closest('article,section,div');
+      const box=anchor.closest('li')||anchor.closest('.news-content-wrap')||anchor.closest('article,section,div')||anchor;
       const title=U.clean(
+        box?.querySelector('h1,h2,h3,h4,.txt-link')?.textContent||
+        anchor.querySelector('h1,h2,h3,h4')?.textContent||
         anchor.getAttribute('title')||
         anchor.textContent||
-        box?.querySelector('h1,h2,h3,h4,.txt-link')?.textContent||
         ''
       );
       if(!validTitle(title))return;
@@ -994,7 +999,7 @@ window.NWParsers = (() => {
       let url;
       try{url=new URL(href,source.pageUrl||source.url)}catch{return}
 
-      const box=anchor.closest('div.MuiBox-root')||anchor.parentElement||anchor;
+      const box=anchor;
       const titleNode=
         box.querySelector('[class*="MuiTypography-card-title"]')||
         box.querySelector('[class*="card-title"]')||
@@ -2116,7 +2121,7 @@ window.NWLiveResolver = (() => {
 (()=>{
   'use strict';
   const U=NWUtils,S=NWStore,P=NWParsers,Q=NWQuery,Stories=NWStories,LiveAlert=NWLiveAlert,Resolver=NWLiveResolver;
-  const APP_VERSION='4.3.2';
+  const APP_VERSION='4.3.3';
   const SOURCE_BUNDLE_VERSION='4.2.5';
   const SOURCE_BUNDLE_IDS=new Set(["usni-news","app-pakistan","spa-saudi","bahrain-national-portal","bahrain-government-directory","qna-qatar","qatar-gco","petra-jordan","jordan-government-entities","ina-iraq","iraq-cabinet","iraq-presidency","iraq-mofa","wam-uae","dubai-media-office","abudhabi-media-office","saba-yemen-sanaa","ypa-yemen","sabanew-aden","insideover","euronews-it","alarabiya-english","us-treasury","tehran-times","iranintl-english","iranintl-live","middleeasteye-live","cnn-iran-war-live","timesofisrael-live","reuters-iran-war-live","bloomberg-europe","lorient-today","nna-lebanon","axios-news","foxnews-world","farsnews-english","irna-english","mehrnews-english"]);
   const RETIRED_SOURCE_IDS=new Set(["idf-x","centcom-x","trump-truthsocial","ukmto-warnings"]);
@@ -2976,8 +2981,8 @@ window.NWLiveResolver = (() => {
       source={
         ...source,
         name:'Bahrain iGA – News',
-        url:'https://www.iga.gov.bh/en/category/news',
-        pageUrl:'https://www.iga.gov.bh/en/category/news',
+        url:'https://www.iga.gov.bh/en/index.aspx',
+        pageUrl:'https://www.iga.gov.bh/en/index.aspx',
         strategy:'iga-news',
         kind:'official',
         selectors:[],
@@ -3306,7 +3311,7 @@ window.NWLiveResolver = (() => {
     const byId=new Map((configuration?.sources||[]).map(source=>[source?.id,source]));
     const tests=[
       ['spa-saudi',source=>source.url!=='https://www.spa.gov.sa/en/news/latest-news?page=1'||source.strategy!=='spa-latest'],
-      ['bahrain-national-portal',source=>source.url!=='https://www.iga.gov.bh/en/category/news'||source.strategy!=='iga-news'],
+      ['bahrain-national-portal',source=>source.url!=='https://www.iga.gov.bh/en/index.aspx'||source.strategy!=='iga-news'],
       ['saba-yemen-sanaa',source=>source.url!=='https://t.me/s/SABAYEen'||source.strategy!=='telegram-channel'],
       ['sabanew-aden',source=>source.url!=='https://www.sabanew.net/rss.php?lang=en'||source.strategy!=='rss'],
       ['alarabiya-english',source=>source.url!=='https://english.alarabiya.net/en-news-sitemap.xml'||source.strategy!=='sitemap'],
