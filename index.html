@@ -118,7 +118,7 @@
   <header class="app-header">
     <div>
       <div class="eyebrow">FLUSSO AGGREGATO DI RASSEGNA ONLINE</div>
-      <h1>FARO <span class="version">4.2.9</span></h1>
+      <h1>FARO <span class="version">4.3.0</span></h1>
       <p>Flusso Aggregato di Rassegna Online · fonti e live blog in ordine cronologico globale.</p>
     </div>
     <nav class="main-nav" aria-label="Sezioni">
@@ -944,6 +944,25 @@ window.NWParsers = (() => {
   }
 
 
+  function igaNews(text, source) {
+    const doc=new DOMParser().parseFromString(text,'text/html');
+    const output=[];
+    doc.querySelectorAll('#pnlNewslist a.txt-link[href],#pnlNewslist a[href*="/article/"]').forEach(anchor=>{
+      const href=anchor.getAttribute('href')||'';
+      let url;
+      try{url=new URL(href,source.pageUrl||source.url)}catch{return}
+      const box=anchor.closest('li')||anchor.closest('article,section,div');
+      const title=U.clean(anchor.textContent||box?.querySelector('h2,h3')?.textContent||'');
+      if(!validTitle(title))return;
+      const date=U.clean(box?.querySelector('.date')?.textContent||'');
+      const description=[...(box?.querySelectorAll('p')||[])]
+        .map(node=>U.clean(node.textContent||''))
+        .find(value=>value.length>40&&value!==title)||'';
+      output.push(make(source,title,url,date,description));
+    });
+    return uniq(output,source.maxItems||40);
+  }
+
   function spaLatest(text, source) {
     const doc=new DOMParser().parseFromString(text,'text/html');
     const output=[];
@@ -1614,6 +1633,7 @@ window.NWParsers = (() => {
     if (source.strategy === 'nna-api') return nnaApi(trimmed, source);
     if (source.strategy === 'lorient-api') return lorientApi(trimmed, source);
     if (source.strategy === 'ukmto') return ukmto(trimmed, source);
+    if (source.strategy === 'iga-news') return igaNews(trimmed, source);
     if (source.strategy === 'spa-latest') return spaLatest(trimmed, source);
     if (source.strategy === 'fars-social') return farsSocial(trimmed, source);
     if (source.strategy === 'telegram-channel') return telegramChannel(trimmed, source);
@@ -1635,6 +1655,7 @@ window.NWParsers = (() => {
       sourceDateParts,
       clockMinutes,
       farsSocial,
+      igaNews,
       spaLatest,
       telegramChannel,
       timesOfIsraelLiveRss,
@@ -2084,7 +2105,7 @@ window.NWLiveResolver = (() => {
 (()=>{
   'use strict';
   const U=NWUtils,S=NWStore,P=NWParsers,Q=NWQuery,Stories=NWStories,LiveAlert=NWLiveAlert,Resolver=NWLiveResolver;
-  const APP_VERSION='4.2.9';
+  const APP_VERSION='4.3.0';
   const SOURCE_BUNDLE_VERSION='4.2.5';
   const SOURCE_BUNDLE_IDS=new Set(["usni-news","ukmto-warnings","app-pakistan","spa-saudi","bahrain-national-portal","bahrain-government-directory","qna-qatar","qatar-gco","petra-jordan","jordan-government-entities","ina-iraq","iraq-cabinet","iraq-presidency","iraq-mofa","wam-uae","dubai-media-office","abudhabi-media-office","saba-yemen-sanaa","ypa-yemen","sabanew-aden","insideover","euronews-it","alarabiya-english","us-treasury","tehran-times","iranintl-english","iranintl-live","middleeasteye-live","cnn-iran-war-live","timesofisrael-live","reuters-iran-war-live","bloomberg-europe","lorient-today","nna-lebanon","axios-news","foxnews-world","farsnews-english","irna-english","mehrnews-english"]);
   const RETIRED_SOURCE_IDS=new Set(["idf-x","centcom-x","trump-truthsocial"]);
@@ -2905,34 +2926,18 @@ window.NWLiveResolver = (() => {
         ...source,
         url:'https://www.ukmto.org/recent-incidents',
         pageUrl:'https://www.ukmto.org/recent-incidents',
-        strategy:'ukmto',
+        strategy:'html',
         kind:'official',
         browserRender:false,
-        selectors:[],
+        selectors:['a.govuk-link[href*="/recent-incidents#"]'],
         includeAny:[],
         excludeAny:[],
         includeKeywordsAny:[],
         filterMode:'none',
-        fallbacks:[
-          {
-            url:'https://www.ukmto.org/',
-            pageUrl:'https://www.ukmto.org/',
-            strategy:'ukmto',
-            browserRender:false,
-            maxItems:Number(source.maxItems)||60,
-            label:'Recent Incidents in homepage ufficiale'
-          },
-          {
-            url:'https://www.ukmto.org/ukmto-products/warnings',
-            pageUrl:'https://www.ukmto.org/ukmto-products/warnings',
-            strategy:'ukmto',
-            browserRender:false,
-            maxItems:Number(source.maxItems)||60,
-            label:'Warnings ufficiali'
-          }
-        ],
-        note:mergeAutoNote(source.note,'UKMTO: usa l’HTML SSR ufficiale di Recent Incidents senza Browser Run; fallback su homepage e Warnings ufficiali.')
+        maxItems:Number(source.maxItems)||60,
+        note:mergeAutoNote(source.note,'UKMTO: legge direttamente le card SSR di Recent Incidents e mantiene il collegamento all’ancora del singolo incidente; Browser Run non necessario.')
       };
+      delete source.fallbacks;
       delete source.directFailureCount;
       delete source.directRetryAt;
       delete source.directManualOnly;
@@ -2942,17 +2947,76 @@ window.NWLiveResolver = (() => {
     if(source?.id==='spa-saudi'){
       source={
         ...source,
-        url:'https://www.spa.gov.sa/en/news/latest-news?page=1',
+        url:'https://www.spa.gov.sa/en/sitemap.xml',
         pageUrl:'https://www.spa.gov.sa/en/news/latest-news?page=1',
-        strategy:'spa-latest',
+        strategy:'sitemap',
         selectors:[],
         includeAny:[],
         excludeAny:[],
         includeKeywordsAny:[],
         filterMode:'none',
-        maxItems:Number(source.maxItems)||60,
-        note:mergeAutoNote(source.note,'SPA: parser dedicato alla pagina ufficiale Latest News e ai permalink /en/N... degli articoli.')
+        maxItems:Number(source.maxItems)||80,
+        note:mergeAutoNote(source.note,'SPA: usa la sitemap ufficiale inglese dichiarata nel robots.txt; i permalink /en/N... sono ordinati con i più recenti in testa.')
       };
+      delete source.fallbacks;
+    }
+
+    if(source?.id==='bahrain-national-portal'){
+      source={
+        ...source,
+        name:'Bahrain iGA – News',
+        url:'https://www.iga.gov.bh/en/category/news',
+        pageUrl:'https://www.iga.gov.bh/en/category/news',
+        strategy:'iga-news',
+        kind:'official',
+        selectors:[],
+        includeAny:[],
+        excludeAny:[],
+        includeKeywordsAny:[],
+        filterMode:'none',
+        maxItems:Number(source.maxItems)||40,
+        note:mergeAutoNote(source.note,'Il National Portal non è un sito di news: FARO usa la sezione News ufficiale della Information & eGovernment Authority del Bahrain.')
+      };
+      delete source.browserRender;
+      delete source.fallbacks;
+    }
+
+    if(source?.id==='sabanew-aden'){
+      source={
+        ...source,
+        url:'https://www.sabanew.net/rss.php?lang=en',
+        pageUrl:'https://www.sabanew.net/home/en',
+        strategy:'rss',
+        kind:'agency',
+        selectors:[],
+        includeAny:[],
+        excludeAny:[],
+        includeKeywordsAny:[],
+        filterMode:'none',
+        maxItems:Number(source.maxItems)||50,
+        note:mergeAutoNote(source.note,'Feed RSS ufficiale inglese Saba Net del governo riconosciuto ad Aden.')
+      };
+      delete source.browserRender;
+      delete source.fallbacks;
+    }
+
+    if(source?.id==='alarabiya-english'){
+      source={
+        ...source,
+        url:'https://english.alarabiya.net/en-news-sitemap.xml',
+        pageUrl:'https://english.alarabiya.net/',
+        strategy:'sitemap',
+        kind:'media',
+        selectors:[],
+        includeAny:[],
+        excludeAny:[],
+        includeKeywordsAny:[],
+        filterMode:'none',
+        maxItems:Number(source.maxItems)||80,
+        note:mergeAutoNote(source.note,'Al Arabiya English: usa la sitemap News ufficiale dichiarata nel robots.txt.')
+      };
+      delete source.browserRender;
+      delete source.fallbacks;
     }
 
     if(source?.id==='iraq-cabinet'){
@@ -3211,8 +3275,11 @@ window.NWLiveResolver = (() => {
   function lot1RepairNeeded(configuration){
     const byId=new Map((configuration?.sources||[]).map(source=>[source?.id,source]));
     const tests=[
-      ['ukmto-warnings',source=>source.url!=='https://www.ukmto.org/recent-incidents'||source.strategy!=='ukmto'||source.browserRender===true],
-      ['spa-saudi',source=>source.url!=='https://www.spa.gov.sa/en/news/latest-news?page=1'||source.strategy!=='spa-latest'],
+      ['ukmto-warnings',source=>source.url!=='https://www.ukmto.org/recent-incidents'||source.strategy!=='html'||source.browserRender===true],
+      ['spa-saudi',source=>source.url!=='https://www.spa.gov.sa/en/sitemap.xml'||source.strategy!=='sitemap'],
+      ['bahrain-national-portal',source=>source.url!=='https://www.iga.gov.bh/en/category/news'||source.strategy!=='iga-news'],
+      ['sabanew-aden',source=>source.url!=='https://www.sabanew.net/rss.php?lang=en'||source.strategy!=='rss'],
+      ['alarabiya-english',source=>source.url!=='https://english.alarabiya.net/en-news-sitemap.xml'||source.strategy!=='sitemap'],
       ['iraq-cabinet',source=>source.url!=='https://t.me/s/cabinetmedia'||source.strategy!=='telegram-channel'],
       ['iraq-presidency',source=>source.url!=='https://t.me/s/IraqiPresidency'||source.strategy!=='telegram-channel'],
       ['iraq-mofa',source=>source.url!=='https://mofa.gov.iq/en/feed/'||source.strategy!=='rss'],
