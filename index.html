@@ -118,7 +118,7 @@
   <header class="app-header">
     <div>
       <div class="eyebrow">FLUSSO AGGREGATO DI RASSEGNA ONLINE</div>
-      <h1>FARO <span class="version">4.3.1</span></h1>
+      <h1>FARO <span class="version">4.3.2</span></h1>
       <p>Flusso Aggregato di Rassegna Online · fonti e live blog in ordine cronologico globale.</p>
     </div>
     <nav class="main-nav" aria-label="Sezioni">
@@ -733,7 +733,12 @@ window.NWParsers = (() => {
       }
       if(!validTitle(title))return;
 
-      const permalink=message.querySelector('a.tgme_widget_message_date[href]')?.getAttribute('href')
+      const officialHost=host(source.pageUrl||'');
+      const officialLink=[...textNode.querySelectorAll('a[href]')]
+        .map(anchor=>anchor.getAttribute('href')||'')
+        .find(value=>officialHost&&host(value)===officialHost);
+      const permalink=officialLink
+        ||message.querySelector('a.tgme_widget_message_date[href]')?.getAttribute('href')
         ||message.querySelector('.tgme_widget_message_date[href]')?.getAttribute('href')
         ||'';
       if(!permalink)return;
@@ -947,14 +952,30 @@ window.NWParsers = (() => {
   function igaNews(text, source) {
     const doc=new DOMParser().parseFromString(text,'text/html');
     const output=[];
-    doc.querySelectorAll('#pnlNewslist a.txt-link[href],#pnlNewslist a[href*="/article/"]').forEach(anchor=>{
+    const selectors=[
+      '#pnlNewslist a.txt-link[href]',
+      '#pnlNewslist a[href*="/article/"]',
+      'a.txt-link[href*="/article/"]',
+      'a[href*="/en/article/"]',
+      'a[href^="../article/"]'
+    ];
+    const anchors=[];
+    selectors.forEach(selector=>{
+      try{anchors.push(...doc.querySelectorAll(selector))}catch{}
+    });
+    anchors.forEach(anchor=>{
       const href=anchor.getAttribute('href')||'';
       let url;
       try{url=new URL(href,source.pageUrl||source.url)}catch{return}
-      const box=anchor.closest('li')||anchor.closest('article,section,div');
-      const title=U.clean(anchor.textContent||box?.querySelector('h2,h3')?.textContent||'');
+      const box=anchor.closest('li')||anchor.closest('.news-content-wrap')||anchor.closest('article,section,div');
+      const title=U.clean(
+        anchor.getAttribute('title')||
+        anchor.textContent||
+        box?.querySelector('h1,h2,h3,h4,.txt-link')?.textContent||
+        ''
+      );
       if(!validTitle(title))return;
-      const date=U.clean(box?.querySelector('.date')?.textContent||'');
+      const date=U.clean(box?.querySelector('.date,time')?.getAttribute?.('datetime')||box?.querySelector('.date,time')?.textContent||'');
       const description=[...(box?.querySelectorAll('p')||[])]
         .map(node=>U.clean(node.textContent||''))
         .find(value=>value.length>40&&value!==title)||'';
@@ -967,37 +988,27 @@ window.NWParsers = (() => {
     const doc=new DOMParser().parseFromString(text,'text/html');
     const output=[];
 
-    doc.querySelectorAll("a[href^='/en/N'],a[href*='spa.gov.sa/en/N']").forEach(anchor=>{
+    doc.querySelectorAll('a[href*="/en/N"]').forEach(anchor=>{
       const href=anchor.getAttribute('href')||'';
-      if(!href)return;
+      if(!/\/en\/N\d+/i.test(href))return;
       let url;
       try{url=new URL(href,source.pageUrl||source.url)}catch{return}
 
+      const box=anchor.closest('div.MuiBox-root')||anchor.parentElement||anchor;
       const titleNode=
-        anchor.querySelector('[class*="card-title"]') ||
-        anchor.querySelector('[class*="MuiTypography-card-title"]') ||
-        anchor.querySelector('h1,h2,h3,h4,h5');
-      let title=U.clean(titleNode?.textContent||'');
-      if(!validTitle(title)){
-        const texts=[...anchor.querySelectorAll('div,p,span')]
-          .map(node=>U.clean(node.textContent||''))
-          .filter(validTitle)
-          .sort((a,b)=>a.length-b.length);
-        title=texts[0]||'';
-      }
+        box.querySelector('[class*="MuiTypography-card-title"]')||
+        box.querySelector('[class*="card-title"]')||
+        box.querySelector('h1,h2,h3,h4,h5');
+      let title=U.clean(titleNode?.textContent||anchor.textContent||anchor.getAttribute('title')||'');
       if(!validTitle(title))return;
 
-      const descriptionNode=
-        anchor.querySelector('[class*="LinesEllipsis"]') ||
-        [...anchor.querySelectorAll('div,p')].find(node=>{
-          const value=U.clean(node.textContent||'');
-          return value.length>80&&value!==title&&!value.includes(title);
-        });
-      const description=U.clean(descriptionNode?.textContent||'');
-
-      const timeText=[...anchor.querySelectorAll('p,span,div')]
+      const description=[...box.querySelectorAll('p,div[class*="LinesEllipsis"]')]
         .map(node=>U.clean(node.textContent||''))
-        .find(value=>/\b(?:minute|minutes|min|hour|hours|day|days)\s+ago\b/i.test(value))||'';
+        .find(value=>value.length>60&&value!==title&&!value.includes(title))||'';
+
+      const timeText=[...box.querySelectorAll('p,span,div')]
+        .map(node=>U.clean(node.textContent||''))
+        .find(value=>/\b(?:(?:\d+|an?|one)\s+)?(?:minute|minutes|min|hour|hours|day|days)\s+ago\b/i.test(value))||'';
       const date=relativeSocialDate(timeText);
 
       output.push(make(source,title,url,date,description));
@@ -2105,7 +2116,7 @@ window.NWLiveResolver = (() => {
 (()=>{
   'use strict';
   const U=NWUtils,S=NWStore,P=NWParsers,Q=NWQuery,Stories=NWStories,LiveAlert=NWLiveAlert,Resolver=NWLiveResolver;
-  const APP_VERSION='4.3.1';
+  const APP_VERSION='4.3.2';
   const SOURCE_BUNDLE_VERSION='4.2.5';
   const SOURCE_BUNDLE_IDS=new Set(["usni-news","app-pakistan","spa-saudi","bahrain-national-portal","bahrain-government-directory","qna-qatar","qatar-gco","petra-jordan","jordan-government-entities","ina-iraq","iraq-cabinet","iraq-presidency","iraq-mofa","wam-uae","dubai-media-office","abudhabi-media-office","saba-yemen-sanaa","ypa-yemen","sabanew-aden","insideover","euronews-it","alarabiya-english","us-treasury","tehran-times","iranintl-english","iranintl-live","middleeasteye-live","cnn-iran-war-live","timesofisrael-live","reuters-iran-war-live","bloomberg-europe","lorient-today","nna-lebanon","axios-news","foxnews-world","farsnews-english","irna-english","mehrnews-english"]);
   const RETIRED_SOURCE_IDS=new Set(["idf-x","centcom-x","trump-truthsocial","ukmto-warnings"]);
@@ -2947,16 +2958,16 @@ window.NWLiveResolver = (() => {
     if(source?.id==='spa-saudi'){
       source={
         ...source,
-        url:'https://www.spa.gov.sa/en/sitemap.xml',
+        url:'https://www.spa.gov.sa/en/news/latest-news?page=1',
         pageUrl:'https://www.spa.gov.sa/en/news/latest-news?page=1',
-        strategy:'sitemap',
+        strategy:'spa-latest',
         selectors:[],
         includeAny:[],
         excludeAny:[],
         includeKeywordsAny:[],
         filterMode:'none',
-        maxItems:Number(source.maxItems)||80,
-        note:mergeAutoNote(source.note,'SPA: usa la sitemap ufficiale inglese dichiarata nel robots.txt; i permalink /en/N... sono ordinati con i più recenti in testa.')
+        maxItems:Number(source.maxItems)||60,
+        note:mergeAutoNote(source.note,'SPA: parser dedicato alle card SSR della pagina ufficiale Latest News e ai permalink /en/N...')
       };
       delete source.fallbacks;
     }
@@ -3014,6 +3025,25 @@ window.NWLiveResolver = (() => {
         filterMode:'none',
         maxItems:Number(source.maxItems)||80,
         note:mergeAutoNote(source.note,'Al Arabiya English: usa la sitemap News ufficiale dichiarata nel robots.txt.')
+      };
+      delete source.browserRender;
+      delete source.fallbacks;
+    }
+
+    if(source?.id==='saba-yemen-sanaa'){
+      source={
+        ...source,
+        url:'https://t.me/s/SABAYEen',
+        pageUrl:'https://www.saba.ye/en',
+        strategy:'telegram-channel',
+        kind:'state-media',
+        selectors:[],
+        includeAny:[],
+        excludeAny:[],
+        includeKeywordsAny:[],
+        filterMode:'none',
+        maxItems:Number(source.maxItems)||50,
+        note:mergeAutoNote(source.note,'Il sito Saba Sana’a restituisce HTTP 403 al Worker; FARO usa il canale Telegram ufficiale inglese dell’agenzia e, quando presente, apre il collegamento originale saba.ye dell’articolo.')
       };
       delete source.browserRender;
       delete source.fallbacks;
@@ -3275,8 +3305,9 @@ window.NWLiveResolver = (() => {
   function lot1RepairNeeded(configuration){
     const byId=new Map((configuration?.sources||[]).map(source=>[source?.id,source]));
     const tests=[
-      ['spa-saudi',source=>source.url!=='https://www.spa.gov.sa/en/sitemap.xml'||source.strategy!=='sitemap'],
+      ['spa-saudi',source=>source.url!=='https://www.spa.gov.sa/en/news/latest-news?page=1'||source.strategy!=='spa-latest'],
       ['bahrain-national-portal',source=>source.url!=='https://www.iga.gov.bh/en/category/news'||source.strategy!=='iga-news'],
+      ['saba-yemen-sanaa',source=>source.url!=='https://t.me/s/SABAYEen'||source.strategy!=='telegram-channel'],
       ['sabanew-aden',source=>source.url!=='https://www.sabanew.net/rss.php?lang=en'||source.strategy!=='rss'],
       ['alarabiya-english',source=>source.url!=='https://english.alarabiya.net/en-news-sitemap.xml'||source.strategy!=='sitemap'],
       ['iraq-cabinet',source=>source.url!=='https://t.me/s/cabinetmedia'||source.strategy!=='telegram-channel'],
