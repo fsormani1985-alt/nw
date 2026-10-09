@@ -695,6 +695,54 @@ window.NWParsers = (() => {
     return '';
   }
 
+  function timesOfIsraelTelegram(text,source){
+    const doc=new DOMParser().parseFromString(text,'text/html');
+    const output=[];
+    const wrappers=[...doc.querySelectorAll('.tgme_widget_message_wrap')];
+    const messages=wrappers.length
+      ?wrappers.map(node=>node.querySelector('.tgme_widget_message')).filter(Boolean)
+      :[...doc.querySelectorAll('.tgme_widget_message[data-post]')];
+
+    messages.forEach(message=>{
+      const textNode=message.querySelector('.tgme_widget_message_text');
+      if(!textNode)return;
+      const link=[...textNode.querySelectorAll('a[href]')]
+        .map(anchor=>anchor.getAttribute('href')||'')
+        .find(value=>/^https:\/\/(?:www\.)?(?:toi\.li|timesofisrael\.com)\//i.test(value));
+      if(!link)return;
+
+      const readable=textNode.cloneNode(true);
+      readable.querySelectorAll('br').forEach(br=>br.replaceWith('\n'));
+      const lines=String(readable.textContent||'')
+        .split(/\r?\n/)
+        .map(value=>U.clean(value))
+        .filter(value=>value&&!/^https?:\/\//i.test(value)&&!/^read more\b/i.test(value));
+      let title=lines.find(validTitle)||'';
+      if(title.length>300){
+        const sentence=title.match(/^(.{14,300}?[.!?])(?:\s|$)/)?.[1]||'';
+        title=validTitle(sentence)?U.clean(sentence):'';
+      }
+      if(!validTitle(title))return;
+
+      const description=lines.filter(value=>value!==title).join(' ');
+      const date=message.querySelector('time[datetime]')?.getAttribute('datetime')
+        ||message.querySelector('time')?.textContent
+        ||'';
+      const item=source.category==='liveblog'
+        ?makeLive(source,title,date,description,link)
+        :make(source,title,link,date,description);
+      item.tags=source.category==='liveblog'
+        ?['live blog','Times of Israel','canale ufficiale']
+        :['Times of Israel','canale ufficiale'];
+      item.discovery='official-social';
+      output.push(item);
+    });
+
+    return source.category==='liveblog'
+      ?dedupeLive(output,source.maxItems||180)
+      :uniq(output,source.maxItems||40,item=>`${item.title.toLowerCase()}|${item.url}`);
+  }
+
   function farsSocial(text,source){
     const doc=new DOMParser().parseFromString(text,'text/html');
     const output=[];
@@ -1350,7 +1398,7 @@ window.NWParsers = (() => {
 
   function middleEastEyeLive(text, source) {
     const documentHtml = new DOMParser().parseFromString(text, 'text/html');
-    const root = documentHtml.querySelector('main,article') || documentHtml.body;
+    const root = documentHtml.querySelector('main') || documentHtml.body;
     const output = [];
     const selector = 'a[href*="/live-blog/live-blog-update/"]';
 
@@ -1453,6 +1501,7 @@ window.NWParsers = (() => {
     if (source.strategy === 'lorient-api') return lorientApi(trimmed, source);
     if (source.strategy === 'ukmto') return ukmto(trimmed, source);
     if (source.strategy === 'fars-social') return farsSocial(trimmed, source);
+    if (source.strategy === 'toi-telegram') return timesOfIsraelTelegram(trimmed, source);
     if (source.strategy === 'liveblog') return liveblog(trimmed, source);
     return html(trimmed, source);
   }
@@ -1469,6 +1518,7 @@ window.NWParsers = (() => {
       sourceDateParts,
       clockMinutes,
       farsSocial,
+      timesOfIsraelTelegram,
       relativeSocialDate
     }
   };
@@ -1914,8 +1964,8 @@ window.NWLiveResolver = (() => {
 (()=>{
   'use strict';
   const U=NWUtils,S=NWStore,P=NWParsers,Q=NWQuery,Stories=NWStories,LiveAlert=NWLiveAlert,Resolver=NWLiveResolver;
-  const APP_VERSION='4.2.4';
-  const SOURCE_BUNDLE_VERSION='4.2.4';
+  const APP_VERSION='4.2.5';
+  const SOURCE_BUNDLE_VERSION='4.2.5';
   const SOURCE_BUNDLE_IDS=new Set(["usni-news","ukmto-warnings","app-pakistan","spa-saudi","bahrain-national-portal","bahrain-government-directory","qna-qatar","qatar-gco","petra-jordan","jordan-government-entities","ina-iraq","iraq-cabinet","iraq-presidency","iraq-mofa","wam-uae","dubai-media-office","abudhabi-media-office","saba-yemen-sanaa","ypa-yemen","sabanew-aden","insideover","euronews-it","alarabiya-english","idf-x","centcom-x","trump-truthsocial","us-treasury","tehran-times","iranintl-english","iranintl-live","middleeasteye-live","cnn-iran-war-live","timesofisrael-live","reuters-iran-war-live","bloomberg-europe","lorient-today","nna-lebanon","axios-news","foxnews-world","farsnews-english","irna-english","mehrnews-english"]);
   const $=id=>document.getElementById(id);
   const ALLOWED=["aljazeera.com","haaretz.com","theiranproject.com","middleeasteye.net","presstv.ir","sky.com","jpost.com","timesofisrael.com","cnn.com","bbc.com","reuters.com","nytimes.com","wsj.com","feeds.content.dowjones.io","centcom.mil","dvidshub.net","edition-prod-cf.sitemirror.cnn.com","mehrnews.com","irna.ir","usni.org","ukmto.org","app.com.pk","spa.gov.sa","bahrain.bh","qna.org.qa","gco.gov.qa","petra.gov.jo","jordan.gov.jo","ina.iq","cabinet.iq","presidency.iq","mofa.gov.iq","wam.ae","mediaoffice.ae","mediaoffice.abudhabi","saba.ye","ypagency.net","sabanew.net","insideover.com","euronews.com","alarabiya.net","x.com","truthsocial.com","treasury.gov","tehrantimes.com","iranintl.com","foxnews.com","bloomberg.com","lorientlejour.com","nna-leb.gov.lb","farsnews.ir"];
@@ -2775,6 +2825,22 @@ window.NWLiveResolver = (() => {
     if(/timesofisrael\.com/.test(identity)&&isLiveSource(source)){
       source.timezone='Asia/Jerusalem';
       delete source.timezoneOffset;
+      const officialFallback={
+        url:'https://t.me/s/TheTimesOfIsrael2022',
+        pageUrl:source.pageUrl||source.url,
+        strategy:'toi-telegram',
+        maxItems:Number(source.maxItems)||180,
+        includeAny:[],
+        excludeAny:[],
+        includeKeywordsAny:[],
+        filterMode:'none',
+        label:'canale ufficiale Times of Israel'
+      };
+      source.fallbacks=[
+        officialFallback,
+        ...(source.fallbacks||[]).filter(item=>host(item?.url)!=='t.me')
+      ];
+      source.note=mergeAutoNote(source.note,'Se il sito blocca il Worker, usa il canale ufficiale verificato di Times of Israel e mantiene i collegamenti originali TOI.');
     }
 
     if(/iranintl\.com/.test(identity)&&isLiveSource(source)){
@@ -3437,7 +3503,23 @@ window.NWLiveResolver = (() => {
       return await firstWorkingLiveCandidate(source, candidates);
     } catch (error) {
       if (indexHtml) return inactiveLiveResult('NESSUN LIVE ATTIVO: Times of Israel non espone aggiornamenti live oggi.', permanentUrl);
-      throw indexError || error;
+      const directError=indexError||error;
+      try{
+        const recovered=await firstWorkingLiveCandidate(source,[{
+          url:'https://t.me/s/TheTimesOfIsrael2022',
+          pageUrl:permanentUrl,
+          strategy:'toi-telegram',
+          label:'canale ufficiale Times of Israel',
+          fresh:false
+        }]);
+        return{
+          ...recovered,
+          status:'recovery',
+          info:'Aggiornamenti recuperati dal canale ufficiale verificato di Times of Israel; il sito diretto resta bloccato al Worker.'
+        };
+      }catch(recoveryError){
+        throw new Error(`Sito diretto non disponibile (${conciseAttemptError(directError.message)}); anche il canale ufficiale non è raggiungibile (${conciseAttemptError(recoveryError.message)}).`);
+      }
     }
   }
 
